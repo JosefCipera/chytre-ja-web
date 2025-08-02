@@ -1,0 +1,120 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail příspěvku | Chytré Já</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="index.html"><img src="iting_logo_male.jpg" alt="Chytré Já Logo"></a>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html#funkce">Funkce</a></li>
+                        <li><a href="index.html#cenik">Ceník</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="index.html#o-nas">O nás</a></li>
+                        <li><a href="index.html#kontakt">Kontakt</a></li>
+                        <li><a href="index.html#koupit" class="btn-primary">Koupit Chytré Já</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section-padding">
+            <div class="container">
+                <h1 class="section-heading">Jak zefektivnit výrobní procesy</h1>
+                <p class="section-subheading">Datum: 01. 08. 2025</p>
+                <div class="blog-content">
+                    <p>V tomto článku se podíváme na praktické kroky, jak pomocí umělé inteligence (AI) a průtokového řízení (TOC) zefektivnit výrobní procesy a snížit náklady ve vaší firmě.</p>
+                    <h2>1. Analýza stávajícího stavu</h2>
+                    <p>Prvním krokem je důkladná analýza aktuálních procesů. Pomocí AI můžete rychle identifikovat úzká hrdla a neefektivní kroky ve výrobě.</p>
+                    <h2>2. Implementace TOC</h2>
+                    <p>Teorie omezení (TOC) vám pomůže zaměřit se na klíčové omezení a optimalizovat celý proces kolem něj. Chytré Já tuto metodu zjednodušuje a automatizuje.</p>
+                    <h2>3. Monitorování a vylepšování</h2>
+                    <p>Pravidelné sledování dat a jejich analýza pomocí AI zajistí, že procesy zůstávají efektivní i v dlouhodobém horizontu.</p>
+                </div>
+                <a href="blog.html" class="btn-secondary" style="border-width: 1px;">Zpět</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <p>Chytré Já – Univerzální AI platforma pro řízení výrobních firem s podporou TOC. Řešíme neřešitelné problémy.</p>
+                </div>
+                <div class="footer-nav">
+                    <h3>Navigace</h3>
+                    <ul>
+                        <li><a href="index.html#funkce">Funkce</a></li>
+                        <li><a href="index.html#cenik">Ceník</a></li>
+                        <li><a href="index.html#o-nas">O nás</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="index.html#kontakt">Kontakt</a></li>
+                        <li><a href="obchodni-podminky.html">Obchodní podmínky</a></li>
+                        <li><a href="zasady-ochrany-osobnich-udaju.html">Zásady ochrany osobních údajů</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Kontakt</h3>
+                    <p>E-mail: <a href="mailto:info@chytreja.cz">info@chytreja.cz</a></p>
+                    <p>Telefon: +420 724 166 988</p>
+                </div>
+                <div class="footer-social">
+                    <h3>Sledujte nás</h3>
+                    <a href="https://linkedin.com/in/josefcipera"><span class="linkedin-icon">📎</span> LinkedIn</a>
+                </div>
+            </div>
+            <p class="copyright">© 2025 Chytré Já. Všechna práva vyhrazena.</p>
+        </div>
+    </footer>
+</body>
+</html>

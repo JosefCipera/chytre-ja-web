@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chytré Já - AI platforma pro řízení firem</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Načtení hlavičky a zápatí přes JavaScript -->
+    <script>
+        function loadHTML(url, elementId) {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(elementId).innerHTML = data;
+                })
+                .catch(error => console.error('Chyba při načítání:', error));
+        }
+        window.onload = function () {
+            loadHTML('header.html', 'header');
+            loadHTML('footer.html', 'footer');
+        };
+    </script>
+</head>
+
+<body>
+    <div id="header"></div> <!-- Hlavička se načte zde -->
+    <main>
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <h1>"Chytré Já" - AI agent pro řízení vaší firmy.</h1>
+                <p>Jedinečné řešení AI s podporou TOC, která dokáže řešit problémy, které jinak řešit nelze. Mějte
+                    přehled a kontrolu s Chytrým Já přímo z mobilu.</p>
+                <a href="#koupit" class="btn-primary">Koupit Chytré Já</a>
+                <a href="#funkce" class="btn-secondary">Zjistit více o funkcích</a>
+            </div>
+            <div class="hero-visual">
+                <img src="./simple_agent_platform_800.PNG" alt="Ukázka rozhraní Chytré Já">
+            </div>
+        </section>
+
+        <section id="funkce" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading">Přestaňte improvizovat. Začněte řídit s precizností AI.</h2>
+                <p class="section-subheading">Chytré Já je navrženo tak, aby řešilo specifické výzvy managementu
+                    výrobních a strojírenských firem v ČR a SR. S námi získáte řešení pro problémy, které se zdály
+                    neřešitelné.</p>
+                <div class="grid-3-cols">
+                    <div class="feature-box">
+                        <div class="icon">📈</div>
+                        <h3>Rozhodování bez chyby</h3>
+                        <p>Získejte bezchybné hodnocení přínosů výrobků a služeb. Naše AI vám poskytne data pro
+                            optimální strategická rozhodnutí, která vás posunou kupředu.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">🗓️</div>
+                        <h3>Přesné výrobní a kapacitní plánování</h3>
+                        <p>Vytvořte a simulujte komplexní plán výroby, včetně vytížení kapacit, specificky pro kusovou a
+                            malosériovou výrobu. Nikdy nepřekvapení, vždy připraveni.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">⚠️</div>
+                        <h3>Projektové řízení s garancí termínů</h3>
+                        <p>Zajistěte si plnění termínů a rozpočtů u vašich projektů. Chytré Já vás včas varuje před
+                            zpožděnými zakázkami a finančními odchylkami, abyste mohli okamžitě reagovat.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">💰</div>
+                        <h3>Efektivní odměňování podle průtoku</h3>
+                        <p>Motivujte svůj tým spravedlivě a transparentně. Automatizované odměňování pracovníků podle
+                            průtoku zajistí synergii a zvýší produktivitu.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding">
+            <div class="container">
+                <h2 class="section-heading">Proč je Chytré Já nezbytností pro vaši firmu?</h2>
+                <p class="section-subheading">Naše platforma je postavena na nejmodernějších technologiích a principech
+                    řízení, aby vám poskytla náskok před konkurencí.</p>
+                <div class="grid-3-cols">
+                    <div class="feature-box">
+                        <div class="icon">⚡</div>
+                        <h3>Blesková rychlost a flexibilita (PWA & SPA)</h3>
+                        <p>Využijte plný potenciál Progressive Web Applications (PWA) a Single Page Applications (SPA).
+                            Získejte bezprecedentní rychlost zobrazení dashboardů a okamžité provádění úkolů ve vašem
+                            CRM či ERP.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">🌱</div>
+                        <h3>Škálovatelná a přizpůsobitelná platforma</h3>
+                        <p>Chytré Já je navrženo jako univerzální platforma s možností vlastních úprav a rozšiřování
+                            funkcí. Roste s vaší firmou a adaptuje se na vaše specifické potřeby.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">🔒</div>
+                        <h3>Garance ochrany do budoucna</h3>
+                        <p>Investujte s důvěrou. Naše řešení je koncipováno tak, aby poskytovalo dlouhodobou ochranu
+                            vašich dat a investice v neustále se vyvíjejícím digitálním světě.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">✅</div>
+                        <h3>Jednoduchost a maximální efekt</h3>
+                        <p>Zapomeňte na složité systémy. Chytré Já přináší komplexní řízení v intuitivním a uživatelsky
+                            přívětivém prostředí. Získejte maximální výsledky s minimálním úsilím.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="icon">🤖</div>
+                        <h3>Revoluční AI agenti pro automatizaci</h3>
+                        <p>Využijte sílu speciálních AI agentů, kteří automatizují kritické procesy, monitorují data a
+                            poskytují včasná varování. Dejte své firmě inteligentního strážce.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="o-nas" class="testimonials-section">
+            <div class="container">
+                <h2 class="section-heading">Co říkají naši klienti?</h2>
+                <p class="section-subheading">I když je Chytré Já nový produkt, stavíme na dlouholetých zkušenostech a
+                    důvěře našich partnerů, kteří již dříve využívali naše pokročilé systémy, například pro plánování
+                    výroby.</p>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <blockquote>"Díky systému od Chytré Já jsme dosáhli významného zlepšení v plánování výroby.
+                            Přesnost a spolehlivost byla klíčová pro náš růst."</blockquote>
+                        <div class="author-info">
+                            <div class="author-avatar"></div>
+                            <div class="author-details">
+                                <strong>Ing. Jan Novák</strong>
+                                <span>Výrobní ředitel, Výroba s.r.o.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <blockquote>"Možnost efektivního řízení kapacit nám ušetřila spoustu času a minimalizovala
+                            prostoje. Je to nepostradatelný nástroj pro každou moderní strojírnu."</blockquote>
+                        <div class="author-info">
+                            <div class="author-avatar"></div>
+                            <div class="author-details">
+                                <strong>Bc. Petr Svoboda</strong>
+                                <span>Provozní manažer, Strojírna a.s.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cenik" class="pricing-summary-section">
+            <div class="container">
+                <h2 class="section-heading">Zvolte si řešení pro vaši firmu.</h2>
+                <p class="section-subheading">Chytré Já nabízí flexibilní možnosti, které se přizpůsobí rozsahu a
+                    potřebám vaší společnosti. Od měsíčního předplatného až po kompletní projekty na míru.</p>
+                <div class="pricing-options-grid">
+                    <div class="pricing-card">
+                        <h3>Předplatné Chytré Já</h3>
+                        <p>Získejte okamžitý přístup k základním i rozšiřitelným funkcím na bázi měsíčního nebo ročního
+                            předplatného. Ideální pro postupné zavádění a růst.</p>
+                        <a href="#cenik" class="btn-primary">Zobrazit detailní ceník</a>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>Projekty a implementace na míru</h3>
+                        <p>Potřebujete řešení, které přesně odpovídá vašim jedinečným firemním procesům? Připravíme a
+                            implementujeme Chytré Já jako projekt placený etapově dle domluvy.</p>
+                        <a href="#kontakt" class="btn-primary">Vyžádat individuální nabídku</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="koupit" class="final-cta-section">
+            <div class="container">
+                <h2>Posuňte své řízení na novou úroveň s Chytrým Já.</h2>
+                <p>Přidejte se k firmám, které už dnes využívají inteligentní řízení s podporou AI. Získejte kontrolu,
+                    efektivitu a jistotu do budoucna.</p>
+                <a href="#koupit" class="btn-primary">Koupit Chytré Já</a>
+                <p class="guarantee-note">S garancí vrácení peněz do 1 měsíce.</p>
+            </div>
+        </section>
+
+        <section id="faq" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading">Často kladené otázky (FAQ)</h2>
+                <p class="section-subheading">Odpovědi na nejčastější dotazy ohledně Chytré Já a jeho použití ve vaší
+                    firmě.</p>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <input type="checkbox" id="faq1" class="faq-toggle">
+                        <label for="faq1" class="faq-question">Co je Chytré Já a jak může pomoci mé firmě?</label>
+                        <div class="faq-answer">
+                            <p style="line-height: 1.6;">Chytré Já je AI platforma s podporou TOC (Teorie omezení),
+                                která pomáhá výrobním a strojírenským firmám řešit složité problémy, jako je plánování
+                                výroby, řízení projektů nebo optimalizace zdrojů. Nabízí automatizaci, přesná data a
+                                intuitivní rozhraní pro efektivní rozhodování.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <input type="checkbox" id="faq2" class="faq-toggle">
+                        <label for="faq2" class="faq-question">Jaké jsou požadavky na implementaci Chytré Já?</label>
+                        <div class="faq-answer">
+                            <p style="line-height: 1.6;">Chytré Já je cloudové řešení (PWA a SPA), které nevyžaduje
+                                složitou instalaci. Stačí moderní webový prohlížeč a připojení k internetu. Pro projekty
+                                na míru nabízíme individuální konzultace a integraci s vašimi systémy.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <input type="checkbox" id="faq3" class="faq-toggle">
+                        <label for="faq3" class="faq-question">Je Chytré Já vhodné pro malé firmy?</label>
+                        <div class="faq-answer">
+                            <p style="line-height: 1.6;">Ano, Chytré Já je škálovatelné a přizpůsobitelné. Nabízíme
+                                předplatné pro menší firmy s postupným zaváděním funkcí i komplexní řešení pro větší
+                                podniky. Můžete začít s základními funkcemi a rozšiřovat podle potřeb.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <input type="checkbox" id="faq4" class="faq-toggle">
+                        <label for="faq4" class="faq-question">Jak je zajištěna bezpečnost dat?</label>
+                        <div class="faq-answer">
+                            <p style="line-height: 1.6;">Chytré Já používá nejmodernější šifrovací technologie a
+                                pravidelné zálohování dat. Naše platforma je navržena s ohledem na dlouhodobou ochranu
+                                vašich informací v souladu s GDPR.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <input type="checkbox" id="faq5" class="faq-toggle">
+                        <label for="faq5" class="faq-question">Mohu Chytré Já vyzkoušet před nákupem?</label>
+                        <div class="faq-answer">
+                            <p style="line-height: 1.6;">Ano, nabízíme 30denní garanci vrácení peněz. Můžete si Chytré
+                                Já vyzkoušet bez rizika a ověřit, jak se hodí pro vaše podnikání. Kontaktujte nás pro
+                                demo verzi.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+</body>
+
+</html>
