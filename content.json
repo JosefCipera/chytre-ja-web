@@ -126,7 +126,7 @@
         {
             "id": "video-002",
             "type": "video",
-            "access": "premium",
+            "access": "free",
             "published": true,
             "icon": "fab fa-vimeo-v text-cyan-500",
             "title": "Šablona: Vimeo Video",
