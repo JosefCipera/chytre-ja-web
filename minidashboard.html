@@ -21,15 +21,12 @@
 
         h1 {
             display: block;
-            /* Zajišťuje, že nadpis bude vždy viditelný */
             font-size: 1.125rem;
             font-weight: 400;
-            /* Normální tloušťka písma (neboldované) */
             color: #6b7280;
             text-align: left;
             margin: 0;
             padding: 0.75rem 1.5rem;
-            /* Odsazení, aby nebyl nalepený na kraji */
             background-color: #f9fafb;
             border-bottom: 1px solid #e5e7eb;
         }
@@ -38,6 +35,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1.5rem;
+            padding: 1.5rem;
         }
 
         .card {
@@ -98,8 +96,8 @@
 </head>
 
 <body>
+    <h1>Aktuální firemní ukazatele</h1>
     <div class="container">
-
         <div class="grid">
             <div class="card" onmouseenter="animateChart('salesCanvas')" onmouseleave="resetChart('salesCanvas')">
                 <div>
@@ -167,203 +165,18 @@
             </div>
         </div>
     </div>
-
     <script>
-        // Deklarace proměnných, které naplníme z JSONu
-        let salesData = [], cashflowData = [], expensesData = [], clientsData = [], stockData = [],
-            throughputData = [], productivityData = [], profitabilityValue = 0, deliveryValue = 0, bottleneckValue = 0;
-
-        // --- PLNÉ VERZE FUNKCÍ PRO KRESLENÍ GRAFŮ ---
-        function drawLineChart(canvas, data, color, pointIndex, isAnimating, animationValue) {
-            if (!canvas || !canvas.getContext) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const maxVal = Math.max(...data);
-            const minVal = Math.min(...data);
-            const range = maxVal - minVal || 1;
-
-            ctx.beginPath();
-            ctx.lineWidth = 4;
-            ctx.strokeStyle = color;
-
-            const animatedDataLength = isAnimating ? Math.floor(data.length * animationValue) : data.length;
-
-            for (let i = 0; i < animatedDataLength; i++) {
-                const value = data[i];
-                const x = (i / (data.length - 1)) * rect.width;
-                const y = range === 1 ? rect.height / 2 : (1 - ((value - minVal) / range)) * rect.height;
-
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            }
-            ctx.stroke();
-
-            if (animatedDataLength === data.length) {
-                const value = data[pointIndex];
-                const pointX = (pointIndex / (data.length - 1)) * rect.width;
-                const pointY = range === 1 ? rect.height / 2 : (1 - ((value - minVal) / range)) * rect.height;
-
-                ctx.beginPath();
-                ctx.arc(pointX, pointY, 6, 0, 2 * Math.PI);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = color;
-                ctx.stroke();
-            }
-        }
-
-        function drawBarChart(canvas, data, color, highlightIndex, isAnimating, animationValue) {
-            if (!canvas || !canvas.getContext) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const maxVal = Math.max(...data);
-            const minVal = Math.min(0, ...data);
-            const range = maxVal - minVal || 1;
-
-            const barWidth = (rect.width / data.length) * 0.7;
-            const gap = (rect.width / data.length) * 0.3;
-            const zeroLineY = range === 1 ? rect.height / 2 : (1 - (0 - minVal) / range) * rect.height;
-            const radius = 5;
-
-            data.forEach((value, index) => {
-                const x = index * (barWidth + gap) + gap / 2;
-                let barHeight = range === 1 ? 0 : Math.abs(value / range) * rect.height;
-                if (isAnimating) {
-                    barHeight *= animationValue;
-                }
-                const y = value >= 0 ? zeroLineY - barHeight : zeroLineY;
-
-                ctx.beginPath();
-                ctx.moveTo(x + radius, y);
-                ctx.lineTo(x + barWidth - radius, y);
-                ctx.arcTo(x + barWidth, y, x + barWidth, y + radius, radius);
-                ctx.lineTo(x + barWidth, y + barHeight - radius);
-                ctx.arcTo(x + barWidth, y + barHeight, x + barWidth - radius, y + barHeight, radius);
-                ctx.lineTo(x + radius, y + barHeight);
-                ctx.arcTo(x, y + barHeight, x, y + barHeight - radius, radius);
-                ctx.lineTo(x, y + radius);
-                ctx.arcTo(x, y, x + radius, y, radius);
-                ctx.closePath();
-
-                ctx.fillStyle = color;
-                ctx.fill();
-            });
-        }
-
-        function drawGaugeChart(canvas, value, maxValue, color, isAnimating, animationValue) {
-            if (!canvas || !canvas.getContext) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const outerRadius = Math.min(centerX, centerY) * 0.8;
-            const innerRadius = outerRadius * 0.7;
-            const startAngle = -Math.PI / 2;
-
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
-            ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
-            ctx.fillStyle = '#e5e7eb';
-            ctx.fill();
-
-            const normalizedValue = Math.min(Math.max(value, 0), maxValue);
-            let endAngle = startAngle + (normalizedValue / maxValue) * 2 * Math.PI;
-            if (isAnimating) {
-                endAngle = startAngle + (normalizedValue / maxValue) * 2 * Math.PI * animationValue;
-            }
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle);
-            ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
-            ctx.fillStyle = color;
-            ctx.fill();
-        }
-
-        // --- ZBYTEK SKRIPTU ZŮSTÁVÁ STEJNÝ ---
+        // Zde je celý váš skript pro dashboard, beze změny funkčnosti
+        let salesData = [], cashflowData = [], expensesData = [], clientsData = [], stockData = [], throughputData = [], productivityData = [], profitabilityValue = 0, deliveryValue = 0, bottleneckValue = 0;
+        function drawLineChart(canvas, data, color, pointIndex, isAnimating, animationValue) { if (!canvas || !canvas.getContext) return; const ctx = canvas.getContext('2d'); const dpr = window.devicePixelRatio || 1; const rect = canvas.getBoundingClientRect(); canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; ctx.scale(dpr, dpr); ctx.clearRect(0, 0, canvas.width, canvas.height); const maxVal = Math.max(...data); const minVal = Math.min(...data); const range = maxVal - minVal || 1; ctx.beginPath(); ctx.lineWidth = 4; ctx.strokeStyle = color; const animatedDataLength = isAnimating ? Math.floor(data.length * animationValue) : data.length; for (let i = 0; i < animatedDataLength; i++) { const value = data[i]; const x = (i / (data.length - 1)) * rect.width; const y = range === 1 ? rect.height / 2 : (1 - ((value - minVal) / range)) * rect.height; if (i === 0) { ctx.moveTo(x, y); } else { ctx.lineTo(x, y); } } ctx.stroke(); if (animatedDataLength === data.length) { const value = data[pointIndex]; const pointX = (pointIndex / (data.length - 1)) * rect.width; const pointY = range === 1 ? rect.height / 2 : (1 - ((value - minVal) / range)) * rect.height; ctx.beginPath(); ctx.arc(pointX, pointY, 6, 0, 2 * Math.PI); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = color; ctx.stroke(); } }
+        function drawBarChart(canvas, data, color, highlightIndex, isAnimating, animationValue) { if (!canvas || !canvas.getContext) return; const ctx = canvas.getContext('2d'); const dpr = window.devicePixelRatio || 1; const rect = canvas.getBoundingClientRect(); canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; ctx.scale(dpr, dpr); ctx.clearRect(0, 0, canvas.width, canvas.height); const maxVal = Math.max(...data); const minVal = Math.min(0, ...data); const range = maxVal - minVal || 1; const barWidth = (rect.width / data.length) * 0.7; const gap = (rect.width / data.length) * 0.3; const zeroLineY = range === 1 ? rect.height / 2 : (1 - (0 - minVal) / range) * rect.height; const radius = 5; data.forEach((value, index) => { const x = index * (barWidth + gap) + gap / 2; let barHeight = range === 1 ? 0 : Math.abs(value / range) * rect.height; if (isAnimating) { barHeight *= animationValue; } const y = value >= 0 ? zeroLineY - barHeight : zeroLineY; ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + barWidth - radius, y); ctx.arcTo(x + barWidth, y, x + barWidth, y + radius, radius); ctx.lineTo(x + barWidth, y + barHeight - radius); ctx.arcTo(x + barWidth, y + barHeight, x + barWidth - radius, y + barHeight, radius); ctx.lineTo(x + radius, y + barHeight); ctx.arcTo(x, y + barHeight, x, y + barHeight - radius, radius); ctx.lineTo(x, y + radius); ctx.arcTo(x, y, x + radius, y, radius); ctx.closePath(); ctx.fillStyle = color; ctx.fill(); }); }
+        function drawGaugeChart(canvas, value, maxValue, color, isAnimating, animationValue) { if (!canvas || !canvas.getContext) return; const ctx = canvas.getContext('2d'); const dpr = window.devicePixelRatio || 1; const rect = canvas.getBoundingClientRect(); canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; ctx.scale(dpr, dpr); ctx.clearRect(0, 0, canvas.width, canvas.height); const centerX = rect.width / 2; const centerY = rect.height / 2; const outerRadius = Math.min(centerX, centerY) * 0.8; const innerRadius = outerRadius * 0.7; const startAngle = -Math.PI / 2; ctx.beginPath(); ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI); ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true); ctx.fillStyle = '#e5e7eb'; ctx.fill(); const normalizedValue = Math.min(Math.max(value, 0), maxValue); let endAngle = startAngle + (normalizedValue / maxValue) * 2 * Math.PI; if (isAnimating) { endAngle = startAngle + (normalizedValue / maxValue) * 2 * Math.PI * animationValue; } ctx.beginPath(); ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle); ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true); ctx.fillStyle = color; ctx.fill(); }
         let animationFrameId = null; let animationStartTime = null; let animationValue = 1; let currentCanvasId = null;
-        function animateChart(canvasId) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            animationValue = 0;
-            animationStartTime = performance.now();
-            currentCanvasId = canvasId;
-            function animate(timestamp) {
-                const duration = 1000;
-                animationValue = Math.min(1, (timestamp - animationStartTime) / duration);
-                renderSingleChart(currentCanvasId, true, animationValue);
-                if (animationValue < 1) {
-                    animationFrameId = requestAnimationFrame(animate);
-                }
-            }
-            animationFrameId = requestAnimationFrame(animate);
-        }
-        function resetChart(canvasId) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            animationValue = 1;
-            renderSingleChart(canvasId, false, 1);
-        }
-        function renderSingleChart(id, isAnimating, animationValue) {
-            const canvas = document.getElementById(id);
-            if (!canvas) return;
-            const charts = {
-                'salesCanvas': () => drawLineChart(canvas, salesData, '#10b981', 1, isAnimating, animationValue),
-                'cashflowCanvas': () => drawLineChart(canvas, cashflowData, '#ef4444', 3, isAnimating, animationValue),
-                'expensesCanvas': () => drawLineChart(canvas, expensesData, '#3b82f6', expensesData.length - 2, isAnimating, animationValue),
-                'clientsCanvas': () => drawLineChart(canvas, clientsData, '#f59e0b', Math.floor(clientsData.length / 3) + 1, isAnimating, animationValue),
-                'throughputCanvas': () => drawLineChart(canvas, throughputData, '#8b5cf6', throughputData.length - 3, isAnimating, animationValue),
-                'productivityCanvas': () => drawLineChart(canvas, productivityData, '#f97316', 1, isAnimating, animationValue),
-                'stockCanvas': () => drawBarChart(canvas, stockData, '#60a5fa', stockData.length - 3, isAnimating, animationValue),
-                'profitabilityCanvas': () => drawGaugeChart(canvas, profitabilityValue, 100, '#10b981', isAnimating, animationValue),
-                'deliveryCanvas': () => drawGaugeChart(canvas, deliveryValue, 100, '#8b5cf6', isAnimating, animationValue),
-                'bottleneckCanvas': () => drawGaugeChart(canvas, bottleneckValue, 100, '#14b8a6', isAnimating, animationValue)
-            };
-            if (charts[id]) charts[id]();
-        }
-        function renderCharts() {
-            const canvasIds = ['salesCanvas', 'cashflowCanvas', 'expensesCanvas', 'profitabilityCanvas', 'clientsCanvas', 'stockCanvas', 'throughputCanvas', 'deliveryCanvas', 'productivityCanvas', 'bottleneckCanvas'];
-            canvasIds.forEach(id => renderSingleChart(id, false, 1));
-        }
-
-        window.addEventListener('load', () => {
-            fetch('minidashboard-data.json?v=' + new Date().getTime())
-                .then(response => {
-                    if (!response.ok) throw new Error('Soubor minidashboard-data.json nenalezen.');
-                    return response.json();
-                })
-                .then(data => {
-                    salesData = data.salesData; cashflowData = data.cashflowData; expensesData = data.expensesData;
-                    clientsData = data.clientsData; stockData = data.stockData; throughputData = data.throughputData;
-                    productivityData = data.productivityData; profitabilityValue = data.profitabilityValue;
-                    deliveryValue = data.deliveryValue; bottleneckValue = data.bottleneckValue;
-                    setTimeout(renderCharts, 0);
-                })
-                .catch(error => {
-                    console.error('Chyba při načítání dat pro dashboard:', error);
-                    document.querySelector('.container').innerHTML = '<h1>Chyba při načítání dat</h1>';
-                });
-        });
-
+        function animateChart(canvasId) { if (animationFrameId) cancelAnimationFrame(animationFrameId); animationValue = 0; animationStartTime = performance.now(); currentCanvasId = canvasId; function animate(timestamp) { const duration = 1000; animationValue = Math.min(1, (timestamp - animationStartTime) / duration); renderSingleChart(currentCanvasId, true, animationValue); if (animationValue < 1) { animationFrameId = requestAnimationFrame(animate); } } animationFrameId = requestAnimationFrame(animate); }
+        function resetChart(canvasId) { if (animationFrameId) cancelAnimationFrame(animationFrameId); animationValue = 1; renderSingleChart(canvasId, false, 1); }
+        function renderSingleChart(id, isAnimating, animationValue) { const canvas = document.getElementById(id); if (!canvas) return; const charts = { 'salesCanvas': () => drawLineChart(canvas, salesData, '#10b981', 1, isAnimating, animationValue), 'cashflowCanvas': () => drawLineChart(canvas, cashflowData, '#ef4444', 3, isAnimating, animationValue), 'expensesCanvas': () => drawLineChart(canvas, expensesData, '#3b82f6', expensesData.length - 2, isAnimating, animationValue), 'clientsCanvas': () => drawLineChart(canvas, clientsData, '#f59e0b', Math.floor(clientsData.length / 3) + 1, isAnimating, animationValue), 'throughputCanvas': () => drawLineChart(canvas, throughputData, '#8b5cf6', throughputData.length - 3, isAnimating, animationValue), 'productivityCanvas': () => drawLineChart(canvas, productivityData, '#f97316', 1, isAnimating, animationValue), 'stockCanvas': () => drawBarChart(canvas, stockData, '#60a5fa', stockData.length - 3, isAnimating, animationValue), 'profitabilityCanvas': () => drawGaugeChart(canvas, profitabilityValue, 100, '#10b981', isAnimating, animationValue), 'deliveryCanvas': () => drawGaugeChart(canvas, deliveryValue, 100, '#8b5cf6', isAnimating, animationValue), 'bottleneckCanvas': () => drawGaugeChart(canvas, bottleneckValue, 100, '#14b8a6', isAnimating, animationValue) }; if (charts[id]) charts[id](); }
+        function renderCharts() { const canvasIds = ['salesCanvas', 'cashflowCanvas', 'expensesCanvas', 'profitabilityCanvas', 'clientsCanvas', 'stockCanvas', 'throughputCanvas', 'deliveryCanvas', 'productivityCanvas', 'bottleneckCanvas']; canvasIds.forEach(id => renderSingleChart(id, false, 1)); }
+        window.addEventListener('load', () => { fetch('minidashboard-data.json?v=' + new Date().getTime()).then(response => { if (!response.ok) throw new Error('Soubor minidashboard-data.json nenalezen.'); return response.json(); }).then(data => { salesData = data.salesData; cashflowData = data.cashflowData; expensesData = data.expensesData; clientsData = data.clientsData; stockData = data.stockData; throughputData = data.throughputData; productivityData = data.productivityData; profitabilityValue = data.profitabilityValue; deliveryValue = data.deliveryValue; bottleneckValue = data.bottleneckValue; setTimeout(renderCharts, 0); }).catch(error => { console.error('Chyba při načítání dat pro dashboard:', error); document.querySelector('.container').innerHTML = '<h1>Chyba při načítání dat</h1>'; }); });
         window.addEventListener('resize', renderCharts);
     </script>
 </body>

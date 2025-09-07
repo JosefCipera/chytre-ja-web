@@ -14,17 +14,15 @@
         }
 
         .table-container {
-            max-width: 1280px;
-            margin: 1rem auto;
-            padding: 0 1rem;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
         }
 
         .table-heading {
             display: block;
-            /* Zajišťuje, že nadpis bude vždy viditelný */
             font-size: 1.125rem;
             font-weight: 400;
-            /* Normální tloušťka písma (neboldované) */
             color: #6b7280;
             text-align: left;
             margin: 0;
@@ -34,15 +32,12 @@
         }
 
         .table-controls {
-            margin-bottom: 1rem;
+            margin: 1rem 1.5rem;
             text-align: right;
         }
 
         .table-responsive {
             overflow-x: auto;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
         }
 
         table {
@@ -52,7 +47,7 @@
 
         th,
         td {
-            padding: 1rem;
+            padding: 1rem 1.5rem;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
             min-width: 120px;
@@ -135,7 +130,7 @@
 
 <body>
     <div class="table-container">
-
+        <h1 class="table-heading">Plán výroby</h1>
         <div class="table-controls">
             <label for="rowsPerPage">Řádků na stránku: </label>
             <select id="rowsPerPage">
