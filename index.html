@@ -523,15 +523,18 @@
                         Zpět do knihovny</button></div>
             </div>
         </section>
-        <section id="production-plan-view" class="view-section py-8 px-4">
-            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-7xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800">Plán výroby</h2><button onclick="showView('library')"
-                        class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">&larr;
-                        Zpět do knihovny</button>
+        <section id="minidashboard-view" class="view-section">
+            <div class="w-full h-screen flex flex-col bg-white">
+                <div class="hidden md:flex justify-between items-center p-4 border-b">
+                    <h2 class="text-2xl font-bold text-gray-800">Mini Dashboard</h2>
+                    <button onclick="showView('library')"
+                        class="bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg hover:bg-gray-300">
+                        &larr; Zpět do knihovny
+                    </button>
                 </div>
-                <div class="border-2 border-gray-200 rounded-lg overflow-hidden" style="height: 75vh;"><iframe
-                        src="table-production.html" class="w-full h-full" frameborder="0"></iframe></div>
+                <div class="flex-grow">
+                    <iframe src="minidashboard.html" class="w-full h-full" frameborder="0"></iframe>
+                </div>
             </div>
         </section>
         <section id="minidashboard-view" class="view-section py-8 px-4">
@@ -820,16 +823,19 @@
 
         function showView(viewId) {
             const header = document.querySelector('header');
+            const mainContent = document.querySelector('main');
 
-            // Seznam pohledů, při kterých se má skrýt hlavní menu
+            // Seznam pohledů, které chceme zobrazit "přes celou obrazovku"
             const immersiveViews = ['production-plan-view', 'minidashboard-view'];
 
             if (immersiveViews.includes(viewId)) {
-                // Skryjeme menu pro pohlcující zobrazení
-                header.style.display = 'none';
+                // Skryjeme menu a odstraníme horní odsazení obsahu
+                header.classList.add('hidden');
+                mainContent.classList.remove('pt-16');
             } else {
-                // Pro všechny ostatní pohledy menu zobrazíme
-                header.style.display = 'block';
+                // Pro všechny ostatní pohledy menu zobrazíme a vrátíme odsazení
+                header.classList.remove('hidden');
+                mainContent.classList.add('pt-16');
             }
 
             for (let id in views) {
