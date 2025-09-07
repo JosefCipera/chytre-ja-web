@@ -112,7 +112,7 @@
             "id": "video-001",
             "type": "video",
             "access": "free",
-            "published": false,
+            "published": true,
             "icon": "fas fa-video text-red-500",
             "title": "Šablona: Video",
             "description": "Tak schválně, jak to vypadá v tom modálním okně.",
@@ -121,21 +121,6 @@
             "tags": [
                 "video",
                 "ukázka"
-            ]
-        },
-        {
-            "id": "video-002",
-            "type": "video",
-            "access": "premium",
-            "published": true,
-            "icon": "fab fa-vimeo-v text-cyan-500",
-            "title": "Šablona: Vimeo Video",
-            "description": "Ukázka vložení videa hostovaného na platformě Vimeo.",
-            "url": "https://player.vimeo.com/video/488880045",
-            "linkText": "Zobrazit Vimeo video",
-            "tags": [
-                "video",
-                "vimeo"
             ]
         },
         {
@@ -184,9 +169,10 @@
         },
         {
             "id": "dashboard-001",
-            "type": "dashboard",
-            "access": "free",
+            "type": "integrated_page",
+            "view_id": "minidashboard-view",
             "published": true,
+            "access": "free",
             "icon": "fas fa-chart-line text-yellow-500",
             "title": "Ukázka: Mini Dashboard",
             "description": "Interaktivní přehled klíčových firemních ukazatelů.",

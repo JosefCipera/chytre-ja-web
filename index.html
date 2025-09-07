@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chytré Já - Vylepšená AI platforma</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -133,13 +134,48 @@
                 </svg>
                 <span class="hidden sm:inline">Chytré Já</span>
             </a>
-            <nav class="space-x-6 hidden md:flex">
+
+            <nav class="space-x-6 hidden md:flex items-center">
                 <button onclick="showView('library')" class="text-gray-600 hover:text-blue-600">Knihovna</button>
                 <a href="#special-assistants" class="text-gray-600 hover:text-blue-600">Asistenti</a>
                 <a href="#thematic-blocks" class="text-gray-600 hover:text-blue-600">Funkce</a>
                 <a href="#pricing" class="text-gray-600 hover:text-blue-600">Ceník</a>
                 <a href="#contact" class="text-gray-600 hover:text-blue-600">Kontakt</a>
                 <a href="#faq" class="text-gray-600 hover:text-blue-600">FAQ</a>
+                <span class="border-l border-gray-300 h-6"></span>
+                <button onclick="alert('Zde bude přihlašovací formulář.');"
+                    class="bg-blue-600 text-white font-medium py-2 px-5 rounded-lg shadow-sm hover:bg-blue-700 transition-colors">Přihlásit
+                    se</button>
+            </nav>
+
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-gray-600 hover:text-blue-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white">
+            <nav class="px-2 pt-2 pb-4 space-y-1 sm:px-3 flex flex-col items-center">
+                <button onclick="showView('library');"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Knihovna</button>
+                <a href="#special-assistants"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Asistenti</a>
+                <a href="#thematic-blocks"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Funkce</a>
+                <a href="#pricing"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Ceník</a>
+                <a href="#contact"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Kontakt</a>
+                <a href="#faq"
+                    class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">FAQ</a>
+                <button onclick="alert('Zde bude přihlašovací formulář.');"
+                    class="mt-4 w-full bg-blue-600 text-white font-medium py-2 px-5 rounded-lg shadow-sm hover:bg-blue-700 transition-colors">Přihlásit
+                    se</button>
             </nav>
         </div>
     </header>
@@ -453,15 +489,30 @@
             </div>
         </section>
         <section id="library-view" class="view-section py-8 px-4">
-            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-4xl">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Knihovna zdrojů zdarma</h2>
-                <p class="text-center text-gray-600 mb-8">Zde najdete výběr materiálů, které vám pomohou lépe porozumět
-                    vašim výzvám.</p>
-                <div id="library-tags-container" class="flex flex-wrap justify-center gap-2 mb-8"></div>
-                <div id="library-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-                <div class="mt-8 flex justify-center"><button onclick="showView('home')"
+            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-6xl">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Knihovna zdrojů</h2>
+                <p class="text-center text-gray-600 mb-8">Prohledávejte a filtrujte materiály, které vám pomohou růst.
+                </p>
+
+                <div class="mb-8 max-w-lg mx-auto">
+                    <input type="text" id="library-search" placeholder="Hledat v knihovně..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div id="library-tags-container" class="flex flex-wrap justify-center gap-2 mb-8">
+                </div>
+
+                <div id="library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+
+                <div id="library-pagination" class="flex justify-center items-center space-x-2 mt-8">
+                </div>
+
+                <div class="mt-8 flex justify-center">
+                    <button onclick="showView('home')"
                         class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">Zpět
-                        na hlavní stránku</button></div>
+                        na hlavní stránku</button>
+                </div>
             </div>
         </section>
         <section id="content-view" class="view-section py-8 px-4">
@@ -481,6 +532,20 @@
                 </div>
                 <div class="border-2 border-gray-200 rounded-lg overflow-hidden" style="height: 75vh;"><iframe
                         src="table-production.html" class="w-full h-full" frameborder="0"></iframe></div>
+            </div>
+        </section>
+        <section id="minidashboard-view" class="view-section py-8 px-4">
+            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-7xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Mini Dashboard</h2>
+                    <button onclick="showView('library')"
+                        class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">
+                        &larr; Zpět do knihovny
+                    </button>
+                </div>
+                <div class="border-2 border-gray-200 rounded-lg overflow-hidden" style="height: 75vh;">
+                    <iframe src="minidashboard.html" class="w-full h-full" frameborder="0"></iframe>
+                </div>
             </div>
         </section>
         <section id="chat-view" class="view-section py-8 px-4">
@@ -520,7 +585,18 @@
     </div>
 
     <script>
+        // Nastavte na `true` pro testování, jak aplikace vypadá pro přihlášeného uživatele
+        let IS_USER_LOGGED_IN = true;
+        // === Globální proměnné ===
         const contentData = {};
+        let fuse; // Vyhledávací engine
+
+        // Stav pro knihovnu
+        let libraryCurrentPage = 1;
+        const libraryRowsPerPage = 6;
+        let libraryActiveTag = 'all';
+
+        // Odkazy na HTML elementy (pohledy)
         const views = {
             'home': document.getElementById('home-view'),
             'info': document.getElementById('info-view'),
@@ -530,9 +606,27 @@
             'library': document.getElementById('library-view'),
             'content': document.getElementById('content-view'),
             'production-plan-view': document.getElementById('production-plan-view'),
+            'minidashboard-view': document.getElementById('minidashboard-view'),
         };
         const modalElement = document.getElementById('media-modal');
 
+        function setupMobileMenu() {
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Skryje menu po kliknutí na odkaz v mobilním menu
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // === Logika pro modální okno a zobrazení obsahu ===
         function openModal(contentHtml) {
             const modalBody = document.getElementById('modal-body');
             modalBody.innerHTML = contentHtml;
@@ -569,7 +663,7 @@
                             if (videoId) embedUrl = `https://player.vimeo.com/video/${videoId}`;
                         }
                     } catch (e) {
-                        console.error("Chybná URL adresa videa:", item.url, e);
+                        console.error("Chybná URL videa:", item.url, e);
                     }
                     if (embedUrl) {
                         contentHtml = `<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div>`;
@@ -587,64 +681,6 @@
             if (contentHtml) openModal(contentHtml);
         }
 
-        function renderLibrary(activeTag = 'all') {
-            const libraryGrid = document.getElementById('library-grid');
-            const tagsContainer = document.getElementById('library-tags-container');
-            if (!libraryGrid || !tagsContainer || !contentData.library) return;
-            const allTags = contentData.library.flatMap(item => item.tags || []);
-            const uniqueTags = ['all', ...new Set(allTags)];
-            tagsContainer.innerHTML = uniqueTags.map(tag => {
-                const isActive = tag === activeTag;
-                const baseClasses = 'py-2 px-4 rounded-full text-sm font-medium transition-colors';
-                const activeClasses = 'bg-blue-600 text-white';
-                const inactiveClasses = 'bg-gray-200 text-gray-700 hover:bg-gray-300';
-                const label = tag === 'all' ? 'Vše' : tag.charAt(0).toUpperCase() + tag.slice(1);
-                return `<button class="${baseClasses} ${isActive ? activeClasses : inactiveClasses}" onclick="renderLibrary('${tag}')">${label}</button>`;
-            }).join('');
-            const itemsFilteredByTag = activeTag === 'all' ? contentData.library : contentData.library.filter(item => item.tags && item.tags.includes(activeTag));
-            const filteredItems = itemsFilteredByTag.filter(item => item.published !== false);
-            libraryGrid.innerHTML = '';
-            filteredItems.forEach(item => {
-                let linkElement = '';
-                let isPremium = item.access === 'premium';
-                let cardClasses = "bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col";
-                let premiumBadge = '';
-
-                if (isPremium) {
-                    // Vizuální odlišení prémiové karty
-                    premiumBadge = `<div class="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">Premium</div>`;
-                    cardClasses = "bg-gray-100 p-6 rounded-lg border border-gray-300 flex flex-col relative opacity-80"; // Přidáme relativní pozici a snížíme viditelnost
-
-                    // Změna akce - místo otevření zobrazí hlášku
-                    linkElement = `<button onclick="alert('Toto je prémiový obsah. Pro plný přístup nás prosím kontaktujte.')" class="mt-4 text-gray-600 font-semibold self-start flex items-center"><i class="fas fa-lock mr-2"></i> ${item.linkText}</button>`;
-
-                } else {
-                    // Původní logika pro bezplatný obsah
-                    if (['video', 'audio', 'image'].includes(item.type)) {
-                        linkElement = `<button onclick="showMediaInModal('${item.id}')" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</button>`;
-                    } else if (item.type === 'article') {
-                        linkElement = `<button onclick="showContent('${item.id}')" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</button>`;
-                    } else if (item.type === 'integrated_page') {
-                        linkElement = `<button onclick="showView('${item.view_id}')" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</button>`;
-                    } else {
-                        linkElement = `<a href="${item.url}" target="_blank" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</a>`;
-                    }
-                }
-
-                const cardHtml = `
-        <div class="${cardClasses}">
-            ${premiumBadge}
-            <div class="flex items-center mb-3">
-                <i class="${item.icon} text-2xl mr-3 w-8 text-center"></i>
-                <h3 class="font-bold text-xl">${item.title}</h3>
-            </div>
-            <p class="text-gray-700 flex-grow">${item.description}</p>
-            ${linkElement}
-        </div>`;
-                libraryGrid.innerHTML += cardHtml;
-            });
-        }
-
         function showContent(itemId) {
             const contentContainer = document.getElementById('content-dynamic');
             if (!contentContainer || !contentData.library) return;
@@ -655,6 +691,101 @@
             showView('content');
         }
 
+
+        // === Hlavní logika pro knihovnu ===
+        function renderLibrary() {
+            const libraryGrid = document.getElementById('library-grid');
+            const tagsContainer = document.getElementById('library-tags-container');
+            const searchInput = document.getElementById('library-search');
+            const paginationContainer = document.getElementById('library-pagination');
+            if (!libraryGrid || !tagsContainer || !searchInput || !paginationContainer || !contentData.library) return;
+
+            const searchText = searchInput.value.trim().toLowerCase();
+            let sourceItems = (searchText === '') ? contentData.library : (fuse ? fuse.search(searchText).map(result => result.item) : []);
+
+            const taggedItems = libraryActiveTag === 'all'
+                ? sourceItems
+                : sourceItems.filter(item => item.tags && item.tags.includes(libraryActiveTag));
+
+            const fullyFilteredItems = taggedItems.filter(item => item.published !== false);
+
+            if (tagsContainer.innerHTML === '') {
+                const allTags = contentData.library.flatMap(item => item.tags || []);
+                const uniqueTags = ['all', ...new Set(allTags)];
+                tagsContainer.innerHTML = uniqueTags.map(tag => {
+                    const label = tag === 'all' ? 'Vše' : tag.charAt(0).toUpperCase() + tag.slice(1);
+                    return `<button data-tag="${tag}" class="py-2 px-4 rounded-full text-sm font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300">${label}</button>`;
+                }).join('');
+
+                tagsContainer.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'BUTTON') {
+                        libraryActiveTag = e.target.dataset.tag;
+                        libraryCurrentPage = 1;
+                        renderLibrary();
+                    }
+                });
+            }
+
+            Array.from(tagsContainer.children).forEach(button => {
+                button.classList.toggle('bg-blue-600', button.dataset.tag === libraryActiveTag);
+                button.classList.toggle('text-white', button.dataset.tag === libraryActiveTag);
+                button.classList.toggle('bg-gray-200', button.dataset.tag !== libraryActiveTag);
+                button.classList.toggle('text-gray-700', button.dataset.tag !== libraryActiveTag);
+            });
+
+            const totalPages = Math.ceil(fullyFilteredItems.length / libraryRowsPerPage);
+            const start = (libraryCurrentPage - 1) * libraryRowsPerPage;
+            const end = start + libraryRowsPerPage;
+            const paginatedItems = fullyFilteredItems.slice(start, end);
+
+            libraryGrid.innerHTML = '';
+            if (paginatedItems.length === 0) {
+                libraryGrid.innerHTML = `<p class="col-span-full text-center text-gray-500">Pro zadaná kritéria nebyly nalezeny žádné materiály.</p>`;
+            } else {
+                paginatedItems.forEach(item => {
+                    let linkElement = '';
+                    const isPremium = item.access === 'premium';
+                    let cardClasses = "bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col relative h-full";
+                    let premiumBadge = '';
+
+                    // TATO LOGIKA NYNÍ POUŽÍVÁ SIMULAČNÍ PROMĚNNOU
+                    if (isPremium && !IS_USER_LOGGED_IN) {
+                        premiumBadge = `<div class="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full z-10">Premium</div>`;
+                        cardClasses += " opacity-70";
+                        linkElement = `<div class="mt-auto pt-4 border-t text-gray-600 font-semibold self-start flex items-center cursor-not-allowed"><i class="fas fa-lock mr-2"></i> ${item.linkText}</div>`;
+                    } else {
+                        if (isPremium) {
+                            premiumBadge = `<div class="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full z-10">Premium</div>`;
+                        }
+                        const actionButtonClass = "mt-auto pt-4 border-t text-blue-600 font-semibold hover:underline self-start";
+                        if (['video', 'audio', 'image'].includes(item.type)) {
+                            linkElement = `<button onclick="showMediaInModal('${item.id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
+                        } else if (item.type === 'article') {
+                            linkElement = `<button onclick="showContent('${item.id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
+                        } else if (item.type === 'integrated_page') {
+                            linkElement = `<button onclick="showView('${item.view_id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
+                        } else {
+                            linkElement = `<a href="${item.url}" target="_blank" class="${actionButtonClass}">${item.linkText} &rarr;</a>`;
+                        }
+                    }
+                    const cardHtml = `<div class="${cardClasses}">${premiumBadge}<div class="flex items-center mb-3"><i class="${item.icon} text-2xl mr-3 w-8 text-center"></i><h3 class="font-bold text-xl">${item.title}</h3></div><p class="text-gray-700 flex-grow">${item.description}</p>${linkElement}</div>`;
+                    libraryGrid.innerHTML += cardHtml;
+                });
+            }
+
+            paginationContainer.innerHTML = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    const button = document.createElement('button');
+                    button.innerText = i;
+                    button.className = `px-4 py-2 rounded-md text-sm font-medium ${i === libraryCurrentPage ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`;
+                    button.onclick = () => { libraryCurrentPage = i; renderLibrary(); };
+                    paginationContainer.appendChild(button);
+                }
+            }
+        }
+
+        // === Hlavní renderovací funkce ===
         function renderContent() {
             renderFaq();
             renderLegal();
@@ -683,11 +814,24 @@
             }
         }
 
+        // === Základní logika PWA (pohledy, navigace) ===
         let currentAssistant = null;
         let currentPage = 0;
-        let assistantStates = { 'kouc': { step: 0, problems: [] }, 'vyroba': { step: 0, problems: [] }, 'finance': { step: 0, problems: [] }, 'strateg': { step: 0, problems: [] }, };
 
         function showView(viewId) {
+            const header = document.querySelector('header');
+
+            // Seznam pohledů, při kterých se má skrýt hlavní menu
+            const immersiveViews = ['production-plan-view', 'minidashboard-view'];
+
+            if (immersiveViews.includes(viewId)) {
+                // Skryjeme menu pro pohlcující zobrazení
+                header.style.display = 'none';
+            } else {
+                // Pro všechny ostatní pohledy menu zobrazíme
+                header.style.display = 'block';
+            }
+
             for (let id in views) {
                 if (views[id]) {
                     views[id].classList.remove('active');
@@ -727,6 +871,9 @@
             });
         }
 
+        // === Logika pro AI Asistenty a chat ===
+        let assistantStates = { 'kouc': { step: 0, problems: [] }, 'vyroba': { step: 0, problems: [] }, 'finance': { step: 0, problems: [] }, 'strateg': { step: 0, problems: [] }, };
+
         function showAssistantInfo(assistantId) {
             const assistant = contentData.assistants[assistantId];
             if (!assistant || !assistant.pages) return;
@@ -749,9 +896,7 @@
             const assistant = contentData.assistants[currentAssistant];
             if (!assistant || !assistant.pages) return;
             const pages = document.querySelectorAll('#info-content-pages .info-page');
-            pages.forEach((page, index) => {
-                page.classList.toggle('active', index === currentPage);
-            });
+            pages.forEach((page, index) => { page.classList.toggle('active', index === currentPage); });
             const prevBtn = document.getElementById('info-prev-btn');
             const nextBtn = document.getElementById('info-next-btn');
             const pageCounter = document.getElementById('info-page-counter');
@@ -762,14 +907,9 @@
 
         function launchAssistant(assistantId) {
             const assistant = contentData.assistants[assistantId];
-            if (!assistant) {
-                console.error(`Assistant ${assistantId} not found in content data.`);
-                return;
-            };
+            if (!assistant) { console.error(`Assistant ${assistantId} not found in content data.`); return; };
             currentAssistant = assistantId;
-            if (assistantStates[assistantId]) {
-                assistantStates[assistantId] = { step: 0, problems: [] };
-            }
+            if (assistantStates[assistantId]) { assistantStates[assistantId] = { step: 0, problems: [] }; }
             document.getElementById('chat-title').innerText = assistant.name;
             document.getElementById('chat-box').innerHTML = '';
             document.getElementById('quick-replies').innerHTML = '';
@@ -785,10 +925,7 @@
             switch (state.step) {
                 case 0:
                     state.problems = userMessage.split(',').map(item => item.trim()).filter(item => item);
-                    if (state.problems.length < 2) {
-                        setTimeout(() => addMessage("Prosím, zkuste vyjmenovat alespoň dva body, oddělené čárkou.", 'ai'), 500);
-                        return;
-                    }
+                    if (state.problems.length < 2) { setTimeout(() => addMessage("Prosím, zkuste vyjmenovat alespoň dva body, oddělené čárkou.", 'ai'), 500); return; }
                     setTimeout(() => {
                         addMessage("Děkuji za přehled. Který z těchto bodů vnímáte jako nejpalčivější?", 'ai');
                         chatInputWrapper.style.display = 'none';
@@ -796,38 +933,26 @@
                             const button = document.createElement('button');
                             button.textContent = problem;
                             button.className = 'bg-blue-100 text-blue-800 py-2 px-4 rounded-full hover:bg-blue-200 transition-colors';
-                            button.onclick = () => {
-                                addMessage(problem, 'user');
-                                state.step = 1;
-                                handleGenericConversation(problem);
-                            };
+                            button.onclick = () => { addMessage(problem, 'user'); state.step = 1; handleGenericConversation(problem); };
                             quickRepliesContainer.appendChild(button);
                         });
                     }, 1000);
                     break;
                 case 1:
                     quickRepliesContainer.innerHTML = '';
+                    setTimeout(() => { addMessage(`Chápu. To, že vnímáte **${userMessage}** jako klíčový problém, je důležitý první krok...`, 'ai'); }, 1000);
                     setTimeout(() => {
-                        addMessage(`Chápu. To, že vnímáte **${userMessage}** jako klíčový problém, je důležitý první krok. Velmi často je to ale jen příznak (nežádoucí efekt) hlubšího, kořenového problému.`, 'ai');
-                    }, 1000);
-                    setTimeout(() => {
-                        addMessage(`Chcete nyní získat přístup do naší bezplatné knihovny, kde najdete videa a případové studie, jak přesně takové problémy řešit?`, 'ai');
+                        addMessage(`Chcete nyní získat přístup do naší bezplatné knihovny...?`, 'ai');
                         chatInputWrapper.style.display = 'none';
                         const yesButton = document.createElement('button');
                         yesButton.textContent = "Ano, chci přístup zdarma";
                         yesButton.className = 'bg-green-500 text-white font-medium py-2 px-6 rounded-lg hover:bg-green-600 transition-colors';
-                        yesButton.onclick = () => {
-                            state.step = 2;
-                            handleGenericConversation("Ano");
-                        };
+                        yesButton.onclick = () => { state.step = 2; handleGenericConversation("Ano"); };
                         quickRepliesContainer.appendChild(yesButton);
                         const noButton = document.createElement('button');
                         noButton.textContent = "Ne, děkuji";
                         noButton.className = 'bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors';
-                        noButton.onclick = () => {
-                            state.step = 2;
-                            handleGenericConversation("Ne");
-                        };
+                        noButton.onclick = () => { state.step = 2; handleGenericConversation("Ne"); };
                         quickRepliesContainer.appendChild(noButton);
                     }, 2500);
                     break;
@@ -835,17 +960,10 @@
                     addMessage(userMessage === 'Ano' ? "Ano, chci přístup zdarma" : "Ne, děkuji", 'user');
                     quickRepliesContainer.innerHTML = '';
                     if (userMessage === "Ano") {
-                        setTimeout(() => {
-                            addMessage("Výborně! Přesměrovávám vás do knihovny zdrojů...", 'ai');
-                        }, 1000);
-                        setTimeout(() => {
-                            showView('library');
-                        }, 2500);
+                        setTimeout(() => { addMessage("Výborně! Přesměrovávám vás do knihovny zdrojů...", 'ai'); }, 1000);
+                        setTimeout(() => { showView('library'); }, 2500);
                     } else {
-                        setTimeout(() => {
-                            addMessage("Rozumím. Děkuji za váš čas. Kdybyste se v budoucnu rozhodl jinak, jsem tu pro vás.", 'ai');
-                            chatInputWrapper.style.display = 'flex';
-                        }, 1000);
+                        setTimeout(() => { addMessage("Rozumím. Děkuji za váš čas...", 'ai'); chatInputWrapper.style.display = 'flex'; }, 1000);
                     }
                     break;
             }
@@ -870,43 +988,30 @@
             }
         }
 
+        // === Inicializace aplikace ===
         document.addEventListener('DOMContentLoaded', () => {
             fetch('content.json')
-                .then(response => {
-                    if (!response.ok) throw new Error(`Chyba sítě: ${response.statusText}`);
-                    return response.json();
-                })
+                .then(response => { if (!response.ok) throw new Error(`Chyba sítě: ${response.statusText}`); return response.json(); })
                 .then(externalData => {
                     Object.assign(contentData, externalData);
+                    if (contentData.library) {
+                        fuse = new Fuse(contentData.library, { includeScore: true, threshold: 0.3, keys: ['title', 'description', 'tags'] });
+                    }
                     renderContent();
                     setupNavigation();
+                    setupMobileMenu();
                 })
                 .catch(error => console.error('Chyba při načítání nebo zpracování content.json:', error));
-            document.getElementById('info-prev-btn').addEventListener('click', () => {
-                if (currentPage > 0) {
-                    currentPage--;
-                    updateInfoView();
-                }
-            });
-            document.getElementById('info-next-btn').addEventListener('click', () => {
-                if (contentData.assistants && currentAssistant && contentData.assistants[currentAssistant].pages && currentPage < contentData.assistants[currentAssistant].pages.length - 1) {
-                    currentPage++;
-                    updateInfoView();
-                }
-            });
-            document.getElementById('contact-form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                alert('Děkujeme za vaši zprávu. Ozveme se vám co nejdříve.');
-                this.reset();
-            });
+
+            document.getElementById('library-search').addEventListener('input', () => { libraryCurrentPage = 1; renderLibrary(); });
+            document.getElementById('info-prev-btn').addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateInfoView(); } });
+            document.getElementById('info-next-btn').addEventListener('click', () => { if (contentData.assistants && currentAssistant && contentData.assistants[currentAssistant].pages && currentPage < contentData.assistants[currentAssistant].pages.length - 1) { currentPage++; updateInfoView(); } });
+            document.getElementById('contact-form').addEventListener('submit', function (e) { e.preventDefault(); alert('Děkujeme za vaši zprávu. Ozveme se vám co nejdříve.'); this.reset(); });
             document.getElementById('send-button').addEventListener('click', handleSend);
-            document.getElementById('chat-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    handleSend();
-                }
-            });
+            document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') { handleSend(); } });
         });
     </script>
+
 </body>
 
 </html>

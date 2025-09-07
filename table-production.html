@@ -1,43 +1,3 @@
-<script type="text/javascript">
-    var gk_isXlsx = false;
-    var gk_xlsxFileLookup = {};
-    var gk_fileData = {};
-    function filledCell(cell) {
-        return cell !== '' && cell != null;
-    }
-    function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                    row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                    headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-    }
-</script>
 <!DOCTYPE html>
 <html lang="cs">
 
@@ -45,28 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plán výroby - Chytré Já</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> -->
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #ffffff;
         }
 
         .table-container {
             max-width: 1280px;
-            margin: 2rem auto;
+            margin: 1rem auto;
             padding: 0 1rem;
-        }
-
-        .table-heading {
-            font-size: 1.875rem;
-            font-weight: bold;
-            color: #1f2937;
-            text-align: center;
-            margin-bottom: 1rem;
         }
 
         .table-responsive {
@@ -74,13 +24,11 @@
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             background-color: #ffffff;
-            display: block;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            display: table;
         }
 
         th,
@@ -92,7 +40,7 @@
         }
 
         th {
-            background-color: #e6f0fa;
+            background-color: #f9fafb;
             font-weight: 600;
             color: #1f2937;
             cursor: pointer;
@@ -103,25 +51,19 @@
         }
 
         th:hover {
-            background-color: #bfdbfe;
+            background-color: #f3f4f6;
         }
 
         th.sort-asc::after {
             content: ' ▲';
-            color: #007bff;
         }
 
         th.sort-desc::after {
             content: ' ▼';
-            color: #007bff;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9fafb;
         }
 
         tr:hover {
-            background-color: #e6f0fa;
+            background-color: #f3f4f6;
         }
 
         td {
@@ -146,6 +88,7 @@
         .pagination {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 0.5rem;
             padding: 1rem;
         }
@@ -156,64 +99,34 @@
             border-radius: 0.25rem;
             background-color: #ffffff;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
         .pagination button:hover {
-            background-color: #e6f0fa;
+            background-color: #f3f4f6;
         }
 
         .pagination button:disabled {
-            background-color: #f1f1f1;
+            background-color: #e5e7eb;
             cursor: not-allowed;
+            opacity: 0.5;
         }
 
         .rows-per-page {
             margin-bottom: 1rem;
             text-align: center;
         }
-
-        @media (max-width: 768px) {
-
-            th,
-            td {
-                padding: 0.75rem;
-                font-size: 0.875rem;
-                min-width: 80px;
-            }
-
-            .table-heading {
-                font-size: 1.5rem;
-            }
-        }
     </style>
-    <!-- Načtení hlavičky a zápatí přes JavaScript -->
-    <script>
-        function loadHTML(url, elementId) {
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById(elementId).innerHTML = data;
-                })
-                .catch(error => console.error('Chyba při načítání:', error));
-        }
-        window.onload = function () {
-            loadHTML('header.html', 'header');
-            loadHTML('footer.html', 'footer');
-        };
-    </script>
 </head>
 
 <body>
-    <div id="header"></div> <!-- Hlavička se načte zde -->
     <div class="table-container">
-        <h1 class="table-heading">Plán výroby</h1>
         <div class="rows-per-page">
-            <label for="rowsPerPage" class="text-gray-700">Řádků na stránku: </label>
-            <select id="rowsPerPage" class="border border-gray-300 rounded-md p-1 text-gray-700">
+            <label for="rowsPerPage">Řádků na stránku: </label>
+            <select id="rowsPerPage">
                 <option value="10">10</option>
                 <option value="15" selected>15</option>
                 <option value="25">25</option>
+                <option value="50">50</option>
             </select>
         </div>
         <div class="table-responsive">
@@ -241,48 +154,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Data budou vložena JavaScriptem -->
                 </tbody>
             </table>
         </div>
         <div class="pagination">
-            <button id="prevPage" class="text-gray-700">Předchozí</button>
-            <span id="pageInfo" class="text-gray-700 pt-2"></span>
-            <button id="nextPage" class="text-gray-700">Další</button>
+            <button id="prevPage">Předchozí</button>
+            <span id="pageInfo"></span>
+            <button id="nextPage">Další</button>
         </div>
     </div>
 
     <script>
-        // Funkce pro převod Excel data na čitelný formát
+        let tableData = [];
+        let currentPage = 1;
+        let currentSort = { column: null, order: 'asc' };
+
         function excelDateToJSDate(excelDate) {
-            if (!excelDate) return "";
+            if (!excelDate || isNaN(excelDate)) return "";
             const date = new Date((excelDate - 25569) * 86400 * 1000);
             return date.toLocaleDateString('cs-CZ');
         }
 
-        // Funkce pro vykreslení tabulky s pagingem
         function renderTable(data, page = 1, rowsPerPage = 15) {
+            currentPage = page;
             const start = (page - 1) * rowsPerPage;
             const end = start + rowsPerPage;
             const paginatedData = data.slice(start, end);
+
             const tbody = document.querySelector('#dataTable tbody');
-            tbody.innerHTML = '';
+            tbody.innerHTML = ''; // Vyčistíme tabulku před novým vykreslením
+
             paginatedData.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${row['ID zakázky']}</td>
-                    <td>${row['Název zakázky']}</td>
-                    <td class="value-positive">${row['Vyrobit ks']}</td>
-                    <td>${row['Odvedeno ks']}</td>
-                    <td class="${row['Zbývá vyrobit ks'] > 0 ? 'value-warning' : 'value-positive'}">${row['Zbývá vyrobit ks']}</td>
+                    <td>${row['ID zakázky'] || ''}</td>
+                    <td>${row['Název zakázky'] || ''}</td>
+                    <td class="value-positive">${row['Vyrobit ks'] || 0}</td>
+                    <td>${row['Odvedeno ks'] || 0}</td>
+                    <td class="${(row['Zbývá vyrobit ks'] || 0) > 0 ? 'value-warning' : 'value-positive'}">${row['Zbývá vyrobit ks'] || 0}</td>
                     <td>${excelDateToJSDate(row['Termín dodání'])}</td>
                     <td>${row['Průběžná doba'] || ''}</td>
-                    <td>${row['Typ zakázky']}</td>
-                    <td>${row['Stav']}</td>
-                    <td class="${row['Časové plnění v %'] < 100 ? 'value-negative' : 'value-positive'}">${row['Časové plnění v %'] || ''}%</td>
-                    <td class="${row['Zpoždění dny'] > 0 ? 'value-negative' : ''}">${row['Zpoždění dny'] || ''}</td>
+                    <td>${row['Typ zakázky'] || ''}</td>
+                    <td>${row['Stav'] || ''}</td>
+                    <td class="${(row['Časové plnění v %'] || 0) < 100 ? 'value-negative' : 'value-positive'}">${row['Časové plnění v %'] || ''}%</td>
+                    <td class="${(row['Zpoždění dny'] || 0) > 0 ? 'value-negative' : ''}">${row['Zpoždění dny'] || ''}</td>
                     <td>${row['Důvod zpoždění'] || ''}</td>
-                    <td class="${row['Kontrola dat'] === 'ok' ? 'value-positive' : 'value-negative'}">${row['Kontrola dat']}</td>
+                    <td class="${row['Kontrola dat'] === 'ok' ? 'value-positive' : 'value-negative'}">${row['Kontrola dat'] || ''}</td>
                     <td>${row['Brusky minut'] || ''}</td>
                     <td>${row['Soustruhy minut'] || ''}</td>
                     <td>${row['Svařování minut'] || ''}</td>
@@ -291,80 +208,85 @@
                 `;
                 tbody.appendChild(tr);
             });
+
             const totalPages = Math.ceil(data.length / rowsPerPage);
             document.getElementById('pageInfo').textContent = `Strana ${page} z ${totalPages}`;
             document.getElementById('prevPage').disabled = page === 1;
             document.getElementById('nextPage').disabled = page === totalPages;
-            console.log(`Počet vykreslených řádků: ${paginatedData.length}, Strana: ${page}, Celkem stránek: ${totalPages}, Řádků na stránku: ${rowsPerPage}`);
         }
 
-        // Funkce pro řazení tabulky
-        function sortTable(column, order) {
-            const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-            const sortedData = [...tableData].sort((a, b) => {
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.order = 'asc';
+            }
+
+            tableData.sort((a, b) => {
                 const valA = a[column] || '';
                 const valB = b[column] || '';
-                if (column === 'Termín dodání') {
-                    const dateA = valA ? parseInt(valA) : 0;
-                    const dateB = valB ? parseInt(valB) : 0;
-                    return order === 'asc' ? dateA - dateB : dateB - dateA;
+
+                // Numerické a datumové řazení
+                const numA = parseFloat(valA);
+                const numB = parseFloat(valB);
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return currentSort.order === 'asc' ? numA - numB : numB - numA;
                 }
-                if (typeof valA === 'string') {
-                    return order === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                }
-                return order === 'asc' ? valA - valB : valB - valA;
+
+                // Textové řazení
+                return currentSort.order === 'asc'
+                    ? String(valA).localeCompare(String(valB), 'cs-CZ')
+                    : String(valB).localeCompare(String(valA), 'cs-CZ');
             });
-            tableData.length = 0;
-            tableData.push(...sortedData);
+
+            document.querySelectorAll('#dataTable th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (th.getAttribute('data-sort') === column) {
+                    th.classList.add(`sort-${currentSort.order}`);
+                }
+            });
+
+            const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
             renderTable(tableData, 1, rowsPerPage);
         }
 
-        // Přidání event listenerů pro řazení
-        document.querySelectorAll('#dataTable th').forEach(th => {
-            th.addEventListener('click', () => {
-                const column = th.getAttribute('data-sort');
-                const currentOrder = th.classList.contains('sort-asc') ? 'desc' : 'asc';
-                document.querySelectorAll('#dataTable th').forEach(t => t.classList.remove('sort-asc', 'sort-desc'));
-                th.classList.add(`sort-${currentOrder}`);
-                sortTable(column, currentOrder);
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('production-plan.json?v=' + new Date().getTime())
+                .then(response => {
+                    if (!response.ok) throw new Error('Soubor production-plan.json nenalezen.');
+                    return response.json();
+                })
+                .then(data => {
+                    tableData = data;
+                    const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+                    renderTable(tableData, 1, rowsPerPage);
+                })
+                .catch(error => {
+                    console.error('Chyba při načítání dat plánu výroby:', error);
+                    document.querySelector('#dataTable tbody').innerHTML = `<tr><td colspan="18" style="text-align:center; color: red;">Nepodařilo se načíst data. Zkontrolujte, zda soubor production-plan.json existuje a je ve správném formátu.</td></tr>`;
+                });
+
+            document.querySelectorAll('#dataTable th').forEach(th => {
+                th.addEventListener('click', () => sortTable(th.getAttribute('data-sort')));
+            });
+
+            document.getElementById('prevPage').addEventListener('click', () => {
+                const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+                renderTable(tableData, currentPage - 1, rowsPerPage);
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+                renderTable(tableData, currentPage + 1, rowsPerPage);
+            });
+
+            document.getElementById('rowsPerPage').addEventListener('change', (e) => {
+                const rowsPerPage = parseInt(e.target.value);
+                renderTable(tableData, 1, rowsPerPage);
             });
         });
-
-        // Přidání event listenerů pro paging
-        let currentPage = 1;
-        document.getElementById('prevPage').addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-                renderTable(tableData, currentPage, rowsPerPage);
-            }
-        });
-        document.getElementById('nextPage').addEventListener('click', () => {
-            const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-            const totalPages = Math.ceil(tableData.length / rowsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable(tableData, currentPage, rowsPerPage);
-            }
-        });
-
-        // Přidání event listeneru pro změnu počtu řádků na stránku
-        document.getElementById('rowsPerPage').addEventListener('change', (e) => {
-            const rowsPerPage = parseInt(e.target.value);
-            currentPage = 1;
-            renderTable(tableData, currentPage, rowsPerPage);
-        });
-
-        let tableData = []; // Inicializujeme prázdné pole
-
-        // Načteme data a poté vykreslíme tabulku
-        fetch('production-plan.json')
-            .then(response => response.json())
-            .then(data => {
-                tableData = data; // Uložíme načtená data do naší proměnné
-                renderTable(tableData, 1, 15); // Vykreslíme tabulku s reálnými daty
-            })
-            .catch(error => console.error('Chyba při načítání dat plánu výroby:', error));
     </script>
 </body>
 
