@@ -32,6 +32,14 @@
             display: block;
         }
 
+        #media-modal.hidden {
+            display: none;
+        }
+
+        #media-modal.active {
+            display: flex;
+        }
+
         .chat-box {
             height: 60vh;
             overflow-y: auto;
@@ -64,14 +72,16 @@
             display: block;
         }
 
-        .legal-content h2 {
+        .legal-content h2,
+        .prose h2 {
             font-size: 1.5rem;
             font-weight: 700;
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
         }
 
-        .legal-content h3 {
+        .legal-content h3,
+        .prose h3 {
             font-size: 1.25rem;
             font-weight: 600;
             margin-top: 1.25rem;
@@ -79,7 +89,8 @@
         }
 
         .legal-content p,
-        .legal-content li {
+        .legal-content li,
+        .prose p {
             margin-bottom: 1rem;
             line-height: 1.6;
         }
@@ -89,7 +100,12 @@
             padding-left: 2rem;
         }
 
-        /* Custom styles for thinner headings */
+        .prose h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
         .h1-thin-style {
             font-weight: 500;
             font-size: 3.5rem;
@@ -106,7 +122,6 @@
 
 <body class="antialiased min-h-screen flex flex-col">
 
-    <!-- Header -->
     <header class="bg-white shadow-md p-4 fixed w-full z-50">
         <div class="container mx-auto flex justify-between items-center px-4 max-w-6xl">
             <a href="#" onclick="showView('home'); window.scrollTo({ top: 0, behavior: 'smooth' });"
@@ -119,7 +134,7 @@
                 <span class="hidden sm:inline">Chytré Já</span>
             </a>
             <nav class="space-x-6 hidden md:flex">
-                <a href="#home-view" class="text-gray-600 hover:text-blue-600">Úvod</a>
+                <button onclick="showView('library')" class="text-gray-600 hover:text-blue-600">Knihovna</button>
                 <a href="#special-assistants" class="text-gray-600 hover:text-blue-600">Asistenti</a>
                 <a href="#thematic-blocks" class="text-gray-600 hover:text-blue-600">Funkce</a>
                 <a href="#pricing" class="text-gray-600 hover:text-blue-600">Ceník</a>
@@ -129,484 +144,383 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-grow pt-16">
-
-        <!-- Home View -->
         <section id="home-view" class="view-section active">
             <div class="hero-section text-center py-16 px-4 rounded-b-3xl">
-                <h1 class="h1-thin-style text-gray-900 mb-4 max-w-5xl mx-auto">
-                    Chytré Já - AI asistent pro řízení firem
+                <h1 class="h1-thin-style text-gray-900 mb-4 max-w-5xl mx-auto">Chytré Já - AI asistent pro řízení firem
                 </h1>
-                <p class="text-lg md:text-xl text-gray-700 max-w-5xl mx-auto mb-8">
-                    Získejte okamžitý přístup ke znalostem a nástrojům našeho unikátního ekosystému.
-                </p>
+                <p class="text-lg md:text-xl text-gray-700 max-w-5xl mx-auto mb-8">Získejte okamžitý přístup ke
+                    znalostem a nástrojům našeho unikátního ekosystému.</p>
             </div>
-
-            <!-- Specialised Assistants Section -->
-            <section id="special-assistants" class="py-12 px-4 -mt-10">
-                <div class="container mx-auto max-w-6xl">
-                    <div class="py-4"></div>
-                    <p class="text-center text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-8">
-                        Chytré já na to není sám. K dispozici má další AI asistenty - specialisty.
-                    </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-
-                        <div
-                            class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
-                            <div class="flex flex-col items-center text-center">
-                                <img src="/images/strateg-192.png" alt="AI asistent Stratég"
-                                    class="w-32 h-32 rounded-xl mb-4 object-cover">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Stratég</h3>
-                                <p class="text-sm text-gray-600 mb-6">Naučí vás tvořit inovativní byznys modely.</p>
-                                <div class="flex space-x-2">
-                                    <button onclick="launchAssistant('strateg')"
-                                        class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button>
-                                    <button onclick="showAssistantInfo('strateg')"
-                                        class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+            <div class="bg-gray-50">
+                <section id="special-assistants" class="py-12 px-4 -mt-10">
+                    <div class="container mx-auto max-w-6xl">
+                        <p class="text-center text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-8">Chytré já na to
+                            není sám. K dispozici má další AI asistenty - specialisty.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div
+                                class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
+                                <div class="flex flex-col items-center text-center"><img src="/images/strateg-192.png"
+                                        alt="AI asistent Stratég" class="w-32 h-32 rounded-xl mb-4 object-cover">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Stratég</h3>
+                                    <p class="text-sm text-gray-600 mb-6">Naučí vás tvořit inovativní byznys modely.</p>
+                                    <div class="flex space-x-2"><button onclick="launchAssistant('strateg')"
+                                            class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button><button
+                                            onclick="showAssistantInfo('strateg')"
+                                            class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div
-                            class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
-                            <div class="flex flex-col items-center text-center">
-                                <img src="/images/finance-192.png" alt="AI asistent Finance"
-                                    class="w-32 h-32 rounded-xl mb-4 object-cover">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Finance</h3>
-                                <p class="text-sm text-gray-600 mb-6">Pomůže vám nalézt peníze tam, kde byste to
-                                    nečekali.
-                                </p>
-                                <div class="flex space-x-2">
-                                    <button onclick="launchAssistant('finance')"
-                                        class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button>
-                                    <button onclick="showAssistantInfo('finance')"
-                                        class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                            <div
+                                class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
+                                <div class="flex flex-col items-center text-center"><img src="/images/finance-192.png"
+                                        alt="AI asistent Finance" class="w-32 h-32 rounded-xl mb-4 object-cover">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Finance</h3>
+                                    <p class="text-sm text-gray-600 mb-6">Pomůže vám nalézt peníze tam, kde byste to
+                                        nečekali.</p>
+                                    <div class="flex space-x-2"><button onclick="launchAssistant('finance')"
+                                            class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button><button
+                                            onclick="showAssistantInfo('finance')"
+                                            class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div
-                            class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
-                            <div class="flex flex-col items-center text-center">
-                                <img src="/images/vyroba-192.png" alt="AI asistent Výroba"
-                                    class="w-32 h-32 rounded-xl mb-4 object-cover">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Výroba</h3>
-                                <p class="text-sm text-gray-600 mb-6">Zvýší vám produktivitu a zlepší využití kapacit.
-                                </p>
-                                <div class="flex space-x-2">
-                                    <button onclick="launchAssistant('vyroba')"
-                                        class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button>
-                                    <button onclick="showAssistantInfo('vyroba')"
-                                        class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                            <div
+                                class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
+                                <div class="flex flex-col items-center text-center"><img src="/images/vyroba-192.png"
+                                        alt="AI asistent Výroba" class="w-32 h-32 rounded-xl mb-4 object-cover">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Výroba</h3>
+                                    <p class="text-sm text-gray-600 mb-6">Zvýší vám produktivitu a zlepší využití
+                                        kapacit.</p>
+                                    <div class="flex space-x-2"><button onclick="launchAssistant('vyroba')"
+                                            class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button><button
+                                            onclick="showAssistantInfo('vyroba')"
+                                            class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div
-                            class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
-                            <div class="flex flex-col items-center text-center">
-                                <img src="/images/kouc-192.png" alt="AI asistent TOC Kouč"
-                                    class="w-32 h-32 rounded-xl mb-4 object-cover">
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent TOC Kouč</h3>
-                                <p class="text-sm text-gray-600 mb-6">Naučí vás řídit firmu jednodušeji a efektivněji.
-                                </p>
-                                <div class="flex space-x-2">
-                                    <button onclick="launchAssistant('kouc')"
-                                        class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button>
-                                    <button onclick="showAssistantInfo('kouc')"
-                                        class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                            <div
+                                class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
+                                <div class="flex flex-col items-center text-center"><img src="/images/kouc-192.png"
+                                        alt="AI asistent TOC Kouč" class="w-32 h-32 rounded-xl mb-4 object-cover">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent TOC Kouč</h3>
+                                    <p class="text-sm text-gray-600 mb-6">Naučí vás řídit firmu jednodušeji a
+                                        efektivněji.</p>
+                                    <div class="flex space-x-2"><button onclick="launchAssistant('kouc')"
+                                            class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button><button
+                                            onclick="showAssistantInfo('kouc')"
+                                            class="bg-white text-blue-500 font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm border-2 border-blue-500 hover:bg-gray-100 transition-colors">Více</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
-
-            <!-- Thematic Blocks Section -->
-            <section id="thematic-blocks" class="py-20 md:py-24 px-4">
-                <div class="container mx-auto max-w-6xl">
-                    <h2 class="text-center text-4xl h2-thin-style mb-8">
-                        Konec dalším pokusům a omylům. Cílíme na průtok!
-                    </h2>
-                    <p class="text-center text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10">
-                        AI asistent Chytré Já totiž přináší zcela nový způsob řízení výroby, projektů,
-                        průtokového účetnictví, odměňování a dalších.
-                    </p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Block 1 -->
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
-                            <div class="text-4xl mb-4">📈</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Rozhodování bez chyb pomocí
-                                "šému"</h3>
-                            <p class="text-gray-600">Získejte bezchybné hodnocení přínosů jednotlivých výrobků a služeb,
-                                a
-                                vydělejte tak mnohem více peněz než doposud.</p>
-                        </div>
-                        <!-- Block 2 -->
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
-                            <div class="text-4xl mb-4">🗓️</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Plánování výroby a vytěžování kapacit</h3>
-                            <p class="text-gray-600">Tvořte plány výroby a vytěžujte kapacity, jak to nedokáže nikdo
-                                jiný. Jednoduše, efektivně, dokonce bez norem. Jedinečné řešení pro kusovou a
-                                malosériovou
-                                výrobu.</p>
-                        </div>
-                        <!-- Block 3 -->
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
-                            <div class="text-4xl mb-4">⚠️</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Neporazitelné strategie</h3>
-                            <p class="text-gray-600">Inovujte váš byznys model podle průtokového řízení. Tvořte
-                                varianty, simulujte přínosy. Budujte strategie, které konkurence nemá šanci porazit.
-                            </p>
-                        </div>
-                        <!-- Block 4 -->
-                        <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
-                            <div class="text-4xl mb-4">💰</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Vzdělávání s AI koučem</h3>
-                            <p class="text-gray-600">Učte se nové věci jinak. Využijte AI pro učení
-                                se kdykoliv a kdekoliv. Vytěžte maximum z našich znalostí a praxe.
-                            </p>
                         </div>
                     </div>
-                </div>
-            </section>
-
-
-            <!-- Why Chytré Já Section -->
-            <section id="why-chytré-já" class="py-20 md:py-24 bg-gray-50">
-                <div class="container mx-auto px-4 max-w-6xl">
-                    <div class="text-center mb-12">
-                        <h2 class="text-4xl h2-thin-style text-blue-800 mb-4">Proč je Chytré Já nezbytností pro vaši
-                            firmu?</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                            Naše platforma je postavena na nejmodernějších technologiích a principech řízení, aby vám
-                            poskytla náskok před konkurencí.
+                </section>
+                <section id="thematic-blocks" class="py-20 md:py-24 px-4">
+                    <div class="container mx-auto max-w-6xl">
+                        <h2 class="text-center text-4xl h2-thin-style mb-8">Konec dalším pokusům a omylům. Cílíme na
+                            průtok!</h2>
+                        <p class="text-center text-lg md:text-xl text-gray-700 max-w-2xl mx-auto mb-10">AI asistent
+                            Chytré Já totiž přináší zcela nový způsob řízení výroby, projektů, průtokového účetnictví,
+                            odměňování a dalších.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
+                                <div class="text-4xl mb-4">📈</div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Rozhodování bez chyb pomocí "šému"
+                                </h3>
+                                <p class="text-gray-600">Získejte bezchybné hodnocení přínosů jednotlivých výrobků a
+                                    služeb, a vydělejte tak mnohem více peněz než doposud.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
+                                <div class="text-4xl mb-4">🗓️</div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Plánování výroby a vytěžování kapacit
+                                </h3>
+                                <p class="text-gray-600">Tvořte plány výroby a vytěžujte kapacity, jak to nedokáže nikdo
+                                    jiný. Jednoduše, efektivně, dokonce bez norem. Jedinečné řešení pro kusovou a
+                                    malosériovou výrobu.</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
+                                <div class="text-4xl mb-4">⚠️</div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Neporazitelné strategie</h3>
+                                <p class="text-gray-600">Inovujte váš byznys model podle průtokového řízení. Tvořte
+                                    varianty, simulujte přínosy. Budujte strategie, které konkurence nemá šanci porazit.
+                                </p>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border-2 border-slate-300">
+                                <div class="text-4xl mb-4">💰</div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">Vzdělávání s AI koučem</h3>
+                                <p class="text-gray-600">Učte se nové věci jinak. Využijte AI pro učení se kdykoliv a
+                                    kdekoliv. Vytěžte maximum z našich znalostí a praxe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="why-chytré-já" class="py-20 md:py-24">
+                    <div class="container mx-auto px-4 max-w-6xl">
+                        <div class="text-center mb-12">
+                            <h2 class="text-4xl h2-thin-style text-blue-800 mb-4">Proč je Chytré Já nezbytností pro vaši
+                                firmu?</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Naše platforma je postavena na
+                                nejmodernějších technologiích a principech řízení, aby vám poskytla náskok před
+                                konkurencí.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div
+                                class="bg-white rounded-xl shadow-lg p-8 transition-transform transform hover:scale-105">
+                                <div class="flex items-center space-x-4 mb-4"><span class="text-4xl">⚡</span>
+                                    <h3 class="text-xl font-bold text-gray-900">Blesková rychlost a flexibilita</h3>
+                                </div>
+                                <p class="text-gray-700">Využijte plný potenciál Progressive Web Applications (PWA) a
+                                    Single Page Applications (SPA) pro okamžitou odezvu.</p>
+                            </div>
+                            <div
+                                class="bg-white rounded-xl shadow-lg p-8 transition-transform transform hover:scale-105">
+                                <div class="flex items-center space-x-4 mb-4"><span class="text-4xl">🌱</span>
+                                    <h3 class="text-xl font-bold text-gray-900">Škálovatelná platforma</h3>
+                                </div>
+                                <p class="text-gray-700">Chytré Já roste s vaší firmou a adaptuje se na vaše specifické
+                                    potřeby díky modulární architektuře.</p>
+                            </div>
+                            <div
+                                class="bg-white rounded-xl shadow-lg p-8 transition-transform transform hover:scale-105">
+                                <div class="flex items-center space-x-4 mb-4"><span class="text-4xl">🤖</span>
+                                    <h3 class="text-xl font-bold text-gray-900">Revoluční AI asistenti</h3>
+                                </div>
+                                <p class="text-gray-700">Síla specifických AI asistentů je v inovativním vzdělávání,
+                                    automatizaci kritických procesů a poskytování včasných varování.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="customers" class="py-20 md:py-24 bg-white">
+                    <div class="container mx-auto px-4 text-center max-w-6xl">
+                        <h2 class="text-4xl h2-thin-style mb-4">Naši spokojení zákazníci</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-12">Stavíme na dlouholetých zkušenostech a
+                            důvěře partnerů, kteří využívají naše pokročilé systémy a služby.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                            <div class="p-6 bg-gray-50 rounded-2xl border-2 border-slate-200">
+                                <p class="text-gray-700 mb-4">"Průtokové řízení TOC nám jako jediné umožnilo plánovat
+                                    naši kusovou výrobu v množstvích, která vyrábíme. Žádný jiný systém to nedokázal."
+                                </p>
+                                <h3 class="font-bold text-lg text-gray-900">SV metal spol. s r.o.</h3>
+                            </div>
+                            <div class="p-6 bg-gray-50 rounded-2xl border-2 border-slate-200">
+                                <p class="text-gray-700 mb-4">"Podařilo se nám zvýšit produktivitu práce o 25 % dva roky
+                                    po sobě. Ani my jsme tomu zpočátku nevěřili, a přesto se to povedlo."</p>
+                                <h3 class="font-bold text-lg text-gray-900">Continental Automotive Czech Republic s.r.o.
+                                </h3>
+                            </div>
+                            <div class="p-6 bg-gray-50 rounded-2xl border-2 border-slate-200">
+                                <p class="text-gray-700 mb-4">"Nevěřili jsme, že odměňování podle průtoku přinese
+                                    takovou změnu, ale výsledky nás příjemně překvapily. Zpoždění dodávek jsme snížili o
+                                    34 %."</p>
+                                <h3 class="font-bold text-lg text-gray-900">PPSD družstvo</h3>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="pricing" class="py-20 md:py-24">
+                    <div class="container mx-auto px-4 text-center max-w-6xl">
+                        <h2 class="text-4xl h2-thin-style mb-4">Zvolte si řešení pro vaši firmu</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-12">Nabízíme flexibilní možnosti, které se
+                            přizpůsobí rozsahu a potřebám vaší společnosti.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                            <div class="p-8 bg-white rounded-2xl shadow-lg border-2 border-blue-500">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-4">Diagnostika Zdarma</h3>
+                                <p class="text-gray-600 mb-6">Otestujte naše AI asistenty. Nechte si zdarma
+                                    identifikovat klíčový symptom, který brzdí váš růst. Žádné závazky.</p><a
+                                    href="#special-assistants"
+                                    class="inline-block bg-blue-500 text-white font-medium py-3 px-8 rounded-lg hover:bg-blue-600 transition-colors">Spustit
+                                    diagnostiku zdarma</a>
+                            </div>
+                            <div class="p-8 bg-white rounded-2xl shadow-lg border-2 border-slate-300">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-4">Premium Řešení</h3>
+                                <p class="text-gray-600 mb-6">Získejte přístup k pokročilé analýze kořenových příčin,
+                                    personalizovaným akčním plánům a prémiovým modulům.</p><a href="#contact"
+                                    class="inline-block bg-gray-800 text-white font-medium py-3 px-8 rounded-lg hover:bg-gray-900 transition-colors">Vyžádat
+                                    individuální nabídku</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="bg-blue-600 text-white py-12 px-4">
+                    <div class="container mx-auto text-center max-w-6xl">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-4">Jste připraveni najít své omezení?</h2>
+                        <p class="text-lg md:text-xl font-light mb-6">Začněte s diagnostikou zdarma a udělejte první
+                            krok k efektivnějšímu řízení a vyšším ziskům.</p>
+                        <div
+                            class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                            <a href="https://app.iting.cz"
+                                class="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-blue-100 transition duration-300">Vyzkoušet
+                                zdarma</a>
+                        </div>
+                    </div>
+                </section>
+                <section id="contact" class="py-20 bg-white">
+                    <div class="container mx-auto px-4 max-w-6xl">
+                        <h2 class="text-4xl h2-thin-style mb-8 text-center">Kontaktujte nás</h2>
+                        <p class="text-lg text-gray-600 mb-12 text-center">Zavolejte nám nebo napište. Jsme tu pro vás.
                         </p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <!-- Feature 1 -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 transition-transform transform hover:scale-105">
-                            <div class="flex items-center space-x-4 mb-4">
-                                <span class="text-4xl">⚡</span>
-                                <h3 class="text-xl font-bold text-gray-900">Blesková rychlost a flexibilita</h3>
-                            </div>
-                            <p class="text-gray-700">
-                                Využijte plný potenciál Progressive Web Applications (PWA) a Single Page Applications
-                                (SPA) pro okamžitou odezvu.
-                            </p>
-                        </div>
-                        <!-- Feature 2 -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 transition-transform transform hover:scale-105">
-                            <div class="flex items-center space-x-4 mb-4">
-                                <span class="text-4xl">🌱</span>
-                                <h3 class="text-xl font-bold text-gray-900">Škálovatelná platforma</h3>
-                            </div>
-                            <p class="text-gray-700">
-                                Chytré Já roste s vaší firmou a adaptuje se na vaše specifické potřeby díky modulární
-                                architektuře.
-                            </p>
-                        </div>
-                        <!-- Feature 3 -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 transition-transform transform hover:scale-105">
-                            <div class="flex items-center space-x-4 mb-4">
-                                <span class="text-4xl">🤖</span>
-                                <h3 class="text-xl font-bold text-gray-900">Revoluční AI asistenti</h3>
-                            </div>
-                            <p class="text-gray-700">
-                                Síla specifických AI asistentů je v inovativním vzdělávání, automatizaci kritických
-                                procesů
-                                a poskytování včasných varování.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Customers Section -->
-            <section id="customers" class="py-20 md:py-24 bg-white">
-                <div class="container mx-auto px-4 text-center max-w-6xl">
-                    <h2 class="text-4xl h2-thin-style mb-4">Naši spokojení zákazníci</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
-                        Stavíme na dlouholetých zkušenostech a důvěře partnerů, kteří využívají naše pokročilé systémy a
-                        služby.
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-                        <div class="p-6 bg-gray-50 rounded-2xl border-2 border-slate-200">
-                            <p class="text-gray-700 mb-4">"Průtokové řízení TOC nám jako jediné umožnilo plánovat naši
-                                kusovou výrobu v množstvích, která vyrábíme. Žádný jiný systém to nedokázel."</p>
-                            <h3 class="font-bold text-lg text-gray-900">SV metal spol. s r.o.</h3>
-                        </div>
-                        <div class="p-6 bg-gray-50 rounded-2xl border-2 border-slate-200">
-                            <p class="text-gray-700 mb-4">"Podařilo se nám zvýšit produktivitu práce o 25 % dva roky po
-                                sobě. Ani my jsme tomu zpočátku nevěřili, a přesto se to povedlo."</p>
-                            <h3 class="font-bold text-lg text-gray-900">Continental Automotive Czech Republic s.r.o.
-                            </h3>
-                        </div>
-                        <div class="p-6 bg-gray-50 rounded-2xl border-2 border-slate-200">
-                            <p class="text-gray-700 mb-4">"Nevěřili jsme, že odměňování podle průtoku přinese takovou
-                                změnu, ale výsledky nás příjemně překvapily. Zpoždění dodávek
-                                jsme snížili o 34 %."</p>
-                            <h3 class="font-bold text-lg text-gray-900">PPSD družstvo</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Pricing Section -->
-            <section id="pricing" class="py-20 md:py-24 bg-gray-50">
-                <div class="container mx-auto px-4 text-center max-w-6xl">
-                    <h2 class="text-4xl h2-thin-style mb-4">Zvolte si řešení pro vaši firmu</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
-                        Nabízíme flexibilní možnosti, které se přizpůsobí rozsahu a potřebám vaší společnosti.
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                        <div class="p-8 bg-white rounded-2xl shadow-lg border-2 border-blue-500">
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Diagnostika Zdarma</h3>
-                            <p class="text-gray-600 mb-6">
-                                Otestujte naše AI asistenty. Nechte si zdarma identifikovat klíčový symptom, který brzdí
-                                váš růst. Žádné závazky.
-                            </p>
-                            <a href="#special-assistants"
-                                class="inline-block bg-blue-500 text-white font-medium py-3 px-8 rounded-lg hover:bg-blue-600 transition-colors">
-                                Spustit diagnostiku zdarma
-                            </a>
-                        </div>
-                        <div class="p-8 bg-white rounded-2xl shadow-lg border-2 border-slate-300">
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4">Premium Řešení</h3>
-                            <p class="text-gray-600 mb-6">
-                                Získejte přístup k pokročilé analýze kořenových příčin, personalizovaným akčním plánům a
-                                prémiovým modulům.
-                            </p>
-                            <a href="#contact"
-                                class="inline-block bg-gray-800 text-white font-medium py-3 px-8 rounded-lg hover:bg-gray-900 transition-colors">
-                                Vyžádat individuální nabídku
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CTA Section #special-assistants -->
-            <section class="bg-blue-600 text-white py-12 px-4">
-                <div class="container mx-auto text-center max-w-6xl">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Jste připraveni najít své omezení?
-                    </h2>
-                    <p class="text-lg md:text-xl font-light mb-6">
-                        Začněte s diagnostikou zdarma a udělejte první krok k efektivnějšímu řízení a vyšším ziskům.
-                    </p>
-                    <div
-                        class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-                        <a href="https://app.iting.cz"
-                            class="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-blue-100 transition duration-300">
-                            Vyzkoušet zdarma
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Contact Section -->
-            <section id="contact" class="py-20 bg-white">
-                <div class="container mx-auto px-4 max-w-6xl">
-                    <h2 class="text-4xl h2-thin-style mb-8 text-center">Kontaktujte nás</h2>
-                    <p class="text-lg text-gray-600 mb-12 text-center">Zavolejte nám nebo napište. Jsme tu pro vás.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
-                        <!-- Left Column: Contact Details -->
-                        <div class="space-y-8">
-                            <div class="bg-gray-50 p-6 rounded-lg">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">Technická podpora</h3>
-                                <p class="text-gray-700">Nefunguje vám aplikace nebo přístup? Pište na <a
-                                        href="mailto:podpora@iting.cz"
-                                        class="text-blue-600 hover:underline">podpora@iting.cz</a>.</p>
-                            </div>
-                            <div class="bg-gray-50 p-6 rounded-lg">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">Obchodní podpora</h3>
-                                <p class="text-gray-700">Chcete vědět více? Pište na <a href="mailto:obchod@iting.cz"
-                                        class="text-blue-600 hover:underline">obchod@iting.cz</a> nebo volejte <a
-                                        href="tel:+420724166988" class="text-blue-600 hover:underline">+420 724 166
-                                        988</a>.</p>
-                            </div>
-                            <div class="bg-gray-50 p-6 rounded-lg">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">Administrativa</h3>
-                                <p class="text-gray-700">Potřebujete poradit s fakturací? Pište na <a
-                                        href="mailto:uctarna@iting.cz"
-                                        class="text-blue-600 hover:underline">uctarna@iting.cz</a> nebo volejte <a
-                                        href="tel:+420723999152" class="text-blue-600 hover:underline">+420 723 999
-                                        152</a>.</p>
-                            </div>
-                        </div>
-                        <!-- Right Column: Contact Form -->
-                        <div class="bg-gray-50 p-8 rounded-lg">
-                            <form id="contact-form">
-                                <div class="mb-4">
-                                    <label for="contact-name"
-                                        class="block text-gray-600 text-base font-normal mb-2">Jméno</label>
-                                    <input type="text" id="contact-name" name="name"
-                                        class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+                            <div class="space-y-8">
+                                <div class="bg-gray-50 p-6 rounded-lg">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Technická podpora</h3>
+                                    <p class="text-gray-700">Nefunguje vám aplikace nebo přístup? Pište na <a
+                                            href="mailto:podpora@iting.cz"
+                                            class="text-blue-600 hover:underline">podpora@iting.cz</a>.</p>
                                 </div>
-                                <div class="mb-4">
-                                    <label for="contact-email"
-                                        class="block text-gray-600 text-base font-normal mb-2">E-mail</label>
-                                    <input type="email" id="contact-email" name="email"
-                                        class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required>
+                                <div class="bg-gray-50 p-6 rounded-lg">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Obchodní podpora</h3>
+                                    <p class="text-gray-700">Chcete vědět více? Pište na <a
+                                            href="mailto:obchod@iting.cz"
+                                            class="text-blue-600 hover:underline">obchod@iting.cz</a> nebo volejte <a
+                                            href="tel:+420724166988" class="text-blue-600 hover:underline">+420 724 166
+                                            988</a>.</p>
                                 </div>
-                                <div class="mb-6">
-                                    <label for="contact-message"
-                                        class="block text-gray-600 text-base font-normal mb-2">Napište nám
-                                        zprávu...</label>
-                                    <textarea id="contact-message" name="message" rows="5"
-                                        class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required></textarea>
+                                <div class="bg-gray-50 p-6 rounded-lg">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Administrativa</h3>
+                                    <p class="text-gray-700">Potřebujete poradit s fakturací? Pište na <a
+                                            href="mailto:uctarna@iting.cz"
+                                            class="text-blue-600 hover:underline">uctarna@iting.cz</a> nebo volejte <a
+                                            href="tel:+420723999152" class="text-blue-600 hover:underline">+420 723 999
+                                            152</a>.</p>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <button type="submit"
-                                        class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline">
-                                        Odeslat zprávu
-                                    </button>
-                                </div>
-                                <p class="text-xs text-gray-600 mt-4">
-                                    Vaše osobní údaje použijeme pouze pro zodpovězení vaší zprávy, viz <button
-                                        type="button" onclick="showView('privacy')"
-                                        class="text-blue-600 hover:underline">Zásady zpracování osobních údajů</button>.
-                                </p>
-                            </form>
+                            </div>
+                            <div class="bg-gray-50 p-8 rounded-lg">
+                                <form id="contact-form">
+                                    <div class="mb-4"><label for="contact-name"
+                                            class="block text-gray-600 text-base font-normal mb-2">Jméno</label><input
+                                            type="text" id="contact-name" name="name"
+                                            class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required></div>
+                                    <div class="mb-4"><label for="contact-email"
+                                            class="block text-gray-600 text-base font-normal mb-2">E-mail</label><input
+                                            type="email" id="contact-email" name="email"
+                                            class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required></div>
+                                    <div class="mb-6"><label for="contact-message"
+                                            class="block text-gray-600 text-base font-normal mb-2">Napište nám
+                                            zprávu...</label><textarea id="contact-message" name="message" rows="5"
+                                            class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            required></textarea></div>
+                                    <div class="flex items-center justify-between"><button type="submit"
+                                            class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline">Odeslat
+                                            zprávu</button></div>
+                                    <p class="text-xs text-gray-600 mt-4">Vaše osobní údaje použijeme pouze pro
+                                        zodpovězení vaší zprávy, viz <button type="button" onclick="showView('privacy')"
+                                            class="text-blue-600 hover:underline">Zásady zpracování osobních
+                                            údajů</button>.</p>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
-
-            <!-- FAQ Section -->
-            <section id="faq" class="py-20 bg-gray-50">
-                <div id="faq-container" class="container mx-auto px-4 text-center max-w-6xl">
-                    <!-- FAQ content will be inserted here by JavaScript -->
-                </div>
-            </section>
+                </section>
+                <section id="faq" class="py-20">
+                    <div id="faq-container" class="container mx-auto px-4 text-center max-w-6xl"></div>
+                </section>
+            </div>
         </section>
 
-        <!-- Terms and Conditions View -->
         <section id="terms-view" class="view-section py-8 px-4">
             <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-4xl">
-                <div id="terms-content" class="legal-content">
-                    <!-- Terms content will be inserted here by JavaScript -->
-                </div>
-                <div class="mt-8 flex justify-center">
-                    <button onclick="showView('home')"
+                <div id="terms-content" class="legal-content"></div>
+                <div class="mt-8 flex justify-center"><button onclick="showView('home')"
                         class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">Zavřít</button>
                 </div>
             </div>
         </section>
-
-        <!-- Privacy Policy View -->
         <section id="privacy-view" class="view-section py-8 px-4">
             <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-4xl">
-                <div id="privacy-content" class="legal-content">
-                    <!-- Privacy content will be inserted here by JavaScript -->
-                </div>
-                <div class="mt-8 flex justify-center">
-                    <button onclick="showView('home')"
+                <div id="privacy-content" class="legal-content"></div>
+                <div class="mt-8 flex justify-center"><button onclick="showView('home')"
                         class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">Zavřít</button>
                 </div>
             </div>
         </section>
-
-        <!-- Assistant Info View (Více) -->
         <section id="info-view" class="view-section py-8 px-4">
             <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-2xl">
                 <h2 id="info-title" class="text-3xl font-bold text-gray-800 mb-6 text-center"></h2>
-                <div id="info-content-pages">
-                    <!-- Pages will be dynamically loaded here -->
-                </div>
-                <div class="mt-8 flex justify-between items-center">
-                    <button id="info-prev-btn"
+                <div id="info-content-pages"></div>
+                <div class="mt-8 flex justify-between items-center"><button id="info-prev-btn"
                         class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors"
                         style="visibility: hidden;">Zpět</button>
-                    <div id="info-page-counter" class="text-gray-600 text-sm"></div>
-                    <button id="info-next-btn"
+                    <div id="info-page-counter" class="text-gray-600 text-sm"></div><button id="info-next-btn"
                         class="bg-blue-500 text-white font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Další</button>
                 </div>
-                <div class="mt-8 flex justify-center">
-                    <button onclick="showView('home')"
+                <div class="mt-8 flex justify-center"><button onclick="showView('home')"
                         class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">Zavřít</button>
                 </div>
             </div>
         </section>
-
-        <!-- Library View -->
         <section id="library-view" class="view-section py-8 px-4">
             <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-4xl">
                 <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Knihovna zdrojů zdarma</h2>
                 <p class="text-center text-gray-600 mb-8">Zde najdete výběr materiálů, které vám pomohou lépe porozumět
                     vašim výzvám.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Example Content -->
-                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                        <h3 class="font-bold text-xl mb-2">Video: 5 kroků TOC v praxi</h3>
-                        <p class="text-gray-700">Podívejte se na případovou studii, jak firma XY zvýšila svůj zisk o 50
-                            %.</p>
-                    </div>
-                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                        <h3 class="font-bold text-xl mb-2">Článek: Proč je cashflow důležitější než zisk</h3>
-                        <p class="text-gray-700">Přečtěte si, jak správně řídit finance a vyhnout se druhotné platební
-                            neschopnosti.</p>
-                    </div>
-                    <div class="bg-green-100 p-6 rounded-lg border border-green-300 text-center">
-                        <h3 class="font-bold text-xl mb-2">Chcete řešení na míru?</h3>
-                        <p class="text-green-800 mb-4">Odhalte skutečné příčiny vašich problémů s naší Premium analýzou.
-                        </p>
-                        <a href="#pricing"
-                            class="bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700">Zjistit
-                            více</a>
-                    </div>
-                </div>
-                <div class="mt-8 flex justify-center">
-                    <button onclick="showView('home')"
+                <div id="library-tags-container" class="flex flex-wrap justify-center gap-2 mb-8"></div>
+                <div id="library-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                <div class="mt-8 flex justify-center"><button onclick="showView('home')"
                         class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">Zpět
-                        na hlavní stránku</button>
-                </div>
+                        na hlavní stránku</button></div>
             </div>
         </section>
-
-        <!-- Assistant Chat View (Spustit) -->
+        <section id="content-view" class="view-section py-8 px-4">
+            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-4xl">
+                <div id="content-dynamic" class="prose max-w-none"></div>
+                <div class="mt-8"><button onclick="showView('library')"
+                        class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">&larr;
+                        Zpět do knihovny</button></div>
+            </div>
+        </section>
+        <section id="production-plan-view" class="view-section py-8 px-4">
+            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-7xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Plán výroby</h2><button onclick="showView('library')"
+                        class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">&larr;
+                        Zpět do knihovny</button>
+                </div>
+                <div class="border-2 border-gray-200 rounded-lg overflow-hidden" style="height: 75vh;"><iframe
+                        src="table-production.html" class="w-full h-full" frameborder="0"></iframe></div>
+            </div>
+        </section>
         <section id="chat-view" class="view-section py-8 px-4">
             <div
                 class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg flex flex-col items-center max-w-2xl">
                 <h2 id="chat-title" class="text-3xl font-bold text-gray-800 mb-6 text-center"></h2>
                 <div id="chat-box"
-                    class="chat-box w-full p-4 md:p-6 bg-gray-50 rounded-2xl shadow-inner mb-4 space-y-4">
-                </div>
+                    class="chat-box w-full p-4 md:p-6 bg-gray-50 rounded-2xl shadow-inner mb-4 space-y-4"></div>
                 <div id="quick-replies" class="flex flex-wrap justify-center gap-2 mb-4"></div>
                 <div class="flex w-full items-center p-2 bg-white rounded-full shadow-lg border border-gray-200"
-                    id="chat-input-wrapper">
-                    <input type="text" placeholder="Napište svou odpověď..."
-                        class="flex-grow p-3 bg-white rounded-full focus:outline-none text-gray-800" id="chat-input" />
-                    <button id="send-button"
-                        class="bg-blue-500 text-white p-3 rounded-full ml-2 hover:bg-blue-600 transition-colors">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+                    id="chat-input-wrapper"><input type="text" placeholder="Napište svou odpověď..."
+                        class="flex-grow p-3 bg-white rounded-full focus:outline-none text-gray-800"
+                        id="chat-input" /><button id="send-button"
+                        class="bg-blue-500 text-white p-3 rounded-full ml-2 hover:bg-blue-600 transition-colors"><i
+                            class="fas fa-paper-plane"></i></button></div>
             </div>
+        </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-auto">
         <div class="container mx-auto text-center px-4 max-w-6xl">
-            <div class="flex justify-center space-x-6 mb-4">
-                <button onclick="showView('terms')" class="hover:text-blue-300 transition-colors">Obchodní
-                    podmínky</button>
-                <button onclick="showView('privacy')" class="hover:text-blue-300 transition-colors">Ochrana
-                    údajů</button>
+            <div class="flex justify-center space-x-6 mb-4"><button onclick="showView('terms')"
+                    class="hover:text-blue-300 transition-colors">Obchodní podmínky</button><button
+                    onclick="showView('privacy')" class="hover:text-blue-300 transition-colors">Ochrana údajů</button>
             </div>
             <p>&copy; 2024 Chytré Já - AI platforma. Všechna práva vyhrazena.</p>
         </div>
     </footer>
 
+    <div id="media-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 items-center justify-center p-4 z-50">
+        <div id="modal-content"
+            class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-full overflow-auto relative">
+            <button onclick="closeModal()"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
+            <div id="modal-body" class="p-4 md:p-6"></div>
+        </div>
+    </div>
+
     <script>
         const contentData = {};
-
         const views = {
             'home': document.getElementById('home-view'),
             'info': document.getElementById('info-view'),
@@ -614,42 +528,145 @@
             'terms': document.getElementById('terms-view'),
             'privacy': document.getElementById('privacy-view'),
             'library': document.getElementById('library-view'),
+            'content': document.getElementById('content-view'),
+            'production-plan-view': document.getElementById('production-plan-view'),
         };
+        const modalElement = document.getElementById('media-modal');
 
-        // --- Content Rendering ---
+        function openModal(contentHtml) {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = contentHtml;
+            modalElement.classList.remove('hidden');
+            modalElement.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = '';
+            modalElement.classList.add('hidden');
+            modalElement.classList.remove('flex');
+        }
+
+        function showMediaInModal(itemId) {
+            const item = contentData.library.find(i => i.id === itemId);
+            if (!item) return;
+            let contentHtml = '';
+            switch (item.type) {
+                case 'video':
+                    let embedUrl = '';
+                    try {
+                        const url = new URL(item.url);
+                        if (url.hostname.includes('youtube.com') || url.hostname.includes('youtu.be')) {
+                            let videoId;
+                            if (url.hostname.includes('youtu.be')) {
+                                videoId = url.pathname.slice(1);
+                            } else {
+                                videoId = url.searchParams.get('v');
+                            }
+                            if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        } else if (url.hostname.includes('vimeo.com')) {
+                            const videoId = url.pathname.split('/').pop();
+                            if (videoId) embedUrl = `https://player.vimeo.com/video/${videoId}`;
+                        }
+                    } catch (e) {
+                        console.error("Chybná URL adresa videa:", item.url, e);
+                    }
+                    if (embedUrl) {
+                        contentHtml = `<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div>`;
+                    } else {
+                        contentHtml = `<p class="text-center text-red-500">Nepodařilo se načíst video.</p>`;
+                    }
+                    break;
+                case 'image':
+                    contentHtml = `<img src="${item.url}" alt="${item.title}" class="max-w-full max-h-[80vh] mx-auto rounded">`;
+                    break;
+                case 'audio':
+                    contentHtml = `<div><h3 class="text-2xl font-bold mb-4">${item.title}</h3><audio controls src="${item.url}" class="w-full">Váš prohlížeč nepodporuje přehrávání audia.</audio></div>`;
+                    break;
+            }
+            if (contentHtml) openModal(contentHtml);
+        }
+
+        function renderLibrary(activeTag = 'all') {
+            const libraryGrid = document.getElementById('library-grid');
+            const tagsContainer = document.getElementById('library-tags-container');
+            if (!libraryGrid || !tagsContainer || !contentData.library) return;
+            const allTags = contentData.library.flatMap(item => item.tags || []);
+            const uniqueTags = ['all', ...new Set(allTags)];
+            tagsContainer.innerHTML = uniqueTags.map(tag => {
+                const isActive = tag === activeTag;
+                const baseClasses = 'py-2 px-4 rounded-full text-sm font-medium transition-colors';
+                const activeClasses = 'bg-blue-600 text-white';
+                const inactiveClasses = 'bg-gray-200 text-gray-700 hover:bg-gray-300';
+                const label = tag === 'all' ? 'Vše' : tag.charAt(0).toUpperCase() + tag.slice(1);
+                return `<button class="${baseClasses} ${isActive ? activeClasses : inactiveClasses}" onclick="renderLibrary('${tag}')">${label}</button>`;
+            }).join('');
+            const itemsFilteredByTag = activeTag === 'all' ? contentData.library : contentData.library.filter(item => item.tags && item.tags.includes(activeTag));
+            const filteredItems = itemsFilteredByTag.filter(item => item.published !== false);
+            libraryGrid.innerHTML = '';
+            filteredItems.forEach(item => {
+                let linkElement = '';
+                let isPremium = item.access === 'premium';
+                let cardClasses = "bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col";
+                let premiumBadge = '';
+
+                if (isPremium) {
+                    // Vizuální odlišení prémiové karty
+                    premiumBadge = `<div class="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">Premium</div>`;
+                    cardClasses = "bg-gray-100 p-6 rounded-lg border border-gray-300 flex flex-col relative opacity-80"; // Přidáme relativní pozici a snížíme viditelnost
+
+                    // Změna akce - místo otevření zobrazí hlášku
+                    linkElement = `<button onclick="alert('Toto je prémiový obsah. Pro plný přístup nás prosím kontaktujte.')" class="mt-4 text-gray-600 font-semibold self-start flex items-center"><i class="fas fa-lock mr-2"></i> ${item.linkText}</button>`;
+
+                } else {
+                    // Původní logika pro bezplatný obsah
+                    if (['video', 'audio', 'image'].includes(item.type)) {
+                        linkElement = `<button onclick="showMediaInModal('${item.id}')" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</button>`;
+                    } else if (item.type === 'article') {
+                        linkElement = `<button onclick="showContent('${item.id}')" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</button>`;
+                    } else if (item.type === 'integrated_page') {
+                        linkElement = `<button onclick="showView('${item.view_id}')" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</button>`;
+                    } else {
+                        linkElement = `<a href="${item.url}" target="_blank" class="mt-4 text-blue-600 font-semibold hover:underline self-start">${item.linkText} &rarr;</a>`;
+                    }
+                }
+
+                const cardHtml = `
+        <div class="${cardClasses}">
+            ${premiumBadge}
+            <div class="flex items-center mb-3">
+                <i class="${item.icon} text-2xl mr-3 w-8 text-center"></i>
+                <h3 class="font-bold text-xl">${item.title}</h3>
+            </div>
+            <p class="text-gray-700 flex-grow">${item.description}</p>
+            ${linkElement}
+        </div>`;
+                libraryGrid.innerHTML += cardHtml;
+            });
+        }
+
+        function showContent(itemId) {
+            const contentContainer = document.getElementById('content-dynamic');
+            if (!contentContainer || !contentData.library) return;
+            const item = contentData.library.find(i => i.id === itemId);
+            if (!item) return;
+            let contentHtml = `<h1>${item.contentTitle}</h1>${item.contentBody}`;
+            contentContainer.innerHTML = contentHtml;
+            showView('content');
+        }
+
         function renderContent() {
             renderFaq();
             renderLegal();
+            renderLibrary();
         }
 
         function renderFaq() {
             const faqContainer = document.getElementById('faq-container');
             if (!faqContainer || !contentData.faq) return;
-
-            let faqHtml = `
-                <h2 class="text-4xl h2-thin-style mb-4">Často kladené dotazy</h2>
-                <p class="text-lg text-gray-600 mb-12">Máte otázky? Zde jsou odpovědi na ty nejčastější.</p>
-                <div class="max-w-3xl mx-auto text-left space-y-4">
-            `;
+            let faqHtml = `<h2 class="text-4xl h2-thin-style mb-4">Často kladené dotazy</h2><p class="text-lg text-gray-600 mb-12">Máte otázky? Zde jsou odpovědi na ty nejčastější.</p><div class="max-w-3xl mx-auto text-left space-y-4">`;
             contentData.faq.forEach((item, index) => {
-                faqHtml += `
-                    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-                        <input type="checkbox" id="faq${index}" class="hidden peer" aria-labelledby="faq${index}-label">
-                        <label id="faq${index}-label" for="faq${index}" class="flex justify-between items-center p-5 cursor-pointer select-none font-bold text-lg text-gray-900">
-                            ${item.question}
-                            <span class="transform transition-transform duration-300 peer-checked:-rotate-180">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </span>
-                        </label>
-                        <div class="peer-checked:max-h-96 max-h-0 overflow-hidden transition-all duration-300">
-                            <div class="p-5 text-gray-700 leading-relaxed border-t border-gray-200">
-                                ${item.answer}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                faqHtml += `<div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200"><input type="checkbox" id="faq${index}" class="hidden peer" aria-labelledby="faq${index}-label"><label id="faq${index}-label" for="faq${index}" class="flex justify-between items-center p-5 cursor-pointer select-none font-bold text-lg text-gray-900">${item.question}<span class="transform transition-transform duration-300 peer-checked:-rotate-180"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span></label><div class="peer-checked:max-h-96 max-h-0 overflow-hidden transition-all duration-300"><div class="p-5 text-gray-700 leading-relaxed border-t border-gray-200">${item.answer}</div></div></div>`;
             });
             faqHtml += `</div>`;
             faqContainer.innerHTML = faqHtml;
@@ -668,76 +685,61 @@
 
         let currentAssistant = null;
         let currentPage = 0;
-
-        let assistantStates = {
-            'kouc': { step: 0, problems: [] },
-            'vyroba': { step: 0, problems: [] },
-            'finance': { step: 0, problems: [] },
-            'strateg': { step: 0, problems: [] },
-        };
+        let assistantStates = { 'kouc': { step: 0, problems: [] }, 'vyroba': { step: 0, problems: [] }, 'finance': { step: 0, problems: [] }, 'strateg': { step: 0, problems: [] }, };
 
         function showView(viewId) {
             for (let id in views) {
-                if (views[id]) views[id].classList.remove('active');
+                if (views[id]) {
+                    views[id].classList.remove('active');
+                }
             }
             if (views[viewId]) {
                 views[viewId].classList.add('active');
-                if (viewId !== 'home') {
-                    window.scrollTo({ top: 0, behavior: 'auto' });
-                }
+            }
+            if (viewId !== 'home') {
+                window.scrollTo({ top: 0, behavior: 'auto' });
             }
         }
 
         function setupNavigation() {
-            document.querySelectorAll('nav a, a[href^="#"], button[onclick^="showView"]').forEach(element => {
-                if (element.tagName === 'A') {
-                    element.addEventListener('click', function (e) {
-                        const href = this.getAttribute('href');
-                        if (href && href.startsWith('#')) {
-                            e.preventDefault();
-                            const targetId = href.substring(1);
-
-                            if (targetId === 'home-view') {
-                                showView('home');
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                                return;
-                            }
-
-                            if (!views.home.classList.contains('active')) {
-                                showView('home');
-                            }
-
-                            setTimeout(() => {
-                                const targetElement = document.getElementById(targetId);
-                                if (targetElement) {
-                                    targetElement.scrollIntoView({ behavior: 'smooth' });
-                                }
-                            }, 100);
+            document.querySelectorAll('nav a, a[href^="#"]').forEach(element => {
+                element.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const targetId = href.substring(1);
+                        if (targetId === 'home-view') {
+                            showView('home');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            return;
                         }
-                    });
-                }
+                        if (!views.home.classList.contains('active')) {
+                            showView('home');
+                        }
+                        setTimeout(() => {
+                            const targetElement = document.getElementById(targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }, 100);
+                    }
+                });
             });
         }
 
         function showAssistantInfo(assistantId) {
             const assistant = contentData.assistants[assistantId];
             if (!assistant || !assistant.pages) return;
-
             currentAssistant = assistantId;
             document.getElementById('info-title').innerText = assistant.name;
             const pagesContainer = document.getElementById('info-content-pages');
             pagesContainer.innerHTML = '';
-
             assistant.pages.forEach((page) => {
                 const pageElement = document.createElement('div');
                 pageElement.className = 'info-page p-4';
-                pageElement.innerHTML = `
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">${page.title}</h3>
-                    <p class="text-gray-700 leading-relaxed">${page.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>
-                `;
+                pageElement.innerHTML = `<h3 class="text-2xl font-bold text-gray-900 mb-4">${page.title}</h3><p class="text-gray-700 leading-relaxed">${page.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>`;
                 pagesContainer.appendChild(pageElement);
             });
-
             currentPage = 0;
             updateInfoView();
             showView('info');
@@ -746,16 +748,13 @@
         function updateInfoView() {
             const assistant = contentData.assistants[currentAssistant];
             if (!assistant || !assistant.pages) return;
-
             const pages = document.querySelectorAll('#info-content-pages .info-page');
             pages.forEach((page, index) => {
                 page.classList.toggle('active', index === currentPage);
             });
-
             const prevBtn = document.getElementById('info-prev-btn');
             const nextBtn = document.getElementById('info-next-btn');
             const pageCounter = document.getElementById('info-page-counter');
-
             prevBtn.style.visibility = currentPage > 0 ? 'visible' : 'hidden';
             nextBtn.style.visibility = currentPage < assistant.pages.length - 1 ? 'visible' : 'hidden';
             pageCounter.innerText = `Stránka ${currentPage + 1} z ${assistant.pages.length}`;
@@ -767,17 +766,14 @@
                 console.error(`Assistant ${assistantId} not found in content data.`);
                 return;
             };
-
             currentAssistant = assistantId;
             if (assistantStates[assistantId]) {
                 assistantStates[assistantId] = { step: 0, problems: [] };
             }
-
             document.getElementById('chat-title').innerText = assistant.name;
             document.getElementById('chat-box').innerHTML = '';
             document.getElementById('quick-replies').innerHTML = '';
             document.getElementById('chat-input-wrapper').style.display = 'flex';
-
             addMessage(assistant.chatInitMessage, 'ai');
             showView('chat');
         }
@@ -786,7 +782,6 @@
             const state = assistantStates[currentAssistant];
             const quickRepliesContainer = document.getElementById('quick-replies');
             const chatInputWrapper = document.getElementById('chat-input-wrapper');
-
             switch (state.step) {
                 case 0:
                     state.problems = userMessage.split(',').map(item => item.trim()).filter(item => item);
@@ -794,7 +789,6 @@
                         setTimeout(() => addMessage("Prosím, zkuste vyjmenovat alespoň dva body, oddělené čárkou.", 'ai'), 500);
                         return;
                     }
-
                     setTimeout(() => {
                         addMessage("Děkuji za přehled. Který z těchto bodů vnímáte jako nejpalčivější?", 'ai');
                         chatInputWrapper.style.display = 'none';
@@ -811,18 +805,14 @@
                         });
                     }, 1000);
                     break;
-
                 case 1:
                     quickRepliesContainer.innerHTML = '';
                     setTimeout(() => {
                         addMessage(`Chápu. To, že vnímáte **${userMessage}** jako klíčový problém, je důležitý první krok. Velmi často je to ale jen příznak (nežádoucí efekt) hlubšího, kořenového problému.`, 'ai');
                     }, 1000);
-
                     setTimeout(() => {
                         addMessage(`Chcete nyní získat přístup do naší bezplatné knihovny, kde najdete videa a případové studie, jak přesně takové problémy řešit?`, 'ai');
-
                         chatInputWrapper.style.display = 'none';
-
                         const yesButton = document.createElement('button');
                         yesButton.textContent = "Ano, chci přístup zdarma";
                         yesButton.className = 'bg-green-500 text-white font-medium py-2 px-6 rounded-lg hover:bg-green-600 transition-colors';
@@ -831,7 +821,6 @@
                             handleGenericConversation("Ano");
                         };
                         quickRepliesContainer.appendChild(yesButton);
-
                         const noButton = document.createElement('button');
                         noButton.textContent = "Ne, děkuji";
                         noButton.className = 'bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors';
@@ -842,7 +831,6 @@
                         quickRepliesContainer.appendChild(noButton);
                     }, 2500);
                     break;
-
                 case 2:
                     addMessage(userMessage === 'Ano' ? "Ano, chci přístup zdarma" : "Ne, děkuji", 'user');
                     quickRepliesContainer.innerHTML = '';
@@ -867,11 +855,7 @@
             const chatBox = document.getElementById('chat-box');
             const messageElement = document.createElement('div');
             messageElement.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-            messageElement.innerHTML = `
-                <div class="p-4 rounded-2xl max-w-[80%] ${sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}">
-                    ${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
-                </div>
-            `;
+            messageElement.innerHTML = `<div class="p-4 rounded-2xl max-w-[80%] ${sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}">${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -886,49 +870,35 @@
             }
         }
 
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Asynchronně načteme veškerý externí obsah
             fetch('content.json')
                 .then(response => {
-                    // Zkontrolujeme, zda byl soubor nalezen
-                    if (!response.ok) {
-                        throw new Error(`Chyba sítě: ${response.statusText}`);
-                    }
-                    return response.json(); // Převedeme odpověď na JSON
+                    if (!response.ok) throw new Error(`Chyba sítě: ${response.statusText}`);
+                    return response.json();
                 })
                 .then(externalData => {
-                    // Zkopírujeme všechny vlastnosti z načtených dat do našeho objektu
-                    // Tím naplníme prázdný contentData objekt
                     Object.assign(contentData, externalData);
-
-                    // Až po úspěšném načtení a zkopírování dat vykreslíme obsah stránky
                     renderContent();
                     setupNavigation();
                 })
                 .catch(error => console.error('Chyba při načítání nebo zpracování content.json:', error));
-
-            // Ostatní inicializace, které nezávisí na načtených datech
             document.getElementById('info-prev-btn').addEventListener('click', () => {
                 if (currentPage > 0) {
                     currentPage--;
                     updateInfoView();
                 }
             });
-
             document.getElementById('info-next-btn').addEventListener('click', () => {
                 if (contentData.assistants && currentAssistant && contentData.assistants[currentAssistant].pages && currentPage < contentData.assistants[currentAssistant].pages.length - 1) {
                     currentPage++;
                     updateInfoView();
                 }
             });
-
             document.getElementById('contact-form').addEventListener('submit', function (e) {
                 e.preventDefault();
                 alert('Děkujeme za vaši zprávu. Ozveme se vám co nejdříve.');
                 this.reset();
             });
-
             document.getElementById('send-button').addEventListener('click', handleSend);
             document.getElementById('chat-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
