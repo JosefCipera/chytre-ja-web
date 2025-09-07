@@ -523,31 +523,31 @@
                         Zpět do knihovny</button></div>
             </div>
         </section>
+        <section id="production-plan-view" class="view-section">
+            <div class="w-full h-screen flex flex-col bg-white">
+                <div class="hidden md:flex justify-between items-center p-4 border-b">
+                    <h2 class="text-2xl font-bold text-gray-800">Plán výroby</h2>
+                    <button onclick="showView('library')"
+                        class="bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg hover:bg-gray-300">&larr; Zpět
+                        do knihovny</button>
+                </div>
+                <div class="flex-grow">
+                    <iframe src="table-production.html" class="w-full h-full" frameborder="0"
+                        style="overscroll-behavior: contain;"></iframe>
+                </div>
+            </div>
+        </section>
         <section id="minidashboard-view" class="view-section">
             <div class="w-full h-screen flex flex-col bg-white">
                 <div class="hidden md:flex justify-between items-center p-4 border-b">
                     <h2 class="text-2xl font-bold text-gray-800">Mini Dashboard</h2>
                     <button onclick="showView('library')"
-                        class="bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg hover:bg-gray-300">
-                        &larr; Zpět do knihovny
-                    </button>
+                        class="bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg hover:bg-gray-300">&larr; Zpět
+                        do knihovny</button>
                 </div>
                 <div class="flex-grow">
-                    <iframe src="minidashboard.html" class="w-full h-full" frameborder="0"></iframe>
-                </div>
-            </div>
-        </section>
-        <section id="minidashboard-view" class="view-section py-8 px-4">
-            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-7xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800">Mini Dashboard</h2>
-                    <button onclick="showView('library')"
-                        class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">
-                        &larr; Zpět do knihovny
-                    </button>
-                </div>
-                <div class="border-2 border-gray-200 rounded-lg overflow-hidden" style="height: 75vh;">
-                    <iframe src="minidashboard.html" class="w-full h-full" frameborder="0"></iframe>
+                    <iframe src="minidashboard.html" class="w-full h-full" frameborder="0"
+                        style="overscroll-behavior: contain;"></iframe>
                 </div>
             </div>
         </section>
