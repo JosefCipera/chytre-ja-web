@@ -20,21 +20,23 @@
         }
 
         .table-heading {
-            font-size: 1.5rem;
-            /* Zmenšeno z 1.875rem */
-            font-weight: bold;
-            color: #1f2937;
-            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #4b5563;
+            text-align: left;
             margin-bottom: 1rem;
-            padding-top: 1rem;
-            /* Přidán malý horní okraj */
+        }
+
+        .table-controls {
+            margin-bottom: 1rem;
+            text-align: right;
         }
 
         .table-responsive {
             overflow-x: auto;
             border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
         }
 
         table {
@@ -47,15 +49,16 @@
             padding: 1rem;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
-            min-width: 100px;
+            min-width: 120px;
+            white-space: nowrap;
         }
 
         th {
             background-color: #f9fafb;
             font-weight: 600;
-            color: #1f2937;
+            color: #374151;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.2s ease;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -67,10 +70,12 @@
 
         th.sort-asc::after {
             content: ' ▲';
+            font-size: 0.8em;
         }
 
         th.sort-desc::after {
             content: ' ▼';
+            font-size: 0.8em;
         }
 
         tr:hover {
@@ -79,21 +84,19 @@
 
         td {
             color: #374151;
+            font-size: 0.9rem;
         }
 
         .value-positive {
             color: #10b981;
-            font-weight: 500;
         }
 
         .value-negative {
             color: #ef4444;
-            font-weight: 500;
         }
 
         .value-warning {
             color: #f59e0b;
-            font-weight: 500;
         }
 
         .pagination {
@@ -119,19 +122,15 @@
         .pagination button:disabled {
             background-color: #e5e7eb;
             cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .rows-per-page {
-            margin-bottom: 1rem;
-            text-align: center;
+            opacity: 0.6;
         }
     </style>
 </head>
 
 <body>
     <div class="table-container">
-        <div class="rows-per-page">
+        <h1 class="table-heading">Plán výroby</h1>
+        <div class="table-controls">
             <label for="rowsPerPage">Řádků na stránku: </label>
             <select id="rowsPerPage">
                 <option value="10">10</option>
@@ -193,7 +192,7 @@
             const paginatedData = data.slice(start, end);
 
             const tbody = document.querySelector('#dataTable tbody');
-            tbody.innerHTML = ''; // Vyčistíme tabulku před novým vykreslením
+            tbody.innerHTML = '';
 
             paginatedData.forEach(row => {
                 const tr = document.createElement('tr');
@@ -237,16 +236,11 @@
             tableData.sort((a, b) => {
                 const valA = a[column] || '';
                 const valB = b[column] || '';
-
-                // Numerické a datumové řazení
                 const numA = parseFloat(valA);
                 const numB = parseFloat(valB);
-
                 if (!isNaN(numA) && !isNaN(numB)) {
                     return currentSort.order === 'asc' ? numA - numB : numB - numA;
                 }
-
-                // Textové řazení
                 return currentSort.order === 'asc'
                     ? String(valA).localeCompare(String(valB), 'cs-CZ')
                     : String(valB).localeCompare(String(valA), 'cs-CZ');
