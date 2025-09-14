@@ -4,168 +4,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chytré Já</title>
+    <title>Chytré Já - Aplikace</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Načtení DOMPurify -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
+    <!-- Načtení Firebase jako modulu -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js';
+
+        // Konfigurace Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKREZsoBZkA1xOQ5ff3XDmiJ88nwSjeOk",
+            authDomain: "chytre-ja-app.firebaseapp.com",
+            projectId: "chytre-ja-app",
+            storageBucket: "chytre-ja-app.firebasestorage.app",
+            messagingSenderId: "65882611642",
+            appId: "1:65882611642:web:53d82914aa07d6677d4783"
+        };
+
+        // Inicializace Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Export pro použití v app.js
+        window.firebaseApp = app;
+        window.firebaseAuth = auth;
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .view-container {
-            display: none;
-        }
-
-        .view-container.active {
-            display: flex;
-        }
-
-        /* Styly pro hezčí zobrazení právních textů */
-        .legal-content h2 {
-            font-size: 1.5rem;
+        .prose h1 {
+            font-size: 2.25rem;
+            /* text-4xl */
             font-weight: 700;
+            /* font-bold */
+            color: #000000;
+            /* text-black */
+            margin-bottom: 1.5rem;
+            /* mb-6 */
+            text-align: center;
+            /* text-center */
+        }
+
+        .prose h2 {
+            font-size: 1.875rem;
+            /* text-3xl */
+            font-weight: 600;
+            /* font-semibold */
+            color: #000000;
+            /* text-black */
             margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            /* mt-6 */
+            margin-bottom: 0.5rem;
+            /* mb-2 */
         }
 
-        .legal-content p,
-        .legal-content li {
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        .prose h3 {
+            font-size: 1.25rem;
+            /* text-xl */
+            font-weight: 600;
+            /* font-semibold */
+            color: #000000;
+            /* text-black */
+            margin-top: 1rem;
+            /* mt-4 */
+            margin-bottom: 0.25rem;
+            /* mb-1 */
         }
 
-        .legal-content ul {
+        .prose p {
+            font-size: 1.125rem;
+            /* text-lg */
+            margin-top: 0.5rem;
+            /* mt-2 */
+            margin-bottom: 0.5rem;
+            /* mb-2 */
+            color: #000000;
+            /* text-black */
+        }
+
+        .prose ul {
+            font-size: 1.125rem;
+            /* text-lg */
             list-style-type: disc;
-            padding-left: 2rem;
+            /* list-disc */
+            padding-left: 1.5rem;
+            /* pl-6 */
+            margin-top: 0.5rem;
+            /* mt-2 */
+            margin-bottom: 0.5rem;
+            /* mb-2 */
+            color: #000000;
+            /* text-black */
         }
 
-        /* NOVÝ STYL: Zajistí, že pole s atributem readonly nevypadá zašedle */
-        input[readonly] {
-            background-color: #fff !important;
-            cursor: text !important;
+        .prose li {
+            margin-bottom: 0.25rem;
+            /* mb-1 */
         }
     </style>
 </head>
 
 <body class="bg-gray-100">
-
-    <div id="login-view" class="view-container items-center justify-center min-h-screen">
-        <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg">
-            <div class="text-center">
-                <svg class="w-16 h-16 mx-auto mb-4" viewBox="0 0 100 100" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 50H90" stroke="#2563EB" stroke-width="8" stroke-linecap="round" />
-                    <circle cx="20" cy="50" r="10" fill="#3B82F6" />
-                    <circle cx="80" cy="50" r="15" fill="#1D4ED8" />
-                </svg>
-                <h2 class="text-3xl font-bold text-gray-900">Vítejte v Chytrém Já</h2>
-                <p class="mt-2 text-gray-600">Přihlaste se ke svému účtu.</p>
+    <div id="login-view" class="hidden max-w-md mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Přihlášení</h1>
+        <p class="mb-4 text-gray-600 text-center">Vítejte v Chytrém Já</p>
+        <p class="mb-4 text-gray-600 text-center">Přihlaste se ke svému účtu.</p>
+        <form id="login-form">
+            <div class="mb-4">
+                <label for="email-address" class="block text-gray-700">E-mail</label>
+                <input id="email-address" type="email" class="w-full px-3 py-2 border rounded-lg">
             </div>
-            <form id="login-form" class="mt-8 space-y-6">
-                <div class="space-y-4 rounded-md">
-                    <label for="email-address" class="block mb-2 text-sm font-medium text-gray-700">E-mail</label>
-                    <input id="email-address" name="email" type="email" autocomplete="email" required
-                        class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg"
-                        placeholder="Zadejte váš e-mail">
-                    <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Heslo</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required
-                        class="relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg"
-                        placeholder="Zadejte vaše heslo">
-                </div>
-                <div id="error-message" class="text-red-500 text-sm text-center pt-2"></div>
-                <div class="flex items-center justify-end text-sm"><a href="#" id="forgot-password-link"
-                        class="font-medium text-blue-600 hover:text-blue-500">Zapomenuté heslo?</a></div>
-                <button type="submit"
-                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700">Přihlásit
-                    se</button>
-            </form>
-            <p class="text-sm text-center text-gray-600">Ještě nemáte účet? <a href="#" id="show-register-link"
-                    class="font-medium text-blue-600 hover:text-blue-500">Zaregistrujte se</a></p>
-        </div>
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700">Heslo</label>
+                <input id="password" type="password" class="w-full px-3 py-2 border rounded-lg">
+            </div>
+            <div id="error-message" class="text-red-500 mb-4"></div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Přihlásit
+                se</button>
+        </form>
+        <p class="mt-4 text-center">
+            Zapomenuté heslo? <a href="#" id="forgot-password-link" class="text-blue-600 hover:underline">Obnovit</a>
+        </p>
+        <p class="mt-4 text-center">
+            Ještě nemáte účet? <a href="#" id="show-register-link" class="text-blue-600 hover:underline">Zaregistrujte
+                se</a>
+        </p>
     </div>
 
-    <div id="register-view" class="view-container hidden items-center justify-center min-h-screen">
-        <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-lg">
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-gray-900">Vytvořit nový účet</h2>
-                <p class="mt-2 text-gray-600">Vyplňte údaje pro vstup do Chytrého Já.</p>
+    <div id="register-view" class="hidden max-w-md mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrace</h1>
+        <p class="mb-4 text-gray-600 text-center">Vytvořit nový účet</p>
+        <p class="mb-4 text-gray-600 text-center">Vyplňte údaje pro vstup do Chytrého Já.</p>
+        <form id="register-form">
+            <div class="mb-4">
+                <label for="register-email" class="block text-gray-700">E-mail</label>
+                <input id="register-email" type="email" class="w-full px-3 py-2 border rounded-lg">
             </div>
-            <form id="register-form" class="mt-8 space-y-6" autocomplete="off">
-                <div class="space-y-4 rounded-md">
-                    <input id="register-email" name="email" type="email" required
-                        class="relative block w-full px-3 py-3 border border-gray-300" placeholder="Emailová adresa">
-                    <input id="register-password" name="password" type="password" required
-                        class="relative block w-full px-3 py-3 border border-gray-300"
-                        placeholder="Heslo (min. 6 znaků)">
-                    <input id="password-confirm" name="password-confirm" type="password" required
-                        class="relative block w-full px-3 py-3 border border-gray-300" placeholder="Potvrďte heslo">
-                </div>
-                <div id="register-error-message" class="text-red-500 text-sm text-center pt-2"></div>
-
-                <button type="submit"
-                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700">Zaregistrovat
-                    se</button>
-                <p class="text-xs text-center text-gray-500 pt-2">
-                    Stiskem "Zaregistrovat se" souhlasíte s <a href="terms.html" target="_blank"
-                        class="underline hover:text-blue-600">obchodními podmínkami</a> a <a href="privacy.html"
-                        target="_blank" class="underline hover:text-blue-600">zpracováním osobních údajů</a>.
-                </p>
-            </form>
-            <p class="text-sm text-center text-gray-600">Už máte účet? <a href="#" id="show-login-link"
-                    class="font-medium text-blue-600 hover:text-blue-500">Přihlaste se</a></p>
-        </div>
+            <div class="mb-4">
+                <label for="register-password" class="block text-gray-700">Heslo</label>
+                <input id="register-password" type="password" class="w-full px-3 py-2 border rounded-lg">
+            </div>
+            <div class="mb-4">
+                <label for="password-confirm" class="block text-gray-700">Potvrzení hesla</label>
+                <input id="password-confirm" type="password" class="w-full px-3 py-2 border rounded-lg">
+            </div>
+            <div id="register-error-message" class="text-red-500 mb-4"></div>
+            <p class="text-gray-600 text-sm mb-4">
+                Stiskem "Zaregistrovat se" souhlasíte s
+                <a href="#" id="terms-link" class="text-blue-600 hover:underline">obchodními podmínkami</a>
+                a
+                <a href="#" id="privacy-link" class="text-blue-600 hover:underline">zpracováním osobních údajů</a>.
+            </p>
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Zaregistrovat se</button>
+        </form>
+        <p class="mt-4 text-center">
+            Už máte účet? <a href="#" id="show-login-link" class="text-blue-600 hover:underline">Přihlaste se</a>
+        </p>
     </div>
 
-    <div id="chat-view" class="view-container hidden min-h-screen w-full flex-col items-center">
-        <header class="bg-white shadow-sm p-4 z-10 w-full">
-            <div class="container mx-auto flex justify-between items-center max-w-3xl">
-                <div class="text-lg font-bold text-blue-600 flex items-center space-x-2">
-                    <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 50H90" stroke="#2563EB" stroke-width="8" stroke-linecap="round" />
-                        <circle cx="20" cy="50" r="10" fill="#3B82F6" />
-                        <circle cx="80" cy="50" r="15" fill="#1D4ED8" />
-                    </svg>
-                    <span>Chytré Já</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button id="logout-button" class="text-gray-500 hover:text-blue-600" title="Odhlásit se">
-                        <i class="fas fa-sign-out-alt text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-        <div class="w-full text-center py-4 bg-gray-50 border-b">
-            <h1 class="text-2xl font-light text-gray-700">Vítejte, <strong id="user-email"
-                    class="font-semibold text-gray-900"></strong>!</h1>
-        </div>
-        <main id="chat-messages" class="flex-grow p-4 md:p-6 space-y-4 overflow-y-auto w-full max-w-3xl">
+    <div id="chat-view" class="hidden max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Chat s AI asistentem</h1>
+        <p class="mb-4 text-gray-600 text-center">Vítejte, <span id="user-email">Uživatel</span>!</p>
+        <div id="chat-messages" class="mb-4 h-96 overflow-y-auto">
             <div class="flex justify-start">
-                <div class="max-w-lg p-3 rounded-lg bg-white text-gray-800 shadow-md">Dobrý den! Jsem AI Orchestrátor.
-                    Zadejte prosím svůj požadavek.</div>
-            </div>
-        </main>
-        <footer class="bg-white border-t p-2 md:p-4 w-full">
-            <div class="container mx-auto max-w-3xl">
-                <div class="flex items-center p-2 bg-gray-100 rounded-full">
-                    <input type="text" placeholder="Zadejte svůj požadavek..."
-                        class="flex-grow p-3 bg-transparent rounded-full focus:outline-none text-gray-800 text-md"
-                        id="chat-input" />
-                    <button id="chat-mic-button" title="Zadat hlasem"
-                        class="text-gray-500 p-3 rounded-full hover:bg-gray-200 transition-colors mx-2"><i
-                            class="fas fa-microphone text-xl"></i></button>
-                    <button id="chat-send-button"
-                        class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors"><i
-                            class="fas fa-paper-plane text-lg"></i></button>
+                <div class="max-w-lg p-3 rounded-lg shadow-md bg-white text-gray-800">
+                    Dobrý den! Jsem AI Orchestrátor. Zadejte prosím svůj požadavek.
                 </div>
             </div>
-        </footer>
+        </div>
+        <div class="flex">
+            <input id="chat-input" type="text" class="flex-1 px-3 py-2 border rounded-l-lg">
+            <button id="chat-send-button"
+                class="bg-blue-600 text-white py-2 px-4 rounded-r-lg hover:bg-blue-700">Odeslat</button>
+        </div>
+        <button id="logout-button" class="mt-4 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">Odhlásit
+            se</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="app.js" defer></script>
+    <div id="terms-view" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+        <h1 class="text-4xl font-bold text-black mb-6 text-center">Obchodní podmínky</h1>
+        <div id="terms-content" class="prose text-black"></div>
+        <button onclick="window.showView('register')"
+            class="mt-6 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Zpět</button>
+    </div>
+
+    <div id="privacy-view" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+        <h1 class="text-4xl font-bold text-black mb-6 text-center">Zásady ochrany osobních údajů</h1>
+        <div id="privacy-content" class="prose text-black"></div>
+        <button onclick="window.showView('register')"
+            class="mt-6 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Zpět</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 
 </html>
