@@ -143,9 +143,9 @@
                 <a href="#contact" class="text-gray-600 hover:text-blue-600">Kontakt</a>
                 <a href="#faq" class="text-gray-600 hover:text-blue-600">FAQ</a>
                 <span class="border-l border-gray-300 h-6"></span>
-                <button onclick="alert('Zde bude přihlašovací formulář.');"
-                    class="bg-blue-600 text-white font-medium py-2 px-5 rounded-lg shadow-sm hover:bg-blue-700 transition-colors">Přihlásit
-                    se</button>
+                <a href="app.html"
+                    class="text-gray-600 border border-gray-300 font-medium py-2 px-5 rounded-lg shadow-sm hover:border-blue-600 hover:text-blue-600 transition-colors">Přihlásit
+                    se</a>
             </nav>
 
             <div class="md:hidden">
@@ -173,9 +173,9 @@
                     class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Kontakt</a>
                 <a href="#faq"
                     class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">FAQ</a>
-                <button onclick="alert('Zde bude přihlašovací formulář.');"
-                    class="mt-4 w-full bg-blue-600 text-white font-medium py-2 px-5 rounded-lg shadow-sm hover:bg-blue-700 transition-colors">Přihlásit
-                    se</button>
+                <a href="app.html"
+                    class="mt-4 w-full text-gray-700 border border-gray-300 font-medium py-2 px-5 rounded-lg shadow-sm hover:bg-gray-100 transition-colors">Přihlásit
+                    se</a>
             </nav>
         </div>
     </header>
@@ -226,7 +226,7 @@
                                 <div class="flex flex-col items-center text-center"><img src="/images/vyroba-192.png"
                                         alt="AI asistent Výroba" class="w-32 h-32 rounded-xl mb-4 object-cover">
                                     <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Výroba</h3>
-                                    <p class="text-sm text-gray-600 mb-6">Zvýší vám produktivitu a zlepší využití
+                                    <p class="text-sm text-gray-600 mb-6">Zvýší vaši produktivitu a zlepší využití
                                         kapacit.</p>
                                     <div class="flex space-x-2"><button onclick="launchAssistant('vyroba')"
                                             class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button><button
@@ -238,10 +238,10 @@
                             <div
                                 class="bg-white p-8 rounded-2xl shadow-lg border-2 border-slate-300 transform hover:scale-105 transition-transform cursor-pointer">
                                 <div class="flex flex-col items-center text-center"><img src="/images/kouc-192.png"
-                                        alt="AI asistent TOC Kouč" class="w-32 h-32 rounded-xl mb-4 object-cover">
-                                    <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent TOC Kouč</h3>
-                                    <p class="text-sm text-gray-600 mb-6">Naučí vás řídit firmu jednodušeji a
-                                        efektivněji.</p>
+                                        alt="AI asistent Marketing" class="w-32 h-32 rounded-xl mb-4 object-cover">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">AI asistent Marketing</h3>
+                                    <p class="text-sm text-gray-600 mb-6">Naučí vás jak přimět trh, aby chtěl vaše
+                                        výrobky a služby.</p>
                                     <div class="flex space-x-2"><button onclick="launchAssistant('kouc')"
                                             class="bg-blue-500 text-white font-medium py-1.5 px-4 text-sm rounded-lg shadow-sm hover:bg-blue-600 transition-colors">Spustit</button><button
                                             onclick="showAssistantInfo('kouc')"
@@ -330,7 +330,8 @@
                 </section>
                 <section id="customers" class="py-20 md:py-24 bg-white">
                     <div class="container mx-auto px-4 text-center max-w-6xl">
-                        <h2 class="text-4xl h2-thin-style mb-4">Naši spokojení zákazníci</h2>
+                        <h2 class="text-4xl h2-thin-style mb-4">Našich školení nebo realizace projektů se doposud
+                            zúčastnilo více než 100 firem. Zde jsou některé z nich.</h2>
                         <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-12">Stavíme na dlouholetých zkušenostech a
                             důvěře partnerů, kteří využívají naše pokročilé systémy a služby.</p>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
@@ -543,11 +544,36 @@
                     class="chat-box w-full p-4 md:p-6 bg-gray-50 rounded-2xl shadow-inner mb-4 space-y-4"></div>
                 <div id="quick-replies" class="flex flex-wrap justify-center gap-2 mb-4"></div>
                 <div class="flex w-full items-center p-2 bg-white rounded-full shadow-lg border border-gray-200"
-                    id="chat-input-wrapper"><input type="text" placeholder="Napište svou odpověď..."
-                        class="flex-grow p-3 bg-white rounded-full focus:outline-none text-gray-800"
-                        id="chat-input" /><button id="send-button"
-                        class="bg-blue-500 text-white p-3 rounded-full ml-2 hover:bg-blue-600 transition-colors"><i
-                            class="fas fa-paper-plane"></i></button></div>
+                    id="chat-input-wrapper">
+                    <input type="text" placeholder="Napište svou odpověď..."
+                        class="flex-grow p-3 bg-white rounded-full focus:outline-none text-gray-800" id="chat-input" />
+
+                    <button id="mic-button" title="Zadat hlasem"
+                        class="bg-gray-200 text-gray-600 p-3 rounded-full ml-2 hover:bg-gray-300 transition-colors">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+
+                    <button id="send-button"
+                        class="bg-blue-500 text-white p-3 rounded-full ml-2 hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+        <section id="checklist-view" class="view-section py-8 px-4">
+            <div class="container mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-4xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 id="checklist-title" class="text-3xl font-bold text-gray-800"></h2>
+                    <div id="checklist-progress"
+                        class="font-semibold text-gray-700 bg-gray-100 rounded-full px-4 py-2 text-lg"></div>
+                </div>
+                <p id="checklist-intro" class="text-gray-600 mb-8 text-lg"></p>
+                <div id="checklist-container" class="space-y-8"></div>
+                <div class="mt-12 flex justify-center">
+                    <button onclick="showView('library')"
+                        class="bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg shadow-sm hover:bg-gray-400 transition-colors">&larr;
+                        Zpět do Portálu</button>
+                </div>
             </div>
         </section>
     </main>
@@ -598,6 +624,7 @@
             'privacy': document.getElementById('privacy-view'),
             'library': document.getElementById('library-view'),
             'content': document.getElementById('content-view'),
+            'checklist': document.getElementById('checklist-view'),
             'production-plan-view': document.getElementById('production-plan-view'),
             'minidashboard-view': document.getElementById('minidashboard-view'),
         };
@@ -674,16 +701,112 @@
             if (contentHtml) openModal(contentHtml);
         }
 
+        // NOVÁ A VYLEPŠENÁ FUNKCE PRO ZOBRAZENÍ ČLÁNKU
         function showContent(itemId) {
             const contentContainer = document.getElementById('content-dynamic');
             if (!contentContainer || !contentData.library) return;
+
             const item = contentData.library.find(i => i.id === itemId);
-            if (!item) return;
-            let contentHtml = `<h1>${item.contentTitle}</h1>${item.contentBody}`;
-            contentContainer.innerHTML = contentHtml;
-            showView('content');
+            if (!item) {
+                contentContainer.innerHTML = '<h1>Chyba</h1><p>Článek nebyl nalezen.</p>';
+                showView('content');
+                return;
+            }
+
+            // Zkontrolujeme, zda má článek novou vlastnost contentUrl
+            if (item.contentUrl) {
+                // Pomocí fetch() načteme obsah .md souboru z dané URL
+                fetch(item.contentUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Síťová odpověď nebyla v pořádku.');
+                        }
+                        return response.text();
+                    })
+                    .then(markdownText => {
+                        // Převedeme Markdown na HTML a zobrazíme ho
+                        contentContainer.innerHTML = convertMarkdownToHtml(markdownText);
+                        showView('content');
+                    })
+                    .catch(error => {
+                        console.error('Chyba při načítání článku:', error);
+                        contentContainer.innerHTML = '<h1>Chyba</h1><p>Nepodařilo se načíst obsah článku. Zkontrolujte prosím konzoli pro více detailů.</p>';
+                        showView('content');
+                    });
+            }
+            // Pokud contentUrl neexistuje, použijeme starou metodu (pro zpětnou kompatibilitu)
+            else if (item.contentBody) {
+                let contentHtml = `<h1>${item.contentTitle}</h1>${item.contentBody}`;
+                contentContainer.innerHTML = contentHtml;
+                showView('content');
+            }
         }
 
+        // FINÁLNÍ VERZE PŘEVODNÍKU S PŘIDANÝMI INLINE STYLY PRO ZAJIŠTĚNÍ ZOBRAZENÍ
+        // FINÁLNÍ VERZE PŘEVODNÍKU S PODPOROU PRO BLOKOVÉ CITACE (>)
+        function convertMarkdownToHtml(md) {
+            const lines = md.split('\n');
+            let html = '';
+            let inList = false;
+
+            for (const line of lines) {
+                // NOVĚ PŘIDÁNO: Zpracování blokové citace
+                if (line.trim().startsWith('> ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    // Přidáme i styl, aby citace byla vždy viditelná
+                    html += `<blockquote style="margin-left: 0; padding-left: 1.5em; border-left: 4px solid #e5e7eb; color: #4b5563; background-color: #f9fafb; margin-bottom: 1em; padding-top: 0.5em; padding-bottom: 0.5em;">${line.trim().substring(2)}</blockquote>\n`;
+                    continue;
+                }
+
+                // Zpracování nadpisů
+                if (line.startsWith('# ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<h1>${line.substring(2)}</h1>\n`;
+                    continue;
+                }
+                if (line.startsWith('## ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<h2>${line.substring(3)}</h2>\n`;
+                    continue;
+                }
+                if (line.startsWith('### ')) {
+                    if (inList) { html += '</ul>\n'; inList = false; }
+                    html += `<h3>${line.substring(4)}</h3>\n`;
+                    continue;
+                }
+
+                // Zpracování seznamů (odrážek)
+                if (line.trim().startsWith('* ')) {
+                    if (!inList) {
+                        html += '<ul style="list-style-type: disc; padding-left: 25px; margin-top: 1em; margin-bottom: 1em;">\n';
+                        inList = true;
+                    }
+                    html += `<li style="margin-bottom: 0.5em;">${line.trim().substring(2)}</li>\n`;
+                    continue;
+                }
+
+                if (inList) {
+                    html += '</ul>\n';
+                    inList = false;
+                }
+
+                if (line.trim() === '') {
+                    html += '\n';
+                } else {
+                    html += `<p style="margin-bottom: 1em;">${line}</p>\n`;
+                }
+            }
+
+            if (inList) {
+                html += '</ul>\n';
+            }
+
+            html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            return html;
+        }
 
         // === Hlavní logika pro knihovnu ===
         function renderLibrary() {
@@ -755,6 +878,9 @@
                             linkElement = `<button onclick="showMediaInModal('${item.id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
                         } else if (item.type === 'article') {
                             linkElement = `<button onclick="showContent('${item.id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
+                        } else if (item.type === 'interactive_checklist') {
+                            linkElement = `<button onclick="showInteractiveChecklist('${item.id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
+
                         } else if (item.type === 'integrated_page') {
                             linkElement = `<button onclick="showView('${item.view_id}')" class="${actionButtonClass}">${item.linkText} &rarr;</button>`;
                         } else {
@@ -813,6 +939,7 @@
 
         function showView(viewId) {
             const header = document.querySelector('header');
+            const footer = document.querySelector('footer'); // <-- PŘIDAT TENTO ŘÁDEK
             const mainContent = document.querySelector('main');
             const fab = document.getElementById('back-to-library-fab');
 
@@ -821,12 +948,14 @@
             if (immersiveViews.includes(viewId)) {
                 // Skryjeme menu a zobrazíme plovoucí tlačítko
                 header.classList.add('hidden');
+                footer.classList.add('hidden'); // <-- PŘIDAT TENTO ŘÁDEK
                 mainContent.classList.remove('pt-16');
                 fab.classList.remove('hidden');
                 fab.onclick = () => showView('library'); // Nastavíme akci tlačítka
             } else {
                 // Pro všechny ostatní pohledy menu zobrazíme a plovoucí tlačítko skryjeme
                 header.classList.remove('hidden');
+                footer.classList.remove('hidden'); // <-- PŘIDAT TENTO ŘÁDEK
                 mainContent.classList.add('pt-16');
                 fab.classList.add('hidden');
             }
@@ -1009,6 +1138,61 @@
             document.getElementById('send-button').addEventListener('click', handleSend);
             document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') { handleSend(); } });
         });
+        // FUNKCE, KTERÁ DYNAMICKY VYGENERUJE INTERAKTIVNÍ CHECKLIST
+        function showInteractiveChecklist(itemId) {
+            const checklistData = contentData.library.find(i => i.id === itemId);
+            if (!checklistData) return;
+
+            // Naplníme titulky a úvod
+            document.getElementById('checklist-title').innerText = checklistData.title;
+            document.getElementById('checklist-intro').innerText = checklistData.introText;
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = ''; // Vyčistíme starý obsah
+
+            // Projdeme sekce a položky z JSONu a vytvoříme HTML
+            checklistData.sections.forEach((section, sectionIndex) => {
+                let sectionHtml = `<div class="p-6 border rounded-lg"><h3 class="text-xl font-bold text-gray-900 mb-4">${section.title}</h3><div class="space-y-3">`;
+                section.items.forEach((item, itemIndex) => {
+                    const checkboxId = `check-${sectionIndex}-${itemIndex}`;
+                    // Zjistíme, zda byl checkbox v minulosti zaškrtnut (z localStorage)
+                    const isChecked = localStorage.getItem(checkboxId) === 'true';
+                    sectionHtml += `
+                        <div class="flex items-center">
+                            <input id="${checkboxId}" type="checkbox" ${isChecked ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label for="${checkboxId}" class="ml-3 text-md text-gray-800">${item}</label>
+                        </div>
+                    `;
+                });
+                sectionHtml += `</div></div>`;
+                container.innerHTML += sectionHtml;
+            });
+
+            // "Oživíme" všechny checkboxy
+            container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (event) => {
+                    // Uložíme stav (zaškrtnuto/odškrtnuto) do paměti prohlížeče
+                    localStorage.setItem(event.target.id, event.target.checked);
+                    updateChecklistProgress(container);
+                });
+            });
+
+            updateChecklistProgress(container); // Spočítáme pokrok při načtení
+            showView('checklist'); // Zobrazíme checklist
+        }
+
+        // FUNKCE, KTERÁ POČÍTÁ A ZOBRAZUJE POKROK
+        function updateChecklistProgress(container) {
+            const allCheckboxes = container.querySelectorAll('input[type="checkbox"]');
+            const checkedCheckboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+            const progressElement = document.getElementById('checklist-progress');
+
+            if (allCheckboxes.length > 0) {
+                const percentage = Math.round((checkedCheckboxes.length / allCheckboxes.length) * 100);
+                progressElement.innerText = `Hotovo: ${checkedCheckboxes.length} z ${allCheckboxes.length} (${percentage}%)`;
+            } else {
+                progressElement.innerText = 'Hotovo: 0 z 0 (0%)';
+            }
+        }
     </script>
 
 </body>
