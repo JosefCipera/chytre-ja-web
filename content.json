@@ -291,6 +291,21 @@
             "linkText": "Stáhnout PDF"
         },
         {
+            "id": "checklist-pdf-002-kuchta",
+            "type": "pdf",
+            "access": "free",
+            "published": true,
+            "icon": "fas fa-file-pdf text-red-500",
+            "title": "Kuchařka skvělých receptů",
+            "description": "Uvařte si podle skvělé kuchařky chutná jídla.",
+            "tags": [
+                "pdf",
+                "TOC"
+            ],
+            "url": "/materialy/kuchta.pdf",
+            "linkText": "Stáhnout PDF"
+        },
+        {
             "id": "checklist-interactive-001",
             "type": "interactive_checklist",
             "access": "free",
@@ -407,24 +422,24 @@
             "definition": "Využití zdrojů mimo omezení ve větším rozsahu, než si vyžaduje systémové omezení. Výsledkem je nadbytečná rozpracovanost či zásoby hotových výrobků."
         },
         {
-            "term": "Nárazník (Buffer)",
-            "definition": "Materiál nebo čas, potřebný k podpoře průtoku a včasného ukončení projektů. Udržuje se u omezení, v bodech sloučení a v místech expedice."
-        },
-        {
-            "term": "Řízení nárazníků (Buffer Management)",
-            "definition": "Proces, ve kterém je řízení všech toků ve výrobě dáno plánovaným obsahem nárazníků. Zabraňuje nečinnosti omezení a opožděným dodávkám."
-        },
-        {
-            "term": "Omezení (Constraint)",
-            "definition": "Jakýkoli prvek nebo činitel, který brání systému dosahovat svého cíle ve větším množství. Může být fyzické (stroj) nebo manažerské (pravidlo)."
-        },
-        {
-            "term": "Řídící body (Control Points)",
-            "definition": "Strategická místa ve výrobě (uvolnění materiálu, omezení, expedice), která zjednodušují plánování a řízení. Ostatní pracoviště se řídí zásadou: „Pracuj, pokud máš práci“."
+            "term": "Analýza VAT",
+            "definition": "Postup, který slouží k popisu obecného toku materiálu od počátečních surovin k hotovému výrobku. Umožňuje hledat a řídit systém v jeho řídících bodech."
         },
         {
             "term": "Bod sloučení",
-            "definition": "Místo, kde dochází ke společné montáži dílů, které prošly omezením, a dílů, které omezením neprošly."
+            "definition": "Řídící bod, ve kterém dochází ke společné montáži dílů, které prošly omezením, a dílů, které omezením neprošly."
+        },
+        {
+            "term": "Bod rozdělení",
+            "definition": "Řídící bod, v němž lze společný díl nebo sestavu nasměrovat k více různým konečným výrobkům."
+        },
+        {
+            "term": "Buben (Drum)",
+            "definition": "Metafora pro omezení systému, které udává rytmus a takt celému výrobnímu závodu, podobně jako buben v armádě."
+        },
+        {
+            "term": "Buben, nárazník, lano (DBR)",
+            "definition": "Obecný nástroj pro řízení zdrojů s cílem maximalizovat průtok. Buben udává takt, Nárazníky chrání před nahodilostí a Lano řídí uvolňování materiálu."
         },
         {
             "term": "Kritický řetěz (Critical Chain)",
@@ -435,24 +450,112 @@
             "definition": "Nástroj pro plánování a řízení projektových činností, který používá nárazníky ke zvýšení úspěšnosti projektů."
         },
         {
-            "term": "Strom současné reality (CRT)",
-            "definition": "Logický nástroj, který používá vztah příčina-následek k nalezení klíčových příčin problémů v systému."
+            "term": "Nadbytečná kapacita",
+            "definition": "Situace, v níž kapacita neomezujícího prvku převyšuje produktivní i ochrannou kapacitu, potřebnou k dosažení stanoveného průtoku omezením."
         },
         {
-            "term": "Bod rozdělení",
-            "definition": "Místo, v němž lze společný díl nebo sestavu nasměrovat k více různým konečným výrobkům."
+            "term": "Nadbytečné zásoby",
+            "definition": "Jakékoli zásoby v systému, které převyšují minimální množství potřebné k dosažení požadovaného průtoku nebo k naplnění plánu dodávek."
         },
         {
-            "term": "Buben (Drum)",
-            "definition": "Omezení systému, které udává rytmus a takt celému výrobnímu závodu, podobně jako buben v armádě."
+            "term": "Nárazník (Buffer)",
+            "definition": "Materiál nebo čas, potřebný k podpoře průtoku a včasného ukončení projektů. Udržuje se u omezení, v bodech sloučení a v místech expedice."
         },
         {
-            "term": "Buben, nárazník, lano (DBR)",
-            "definition": "Obecný nástroj pro řízení zdrojů s cílem maximalizovat průtok. Buben udává takt, Nárazníky chrání před nahodilostí a Lano řídí uvolňování materiálu."
+            "term": "Nečinná kapacita",
+            "definition": "Kapacita, která není v řetězci zdrojů obecně využívána. Sestává z kapacity ochranné a nadbytečné."
+        },
+        {
+            "term": "Nečinné zásoby",
+            "definition": "Zásoby, které nejsou v řetězci zdrojů obecně využívány. Sestávají z ochranných zásob a nadbytečných zásob."
+        },
+        {
+            "term": "Omezení (Constraint)",
+            "definition": "Jakýkoli prvek nebo činitel, který brání systému dosahovat svého cíle ve větším množství. Může být fyzické (stroj) nebo manažerské (pravidlo)."
+        },
+        {
+            "term": "Ochranná kapacita",
+            "definition": "Dané množství kapacity zdrojů, jež nejsou omezením, a které chrání omezení před statistickou proměnlivostí (poruchy, problémy s kvalitou)."
+        },
+        {
+            "term": "Ochranné zásoby",
+            "definition": "Množství zásob, které je ve vztahu k ochranné kapacitě potřebné k docílení stanoveného průtoku omezením."
+        },
+        {
+            "term": "Pět kroků pro zaměření",
+            "definition": "Proces neustálého zvyšování zisku organizace tím, že se neustále hodnotí výrobní systém a marketingový mix. 1. Najděte omezení. 2. Využijte ho. 3. Podřiďte vše ostatní. 4. Zvyšte kapacitu. 5. Vraťte se na začátek."
+        },
+        {
+            "term": "Politické omezení",
+            "definition": "Omezení, které není fyzické povahy. Zahrnuje celý systém měření, metod i podvědomí lidí, které předurčuje rozhodování podniku."
+        },
+        {
+            "term": "Produktivní kapacita",
+            "definition": "Maximální výstupní kapacita zdroje nebo řady zdrojů nebo tržní poptávka po daném zdroji za jednotku času."
+        },
+        {
+            "term": "Provozní náklady",
+            "definition": "Množství peněz, které podnik spotřebovává za jednotku času k tomu, aby přeměnil zásoby na tržby."
+        },
+        {
+            "term": "Provozní měřítka TOC",
+            "definition": "Použití průtoku, investic a provozních nákladů jako měřítek, která propojují manažerská rozhodnutí se ziskem firmy."
+        },
+        {
+            "term": "Průtok",
+            "definition": "Míra, kterou systém (podnik) generuje peníze prostřednictvím tržeb. Je odlišný pojem než výstup procesu."
+        },
+        {
+            "term": "Řídící body (Control Points)",
+            "definition": "Strategická místa ve výrobě (uvolnění materiálu, omezení, expedice), která zjednodušují plánování a řízení."
+        },
+        {
+            "term": "Řízení nárazníků (Buffer Management)",
+            "definition": "Proces, ve kterém je řízení všech toků ve výrobě dáno plánovaným obsahem nárazníků. Zabraňuje nečinnosti omezení a opožděným dodávkám."
         },
         {
             "term": "Rozvrh bubnu",
             "definition": "Podrobný rozvrh výroby závodu, který udává rytmus celému systému a slaďuje požadavky zákazníků s omezeními."
+        },
+        {
+            "term": "Strom budoucí reality (FRT)",
+            "definition": "Logický nástroj sloužící k vývoji a zkoušení potenciálních řešení před jejich realizací."
+        },
+        {
+            "term": "Strom předpokladů (PRT)",
+            "definition": "Logický nástroj sloužící k nalezení překážek, jež brání realizaci řešení nebo nápadu."
+        },
+        {
+            "term": "Strom přechodu (TRT)",
+            "definition": "Logický nástroj, který se používá pro hledání a časové uspořádání činností, potřebných k dosažení cíle."
+        },
+        {
+            "term": "Strom současné reality (CRT)",
+            "definition": "Logický nástroj, který používá vztah příčina-následek k nalezení klíčových příčin problémů v systému."
+        },
+        {
+            "term": "Teorie omezení (TOC)",
+            "definition": "Manažerská filosofie, rozvinutá Dr. Eliyahu M. Goldrattem, kterou je možno rozčlenit do tří oblastí - logistika, měření výkonnosti a logické myšlení."
+        },
+        {
+            "term": "Účetnictví založené na teorii omezení",
+            "definition": "Nákladový a manažerský účetní systém, který dělí náklady a výnosy do tří oblastí - průtok, zásoby a provozní náklady. Nemotivuje k vytváření zásob."
+        },
+        {
+            "term": "Využití",
+            "definition": "Poměr času, který zdroj potřebuje k pokrytí potřeb omezení, k celkovému času, jenž má zdroj k dispozici."
+        },
+        {
+            "term": "Vypařující se oblak",
+            "definition": "Logický nástroj, jehož úkolem je odhalit předpoklady, jenž jsou spjaté s konfliktem nebo problémem, a nalézt řešení."
+        },
+        {
+            "term": "Výrobková struktura",
+            "definition": "Posloupnost operací, jimiž procházejí díly v procesu výroby hotového výrobku."
+        },
+        {
+            "term": "Zásoby",
+            "definition": "Veškeré zboží, nakupované za účelem dalšího prodeje. Zahrnují dokončenou i rozpracovanou výrobu i materiály a jsou vždy oceněny jen nákupní cenou."
         }
     ],
     "termsContent": "<h1 class=\"text-3xl font-bold text-gray-800 mb-6 text-center\">Obchodní podmínky</h1><p> <h2>1. Úvodní ustanovení</h2><p>Tyto obchodní podmínky blíže vymezují a upřesňují práva a povinnosti kupujících a prodávajícího.</p><p>Prodávajícím je společnost ITING s.r.o. se sídlem Vančurova 2710, 544 01 Dvůr Králové nad Labem, zapsaná u Krajského Soudu v Hradci Králové, odd. C, vložka 18164 3, IČO: 25970631, DIČ: CZ25970631, plátce DPH (dále jen „prodávající“).</p><p>Kupujícím se pro účely těchto všeobecných obchodních podmínek rozumí zákazník - fyzická nebo právnická osoba. Tyto obchodní podmínky specifikují kupní smlouvu, jejímž předmětem je prodej on-line kurzů, živých seminářů a workshopů, webinářů, e-booků a individuálních služeb, kterou strany uzavírají prostřednictvím webových stránek www.iting.cz (dále jen předmět koupě).</p><p>Předmět koupě je produktem duševního vlastnictví, a proto je zakázáno jakékoliv šíření nebo poskytování třetím osobám bez souhlasu autora. Uzavřením kupní smlouvy kupující přijímá, že jakékoliv použití informací z předmětu koupě a úspěchy či neúspěchy z toho plynoucí, jsou pouze v rukou kupujícího a autor za ně nenese žádnou odpovědnost. V předmětu koupě může kupující najít informace o produktech nebo službách třetích osob. Tyto informace jsou pouze doporučením a vyjádřením názoru k této tematice.</p><h2>2. Předmět smlouvy</h2><h3>2.1 Předmět a plnění smlouvy</h3><p>Předmětem smlouvy je nákup a prodej on-line kurzů, živých kurzů, webinářů, e-booků a individuálních služeb. Jejich specifikace a jednotlivé varianty, včetně obsahu, jsou uvedeny na webových stránkách www.iting.cz.</p><p>Termíny zahájení on-line programů či kurzů, termíny jednotlivých workshopů včetně živých akcí nebo zpřístupnění videí, budou předem zveřejňovány na stránkách www.iting.cz. Zde jsou také obsaženy veškeré informace, týkající se objednávky. Jakékoliv doplňující informace kupující získá na emailové adrese info@iting.cz.</p><p>V případě on-line kurzů po objednání a plném uhrazení platby, nejpozději v den zahájení kurzu, obdrží kupující emailem přístupové údaje do členské sekce, nebo na stránky kurzu. V případě, že kupující tyto přístupové údaje i přes svou platbu neobdrží, sdělí tuto skutečnost prodávajícímu prostřednictvím emailové adresy podpora@iting.cz. Ten je povinen sjednat neprodleně nápravu.</p><h3>2.2 Objednávka</h3><p>Kupující prohlašuje, že se seznámil se všemi informacemi, týkajícími se objednávky, a to na webové adrese www.iting.cz. Kupující objednává předmět koupě vyplněním elektronického formuláře objednávky prostřednictvím webové stránky na www.iting.cz. Kupující je povinen objednávku před jejím odesláním zkontrolovat a případně opravit. Odeslaná objednávka je právně závazná a kupujícímu a prodávajícímu vznikají vzájemná práva a povinnosti, tj. prodávající se zavazuje poskytnout kupujícímu předmět koupě a kupující se zavazuje uhradit kupní cenu.</p><p>Kupující odesláním objednávky stvrzuje, že se seznámil s obchodními podmínkami pro nákup na webové stránce www.iting.cz/obchodni-podminky, a že s nimi souhlasí. Tyto obchodní podmínky, které jsou zároveň zveřejněné na webových stránkách prodávajícího, jsou nedílnou součástí kupní smlouvy, která je uzavřena vyplněním a odesláním objednávky.</p><p>Na základě odeslané objednávky kupující obdrží na e-mail, uvedený v objednávkovém formuláři:</p><ul><li>daňový doklad - fakturu, nebo</li><li>zálohovou fakturu. Ta obsahuje veškeré platební údaje, potřebné k realizaci platby, včetně doby splatnosti. V případě, že nebude zálohová faktura uhrazena po době splatnosti, obdrží kupující do své e-mailové schránky upomínku a výzvu k platbě. Pokud i přesto nebude faktura do 5 dnů uhrazena, bude objednávka stornována. Veškeré dotazy ohledně objednávek a plateb je možné získat na emailové adrese uctarna@iting.cz.</li></ul><h2>3. Cena a daňový doklad</h2><p>V objednávce nebo na webové adrese www.iting.cz najde kupující všechny ceny služeb. Ohledně plateb, prováděných na základě kupní smlouvy, vystaví prodávající kupujícímu daňový doklad-fakturu, který slouží jako doklad o zakoupení produktů a služeb. Tato faktura bude zaslána na e-mail kupujícího, uvedený v objednávce. Prodávající je plátcem DPH.</p><h2>4. Garance a odstoupení od smlouvy</h2><p>Za své produkty ručí prodávající zárukou spokojenosti a garancí vrácení peněz.</p><h3>a) on-line kurzu</h3><p>U on-line kurzů má kupující právo využít garanční doby. Ta trvá 14 dní a začíná běžet vždy v den zahájení kurzu.</p><h3>b) účasti na živé akci - workshopu či semináři</h3><p>Při zrušení účasti více než 30 dní před konáním, obdrží kupující zpět 100% poplatku. Při zrušení 30 - 10 dní před, obdrží 50%. Při zrušení méně než 10 dní před, nebude poplatek vrácen.</p><h2>5. Zabezpečení a odpovědnost</h2><h3>5.1. Zabezpečení</h3><p>Přístup k uživatelskému účtu on-line kurzu je zabezpečen uživatelským jménem a heslem. Kupující je povinen zachovávat mlčenlivost.</p><h3>5.2. Odpovědnost</h3><p>Webové stránky mohou být aktualizovány bez předchozího upozornění.</p><h2>6. Závěrečná ustanovení</h2><p>Tyto obchodní podmínky nabývají účinnosti dne 1. 1. 2020. Prodávající si vyhrazuje právo na změnu těchto obchodních podmínek.</p><h2>7. Ochrana údajů</h2><p>Prodávající se zavazuje plně respektovat důvěrný charakter osobních a firemních dat kupujícího, která jsou zabezpečena proti neautorizovanému přístupu a chráněna proti zneužití. Údaje, které zadává kupující v přihlášce, jsou nezbytné pro jeho identifikaci. Jsou použity k realizaci celého obchodu, včetně nezbytných účetních operací, vystavení daňových dokladů, identifikaci bezhotovostních plateb a pro komunikaci s kupujícím. Detailní osobní data i údaje o nákupech kupujícího jsou ukládány v databázi s přísným zabezpečením proti zneužití a nejsou poskytovány třetím stranám.</p><h2>8. Závěrečná ustanovení</h2><p>Tyto obchodní podmínky nabývají účinnosti dne 1. 1. 2020. Informace jsou sdělovány prostřednictvím webových stránek www.iting.cz, popřípadě dalšími informačními kanály. Prodávající si vyhrazuje právo na změnu těchto obchodních podmínek.</p>",

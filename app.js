@@ -154,6 +154,14 @@ function showErrorMessage(elementId, message) {
   if (element) element.innerText = message;
 }
 
+function showForgotPasswordMessage(message, isError = false) {
+  const element = document.getElementById('forgot-password-message');
+  if (element) {
+    element.innerText = message;
+    element.className = `mt-2 text-center ${isError ? 'text-red-500' : 'text-green-600'}`;
+  }
+}
+
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');
 
@@ -208,20 +216,23 @@ function handleForgotPassword(event) {
   event.preventDefault();
   const email = document.getElementById('email-address').value;
   if (!email) {
-    showErrorMessage('error-message', 'Zadejte prosím váš e-mail.');
+    showForgotPasswordMessage('Zadejte prosím váš e-mail.', true);
     return;
   }
-  showErrorMessage('error-message', '');
+  showForgotPasswordMessage('');
   sendPasswordResetEmail(auth, email)
-    .then(() => alert('Instrukce pro obnovu hesla byly odeslány.'))
-    .catch(() => showErrorMessage('error-message', 'Nepodařilo se odeslat e-mail.'));
+    .then(() => {
+      showForgotPasswordMessage('Instrukce pro obnovu hesla byly odeslány na váš e-mail.');
+    })
+    .catch(() => {
+      showForgotPasswordMessage('Nepodařilo se odeslat e-mail. Zkontrolujte prosím adresu.', true);
+    });
 }
 
 function handleLogout() {
   const messagesContainer = document.getElementById('chat-messages');
   if (messagesContainer) {
-    messagesContainer.innerHTML = '';
-    addChatMessage("Dobrý den! Jsem AI Orchestrátor. Zadejte prosím svůj požadavek.");
+    messagesContainer.innerHTML = ''; // Reset bez počáteční zprávy
   }
   signOut(auth);
 }
@@ -239,50 +250,113 @@ function addChatMessage(message, sender = 'ai') {
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
+function updateMicIcon() {
+  const chatInput = document.getElementById('chat-input');
+  const chatMicButton = document.getElementById('chat-mic-button');
+  if (chatInput && chatMicButton) {
+    if (chatInput.value.trim() === '') {
+      chatMicButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+            `;
+    } else {
+      chatMicButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            `;
+    }
+  } else {
+    console.error('Element chatInput nebo chatMicButton nebyl nalezen v DOM.');
+  }
+}
+
+function handleMicSend() {
+  const chatInput = document.getElementById('chat-input');
+  if (chatInput) {
+    const userMessage = chatInput.value.trim();
+    if (userMessage && chatInput.value.trim() !== '') {
+      addChatMessage(userMessage, 'user');
+      chatInput.value = '';
+      updateMicIcon(); // Reset ikony zpět na mikrofon
+      setTimeout(() => {
+        addChatMessage("Rozumím. Zpracovávám váš požadavek...", 'ai');
+      }, 1000);
+    }
+  } else {
+    console.error('Element chatInput nebyl nalezen v DOM.');
+  }
+}
+
 // Napojení posluchačů na elementy
 loginForm.addEventListener('submit', handleLogin);
 registerForm.addEventListener('submit', handleRegisterSubmit);
-document.getElementById('show-register-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  showView('register');
-});
-document.getElementById('show-login-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  showView('login');
-});
-document.getElementById('forgot-password-link').addEventListener('click', handleForgotPassword);
-document.getElementById('logout-button').addEventListener('click', handleLogout);
-document.getElementById('terms-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  showView('terms');
-});
-document.getElementById('privacy-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  showView('privacy');
-});
+if (document.getElementById('show-register-link')) {
+  document.getElementById('show-register-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('register');
+  });
+} else {
+  console.error('Element show-register-link nebyl nalezen v DOM.');
+}
+if (document.getElementById('show-login-link')) {
+  document.getElementById('show-login-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('login');
+  });
+} else {
+  console.error('Element show-login-link nebyl nalezen v DOM.');
+}
+if (document.getElementById('forgot-password-link')) {
+  document.getElementById('forgot-password-link').addEventListener('click', handleForgotPassword);
+} else {
+  console.error('Element forgot-password-link nebyl nalezen v DOM.');
+}
+if (document.getElementById('logout-button')) {
+  document.getElementById('logout-button').addEventListener('click', handleLogout);
+} else {
+  console.error('Element logout-button nebyl nalezen v DOM.');
+}
+if (document.getElementById('terms-link')) {
+  document.getElementById('terms-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('terms');
+  });
+} else {
+  console.error('Element terms-link nebyl nalezen v DOM.');
+}
+if (document.getElementById('privacy-link')) {
+  document.getElementById('privacy-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('privacy');
+  });
+} else {
+  console.error('Element privacy-link nebyl nalezen v DOM.');
+}
 
-const chatSendButton = document.getElementById('chat-send-button');
 const chatInput = document.getElementById('chat-input');
-const handleChatMessageSend = () => {
-  const userMessage = chatInput.value.trim();
-  if (userMessage) {
-    addChatMessage(userMessage, 'user');
-    chatInput.value = '';
-    setTimeout(() => {
-      addChatMessage("Rozumím. Zpracovávám váš požadavek...", 'ai');
-    }, 1000);
-  }
-};
-chatSendButton.addEventListener('click', handleChatMessageSend);
-chatInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    handleChatMessageSend();
-  }
-});
+const chatMicButton = document.getElementById('chat-mic-button');
+if (chatInput) {
+  chatInput.addEventListener('input', updateMicIcon);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleMicSend();
+    }
+  });
+} else {
+  console.error('Element chatInput nebyl nalezen v DOM.');
+}
+if (chatMicButton) {
+  chatMicButton.addEventListener('click', handleMicSend);
+} else {
+  console.error('Element chatMicButton nebyl nalezen v DOM.');
+}
 
 // Hlavní kontroler aplikace
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM načten podruhé (kontrola duplicity)');
+  updateMicIcon(); // Inicializace ikony
 });
 onAuthStateChanged(auth, user => {
   console.log("Uživatel přihlášen:", user ? user.email : 'Uživatel odhlášen');

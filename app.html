@@ -112,11 +112,13 @@
         <form id="login-form">
             <div class="mb-4">
                 <label for="email-address" class="block text-gray-700">E-mail</label>
-                <input id="email-address" type="email" class="w-full px-3 py-2 border rounded-lg">
+                <input id="email-address" type="email" class="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Zadejte svůj e-mail">
             </div>
             <div class="mb-4">
                 <label for="password" class="block text-gray-700">Heslo</label>
-                <input id="password" type="password" class="w-full px-3 py-2 border rounded-lg">
+                <input id="password" type="password" class="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Zadejte své heslo">
             </div>
             <div id="error-message" class="text-red-500 mb-4"></div>
             <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Přihlásit
@@ -125,32 +127,35 @@
         <p class="mt-4 text-center">
             Zapomenuté heslo? <a href="#" id="forgot-password-link" class="text-blue-600 hover:underline">Obnovit</a>
         </p>
-        <p class="mt-4 text-center">
-            Ještě nemáte účet? <a href="#" id="show-register-link" class="text-blue-600 hover:underline">Zaregistrujte
-                se</a>
+        <p class="mt-2 text-center">
+            Nemáte účet? <a href="#" id="show-register-link" class="text-blue-600 hover:underline">Zaregistrovat se</a>
         </p>
+        <div id="forgot-password-message" class="mt-2 text-center text-green-600"></div>
     </div>
 
     <div id="register-view" class="hidden max-w-md mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrace</h1>
-        <p class="mb-4 text-gray-600 text-center">Vytvořit nový účet</p>
+        <p class="mb-4 text-gray-600 text-center">Vytvořte si nový účet</p>
         <p class="mb-4 text-gray-600 text-center">Vyplňte údaje pro vstup do Chytrého Já.</p>
         <form id="register-form">
             <div class="mb-4">
                 <label for="register-email" class="block text-gray-700">E-mail</label>
-                <input id="register-email" type="email" class="w-full px-3 py-2 border rounded-lg">
+                <input id="register-email" type="email" class="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Zadejte svůj e-mail">
             </div>
             <div class="mb-4">
                 <label for="register-password" class="block text-gray-700">Heslo</label>
-                <input id="register-password" type="password" class="w-full px-3 py-2 border rounded-lg">
+                <input id="register-password" type="password" class="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Zadejte heslo">
             </div>
             <div class="mb-4">
                 <label for="password-confirm" class="block text-gray-700">Potvrzení hesla</label>
-                <input id="password-confirm" type="password" class="w-full px-3 py-2 border rounded-lg">
+                <input id="password-confirm" type="password" class="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Potvrďte heslo">
             </div>
             <div id="register-error-message" class="text-red-500 mb-4"></div>
             <p class="text-gray-600 text-sm mb-4">
-                Stiskem "Zaregistrovat se" souhlasíte s
+                Stiskem „Zaregistrovat se“ souhlasíte s
                 <a href="#" id="terms-link" class="text-blue-600 hover:underline">obchodními podmínkami</a>
                 a
                 <a href="#" id="privacy-link" class="text-blue-600 hover:underline">zpracováním osobních údajů</a>.
@@ -164,22 +169,25 @@
     </div>
 
     <div id="chat-view" class="hidden max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Chat s AI asistentem</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Chytré Já</h1>
         <p class="mb-4 text-gray-600 text-center">Vítejte, <span id="user-email">Uživatel</span>!</p>
-        <div id="chat-messages" class="mb-4 h-96 overflow-y-auto">
-            <div class="flex justify-start">
-                <div class="max-w-lg p-3 rounded-lg shadow-md bg-white text-gray-800">
-                    Dobrý den! Jsem AI Orchestrátor. Zadejte prosím svůj požadavek.
-                </div>
-            </div>
+        <div class="flex justify-start mb-4">
+            <div class="max-w-lg p-3 rounded-lg shadow-md bg-white text-gray-800">Zadejte prosím svůj požadavek.</div>
         </div>
-        <div class="flex">
-            <input id="chat-input" type="text" class="flex-1 px-3 py-2 border rounded-l-lg">
-            <button id="chat-send-button"
-                class="bg-blue-600 text-white py-2 px-4 rounded-r-lg hover:bg-blue-700">Odeslat</button>
+        <div id="chat-messages" class="mb-4 h-96 overflow-y-auto"></div>
+        <div class="flex items-center">
+            <input id="chat-input" type="text" class="flex-1 px-3 py-2 border rounded-l-lg"
+                placeholder="Napište zprávu">
+            <button id="chat-mic-button" class="p-2 bg-transparent border border-gray-200 hover:bg-gray-100 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+            </button>
         </div>
-        <button id="logout-button" class="mt-4 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">Odhlásit
-            se</button>
+        <button id="logout-button"
+            class="mt-4 p-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 w-auto">Odhlásit</button>
     </div>
 
     <div id="terms-view" class="hidden max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
