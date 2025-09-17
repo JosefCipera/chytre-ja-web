@@ -228,13 +228,30 @@
             "contentUrl": "/clanky/erp-a-cihlova-zed.md"
         },
         {
+            "id": "looker-report-001",
+            "type": "integrated_page",
+            "view_id": "looker-report-view",
+            "published": true,
+            "access": "free",
+            "icon": "fas fa-chart-pie text-orange-500",
+            "title": "Looker Report: Finanční stabilita",
+            "description": "Klíčové ukazatele pro posouzení finanční stability firmy.",
+            "url": "https://lookerstudio.google.com/embed/reporting/d6b45af6-e181-4bb7-b9bc-6e1271b9d989/page/YuTKF",
+            "linkText": "Otevřít report",
+            "tags": [
+                "dashboard",
+                "report",
+                "looker"
+            ]
+        },
+        {
             "id": "video-001",
             "type": "video",
             "access": "free",
             "published": true,
             "icon": "fas fa-video text-red-500",
-            "title": "Šablona: Video",
-            "description": "Takhle na video?",
+            "title": "Plánovač Karel",
+            "description": "Zjistěte, jak se dá plánovat výroba v průtokovém světě.",
             "url": "https://www.youtube.com/watch?v=LRXSXmQ5kZU&t=1s",
             "linkText": "Zobrazit video",
             "tags": [
@@ -245,12 +262,12 @@
         {
             "id": "image-001",
             "type": "image",
-            "access": "premium",
+            "access": "free",
             "published": true,
             "icon": "fas fa-image text-indigo-500",
-            "title": "Šablona: Obrázek/GIF",
+            "title": "AI specializovaný asistent",
             "description": "Popis obrázku nebo animovaného GIFu, ideální pro vizuální schémata.",
-            "url": "/images/strateg-192.png",
+            "url": "/images/avatar_chytre_ja.png",
             "linkText": "Zobrazit obrázek",
             "tags": [
                 "obrázek",
@@ -363,7 +380,7 @@
             "icon": "fas fa-podcast text-purple-500",
             "title": "Šablona: Audio/Podcast",
             "description": "Popis audio nahrávky. Skvělé pro rozhovory nebo podcasty.",
-            "url": "/materialy/vas-podcast.mp3",
+            "url": "/materialy/eliska.mp3",
             "linkText": "Poslechnout audio",
             "tags": [
                 "podcast"
@@ -394,10 +411,28 @@
             "icon": "fas fa-tasks text-teal-500",
             "title": "Plán výroby",
             "description": "Detailní tabulka se zakázkami, termíny a vytížením pracovišť.",
+            "url": "table-production.html",
             "linkText": "Otevřít plán",
             "tags": [
                 "dashboard",
                 "výroba"
+            ]
+        },
+        {
+            "id": "produktivita-chart-001",
+            "type": "iframe_view",
+            "published": true,
+            "access": "free",
+            "view_id": "iframe_view",
+            "icon": "fas fa-chart-line text-green-500",
+            "title": "Minidashboard: Produktivita",
+            "description": "Interaktivní graf zobrazující vývoj skutečné a plánované produktivity v čase.",
+            "url": "produktivita.html",
+            "linkText": "Zobrazit dashboard",
+            "tags": [
+                "dashboard",
+                "produktivita",
+                "graf"
             ]
         },
         {
@@ -413,7 +448,7 @@
                 "článek"
             ],
             "contentTitle": "Nadpis článku zobrazeného v aplikaci",
-            "contentBody": "<p>...</p>"
+            "contentBody": "<p>Test na článek napsaný přímo v aplikaci se bude formátovat podle html....</p>"
         }
     ],
     "dictionary": [

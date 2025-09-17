@@ -1,0 +1,74 @@
+[
+    {
+        "ID": 1,
+        "Měsíc": "2022-11-30",
+        "Produktivita skutečnost": 1.9,
+        "Produktivita plán": 1.5
+    },
+    {
+        "ID": 2,
+        "Měsíc": "2022-12-31",
+        "Produktivita skutečnost": 1.5,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 3,
+        "Měsíc": "2023-01-31",
+        "Produktivita skutečnost": 0.8,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 4,
+        "Měsíc": "2023-02-28",
+        "Produktivita skutečnost": 1.6,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 5,
+        "Měsíc": "2023-03-31",
+        "Produktivita skutečnost": 0.8,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 6,
+        "Měsíc": "2023-04-30",
+        "Produktivita skutečnost": 0.5,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 7,
+        "Měsíc": "2023-05-31",
+        "Produktivita skutečnost": 1.0,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 8,
+        "Měsíc": "2023-06-30",
+        "Produktivita skutečnost": 1.4,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 9,
+        "Měsíc": "2023-07-31",
+        "Produktivita skutečnost": 1.7,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 10,
+        "Měsíc": "2023-08-31",
+        "Produktivita skutečnost": 2.0,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 11,
+        "Měsíc": "2023-09-30",
+        "Produktivita skutečnost": 1.0,
+        "Produktivita plán": 1.2
+    },
+    {
+        "ID": 12,
+        "Měsíc": "2023-10-31",
+        "Produktivita skutečnost": 2.8,
+        "Produktivita plán": 1.2
+    }
+]

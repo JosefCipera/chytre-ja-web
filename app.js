@@ -57,6 +57,68 @@ function removeH1(html) {
   }
 }
 
+// Funkce pro zobrazení TOC slovníku
+function displayTocDictionary(searchTerm = '') { // PŘIDÁN parametr
+  const libraryContentEl = document.getElementById('library-content');
+  if (libraryContentEl && Array.isArray(contentData.dictionary)) {
+
+    // PŘIDÁNO: Filtrování dat na základě hledaného výrazu
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    // ZMĚNA: Hledáme už jen v 'term'
+    const filteredDictionary = contentData.dictionary.filter(item => {
+      return item.term.toLowerCase().includes(lowerCaseSearchTerm);
+    });
+
+    if (filteredDictionary.length === 0) return; // Pokud nic nenajdeme, nic nezobrazíme
+
+    let html = '<dl class="grid grid-cols-1 gap-2 mt-4 pt-4 border-t">'; // Přidán odstup a oddělovač
+    // ZMĚNA: Používáme vyfiltrovaná data
+    filteredDictionary.forEach(item => {
+      html += `<dt class="font-semibold">${item.term}</dt><dd class="ml-4">${item.definition}</dd>`;
+    });
+    html += '</dl>';
+    libraryContentEl.innerHTML += DOMPurify.sanitize(html);
+  } else {
+    console.warn('TOC slovník není k dispozici nebo není ve správném formátu.');
+  }
+}
+
+// Načtení a zobrazení obsahu knihovny
+function displayLibraryContent(searchTerm = '') { // PŘIDÁN parametr
+  const libraryContentEl = document.getElementById('library-content');
+  if (libraryContentEl) {
+    let html = '';
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    // Filtrování a zobrazení neplacené části
+    if (contentData.library && contentData.library.free) {
+      const filteredFree = contentData.library.free.filter(item =>
+        item.title.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+
+      filteredFree.forEach(item => {
+        html += `<div class="mb-4 p-4 border rounded-lg"><h3 class="text-xl font-semibold">${item.title}</h3><p>${item.description}</p></div>`;
+      });
+    }
+
+    // Filtrování a zobrazení placené části
+    if (contentData.library && contentData.library.premium) {
+      const filteredPremium = contentData.library.premium.filter(item =>
+        item.title.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+
+      filteredPremium.forEach(item => {
+        html += `<div class="mb-4 p-4 border rounded-lg bg-gray-100"><h3 class="text-xl font-semibold">${item.title}</h3><p>${item.description}</p><p class="text-red-500">Vyžaduje premium předplatné</p></div>`;
+      });
+    }
+
+    libraryContentEl.innerHTML = DOMPurify.sanitize(html); // Nahradí stávající obsah novým
+
+  } else {
+    console.error('Element library-content nebyl nalezen.');
+  }
+}
+
 // Načtení content.json
 console.log('Spouštím fetch content.json');
 fetch('content.json')
@@ -73,8 +135,10 @@ fetch('content.json')
       contentData = data;
       const termsContentEl = document.getElementById('terms-content');
       const privacyContentEl = document.getElementById('privacy-content');
+      const libraryContentEl = document.getElementById('library-content');
       console.log('terms-content element:', termsContentEl);
       console.log('privacy-content element:', privacyContentEl);
+      console.log('library-content element:', libraryContentEl);
       if (termsContentEl) {
         let termsText = contentData.termsContent ||
           (contentData.assistants?.strateg?.pages?.[0]?.content) ||
@@ -119,6 +183,11 @@ fetch('content.json')
           console.log('privacy-content textContent po 1s:', privacyContentEl.textContent.substring(0, 200) + '...');
         }, 1000);
       }
+      if (libraryContentEl) {
+        // ZMĚNA: Voláme novou řídící funkci
+        updateLibraryView();
+        // displayLibraryContent();
+      }
     } catch (e) {
       throw new Error('Chyba při parsování JSON: ' + e.message);
     }
@@ -127,8 +196,10 @@ fetch('content.json')
     console.error('Chyba při načítání content.json:', error);
     const termsContentEl = document.getElementById('terms-content');
     const privacyContentEl = document.getElementById('privacy-content');
+    const libraryContentEl = document.getElementById('library-content');
     if (termsContentEl) termsContentEl.innerHTML = 'Chyba: Obsah obchodních podmínek není k dispozici.';
     if (privacyContentEl) privacyContentEl.innerHTML = 'Chyba: Obsah zásad ochrany osobních údajů není k dispozici.';
+    if (libraryContentEl) libraryContentEl.innerHTML = 'Chyba: Obsah knihovny není k dispozici.';
   });
 
 // Funkce showView musí být globální kvůli onclick v HTML
@@ -139,10 +210,16 @@ function showView(viewId) {
     'register': document.getElementById('register-view'),
     'chat': document.getElementById('chat-view'),
     'terms': document.getElementById('terms-view'),
-    'privacy': document.getElementById('privacy-view')
+    'privacy': document.getElementById('privacy-view'),
+    'library': document.getElementById('library-view')
   };
   for (const [id, view] of Object.entries(views)) {
     if (view) view.classList.toggle('hidden', id !== viewId);
+  }
+  if (viewId === 'library') {
+    // ZMĚNA: Voláme novou řídící funkci
+    updateLibraryView();
+    // displayLibraryContent(); // Znovu zobrazit obsah knihovny při přepnutí
   }
 }
 
@@ -334,6 +411,14 @@ if (document.getElementById('privacy-link')) {
 } else {
   console.error('Element privacy-link nebyl nalezen v DOM.');
 }
+if (document.getElementById('library-button')) {
+  document.getElementById('library-button').addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('library');
+  });
+} else {
+  console.error('Element library-button nebyl nalezen v DOM.');
+}
 
 const chatInput = document.getElementById('chat-input');
 const chatMicButton = document.getElementById('chat-mic-button');
@@ -358,6 +443,29 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM načten podruhé (kontrola duplicity)');
   updateMicIcon(); // Inicializace ikony
 });
+// --- LOGIKA PRO VYHLEDÁVÁNÍ VE SLOVNÍKU ---
+
+// Funkce, která řídí překreslení obsahu slovníku
+function updateLibraryView() {
+  const searchInput = document.getElementById('library-search-input');
+  const libraryContentEl = document.getElementById('library-content');
+
+  if (!searchInput || !libraryContentEl) return;
+
+  const searchTerm = searchInput.value.trim();
+
+  // Vyčistíme obsah a znovu ho vykreslíme s filtrem
+  libraryContentEl.innerHTML = '';
+  displayLibraryContent(searchTerm);
+  displayTocDictionary(searchTerm);
+}
+
+// Připojení posluchače k vyhledávacímu poli
+const searchInput = document.getElementById('library-search-input');
+if (searchInput) {
+  searchInput.addEventListener('input', updateLibraryView);
+}
+
 onAuthStateChanged(auth, user => {
   console.log("Uživatel přihlášen:", user ? user.email : 'Uživatel odhlášen');
   if (user) {

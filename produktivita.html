@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Produktivity</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f7f7f7;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 95%;
+            height: 95%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chart-container">
+        <canvas id="myChartCanvas"></canvas>
+    </div>
+
+    <script>
+        fetch('produktivita.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Soubor produktivita.json nebyl nalezen (status: ${response.status})`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Požádáme prohlížeč, aby spustil náš kód, až bude připraven kreslit
+                requestAnimationFrame(() => {
+                    const labels = data.map(d => {
+                        const [year, month, day] = d.Měsíc.split('-');
+                        return `${parseInt(day, 10)}.${parseInt(month, 10)}.${year}`;
+                    });
+                    const actualData = data.map(d => d['Produktivita skutečnost']);
+                    const plannedData = data.map(d => d['Produktivita plán']);
+                    const ctx = document.getElementById('myChartCanvas').getContext('2d');
+
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Skutečnost',
+                                data: actualData,
+                                borderColor: 'royalblue',
+                                tension: 0.1,
+                                fill: false
+                            }, {
+                                label: 'Plán',
+                                data: plannedData,
+                                borderColor: 'crimson',
+                                borderDash: [5, 5],
+                                tension: 0.1,
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Vývoj produktivity v čase'
+                                }
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                document.body.innerHTML = `<div style="color: red; font-family: sans-serif; padding: 20px;"><h1>Chyba</h1><p>${error.message}</p></div>`;
+                console.error('Chyba v produktivita.html:', error);
+            });
+    </script>
+</body>
+
+</html>
