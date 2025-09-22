@@ -4,42 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plán výroby - Chytré Já</title>
+    <title>Plán Výroby</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #ffffff;
-        }
-
-        .table-container {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 0;
-        }
-
-        .table-heading {
-            display: block;
-            font-size: 1.125rem;
-            font-weight: 400;
-            color: #6b7280;
-            text-align: left;
-            margin: 0;
-            padding: 0.75rem 1.5rem;
-            background-color: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .table-controls {
-            margin: 1rem 1.5rem;
-            text-align: right;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -47,252 +13,213 @@
 
         th,
         td {
-            padding: 1rem 1.5rem;
+            border: 1px solid black;
+            padding: 8px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-            min-width: 120px;
-            white-space: nowrap;
         }
 
         th {
-            background-color: #f9fafb;
-            font-weight: 600;
-            color: #374151;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            background-color: #f2f2f2;
         }
 
-        th:hover {
-            background-color: #f3f4f6;
+        .ok {
+            background-color: #d4edda;
         }
 
-        th.sort-asc::after {
-            content: ' ▲';
-            font-size: 0.8em;
+        .error {
+            background-color: #f8d7da;
         }
 
-        th.sort-desc::after {
-            content: ' ▼';
-            font-size: 0.8em;
+        #loading {
+            display: none;
+            margin-top: 10px;
+            font-weight: bold;
         }
 
-        tr:hover {
-            background-color: #f3f4f6;
-        }
-
-        td {
-            color: #374151;
-            font-size: 0.9rem;
-        }
-
-        .value-positive {
-            color: #10b981;
-        }
-
-        .value-negative {
-            color: #ef4444;
-        }
-
-        .value-warning {
-            color: #f59e0b;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem;
-        }
-
-        .pagination button {
-            padding: 0.5rem 1rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.25rem;
-            background-color: #ffffff;
-            cursor: pointer;
-        }
-
-        .pagination button:hover {
-            background-color: #f3f4f6;
-        }
-
-        .pagination button:disabled {
-            background-color: #e5e7eb;
-            cursor: not-allowed;
-            opacity: 0.6;
+        button {
+            margin-bottom: 10px;
+            padding: 10px;
         }
     </style>
 </head>
 
 <body>
-    <div class="table-container">
-        <h1 class="table-heading">Plán výroby</h1>
-        <div class="table-controls">
-            <label for="rowsPerPage">Řádků na stránku: </label>
-            <select id="rowsPerPage">
-                <option value="10">10</option>
-                <option value="15" selected>15</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-            </select>
-        </div>
-        <div class="table-responsive">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th data-sort="ID zakázky">ID zakázky</th>
-                        <th data-sort="Název zakázky">Název zakázky</th>
-                        <th data-sort="Vyrobit ks">Vyrobit ks</th>
-                        <th data-sort="Odvedeno ks">Odvedeno ks</th>
-                        <th data-sort="Zbývá vyrobit ks">Zbývá vyrobit ks</th>
-                        <th data-sort="Termín dodání">Termín dodání</th>
-                        <th data-sort="Průběžná doba">Průběžná doba</th>
-                        <th data-sort="Typ zakázky">Typ zakázky</th>
-                        <th data-sort="Stav">Stav</th>
-                        <th data-sort="Časové plnění v %">Časové plnění %</th>
-                        <th data-sort="Zpoždění dny">Zpoždění dny</th>
-                        <th data-sort="Důvod zpoždění">Důvod zpoždění</th>
-                        <th data-sort="Kontrola dat">Kontrola dat</th>
-                        <th data-sort="Brusky minut">Brusky minut</th>
-                        <th data-sort="Soustruhy minut">Soustruhy minut</th>
-                        <th data-sort="Svařování minut">Svařování minut</th>
-                        <th data-sort="Laser minut">Laser minut</th>
-                        <th data-sort="Ohyb minut">Ohyb minut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination">
-            <button id="prevPage">Předchozí</button>
-            <span id="pageInfo"></span>
-            <button id="nextPage">Další</button>
-        </div>
-    </div>
+    <h1>Plán Výroby (načteno z Firebase)</h1>
+    <button onclick="runDataCheck()">Spustit kontrolu dat</button>
+    <div id="loading">Načítám data...</div>
+    <table id="productionTable">
+        <thead>
+            <tr>
+                <th>ID zakázky</th>
+                <th>Název zakázky</th>
+                <th>Vyrobit ks</th>
+                <th>Odvedeno ks</th>
+                <th>Zbývá ks</th>
+                <th>Termín dodání</th>
+                <th>Průběžná doba</th>
+                <th>Typ zakázky</th>
+                <th>Plán. ukončení</th>
+                <th>Plán. zahájení</th>
+                <th>Stav</th>
+                <th>Skut. zahájení</th>
+                <th>Skut. ukončení</th>
+                <th>Čas. plnění (%)</th>
+                <th>Zpoždění (dny)</th>
+                <th>Důvod zpoždění</th>
+                <th>Kontrola dat</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 
-    <script>
-        let tableData = [];
-        let currentPage = 1;
-        let currentSort = { column: null, order: 'asc' };
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-        function excelDateToJSDate(excelDate) {
-            if (!excelDate || isNaN(excelDate)) return "";
-            const date = new Date((excelDate - 25569) * 86400 * 1000);
-            return date.toLocaleDateString('cs-CZ');
-        }
+        // Inicializace Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAKREZsoBZkA1xOQ5ff3XDmiJ88nwSjeOk",
+            authDomain: "chytre-ja-app.firebaseapp.com",
+            projectId: "chytre-ja-app",
+            storageBucket: "chytre-ja-app.firebasestorage.app",
+            messagingSenderId: "65882611642",
+            appId: "1:65882611642:web:53d82914aa07d6677d4783"
+        };
 
-        function renderTable(data, page = 1, rowsPerPage = 15) {
-            currentPage = page;
-            const start = (page - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            const paginatedData = data.slice(start, end);
+        try {
+            const app = initializeApp(firebaseConfig);
+            console.log('Firebase inicializováno');
+            const db = getFirestore(app);
+            let allRows = [];
 
-            const tbody = document.querySelector('#dataTable tbody');
-            tbody.innerHTML = '';
-
-            paginatedData.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row['ID zakázky'] || ''}</td>
-                    <td>${row['Název zakázky'] || ''}</td>
-                    <td class="value-positive">${row['Vyrobit ks'] || 0}</td>
-                    <td>${row['Odvedeno ks'] || 0}</td>
-                    <td class="${(row['Zbývá vyrobit ks'] || 0) > 0 ? 'value-warning' : 'value-positive'}">${row['Zbývá vyrobit ks'] || 0}</td>
-                    <td>${excelDateToJSDate(row['Termín dodání'])}</td>
-                    <td>${row['Průběžná doba'] || ''}</td>
-                    <td>${row['Typ zakázky'] || ''}</td>
-                    <td>${row['Stav'] || ''}</td>
-                    <td class="${(row['Časové plnění v %'] || 0) < 100 ? 'value-negative' : 'value-positive'}">${row['Časové plnění v %'] || ''}%</td>
-                    <td class="${(row['Zpoždění dny'] || 0) > 0 ? 'value-negative' : ''}">${row['Zpoždění dny'] || ''}</td>
-                    <td>${row['Důvod zpoždění'] || ''}</td>
-                    <td class="${row['Kontrola dat'] === 'ok' ? 'value-positive' : 'value-negative'}">${row['Kontrola dat'] || ''}</td>
-                    <td>${row['Brusky minut'] || ''}</td>
-                    <td>${row['Soustruhy minut'] || ''}</td>
-                    <td>${row['Svařování minut'] || ''}</td>
-                    <td>${row['Laser minut'] || ''}</td>
-                    <td>${row['Ohyb minut'] || ''}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            const totalPages = Math.ceil(data.length / rowsPerPage);
-            document.getElementById('pageInfo').textContent = `Strana ${page} z ${totalPages}`;
-            document.getElementById('prevPage').disabled = page === 1;
-            document.getElementById('nextPage').disabled = page === totalPages;
-        }
-
-        function sortTable(column) {
-            if (currentSort.column === column) {
-                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.column = column;
-                currentSort.order = 'asc';
+            // Funkce pro převod Timestamp na DD.MM.YYYY
+            function formatTimestamp(timestamp) {
+                if (!timestamp || !timestamp.toDate) return '';
+                const date = timestamp.toDate();
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`; // Vrátí např. 01.10.2025
             }
 
-            tableData.sort((a, b) => {
-                const valA = a[column] || '';
-                const valB = b[column] || '';
-                const numA = parseFloat(valA);
-                const numB = parseFloat(valB);
-                if (!isNaN(numA) && !isNaN(numB)) {
-                    return currentSort.order === 'asc' ? numA - numB : numB - numA;
-                }
-                return currentSort.order === 'asc'
-                    ? String(valA).localeCompare(String(valB), 'cs-CZ')
-                    : String(valB).localeCompare(String(valA), 'cs-CZ');
-            });
+            // Načtení dat z Firestore
+            async function loadData() {
+                const tableBody = document.getElementById('tableBody');
+                tableBody.innerHTML = '';
+                allRows = [];
+                const loadingDiv = document.getElementById('loading');
+                loadingDiv.innerText = 'Načítám data...';
+                loadingDiv.style.display = 'block';
 
-            document.querySelectorAll('#dataTable th').forEach(th => {
-                th.classList.remove('sort-asc', 'sort-desc');
-                if (th.getAttribute('data-sort') === column) {
-                    th.classList.add(`sort-${currentSort.order}`);
-                }
-            });
+                try {
+                    console.log('Načítám data z kolekce "productionOrders"');
+                    const snapshot = await getDocs(collection(db, 'productionOrders'));
+                    if (snapshot.empty) {
+                        console.warn('Žádné dokumenty v kolekci productionOrders');
+                        loadingDiv.innerText = 'Žádná data k zobrazení';
+                        return;
+                    }
 
-            const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-            renderTable(tableData, 1, rowsPerPage);
+                    snapshot.forEach(doc => {
+                        console.log('Načtený dokument:', doc.id, doc.data());
+                        const data = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${doc.id}</td>
+                            <td>${data.nazevZakazky || ''}</td>
+                            <td>${data.vyrobitKs || ''}</td>
+                            <td>${data.odvedenoKs || ''}</td>
+                            <td>${data.zbyvaKs || ''}</td>
+                            <td>${formatTimestamp(data.terminDodani)}</td>
+                            <td>${data.prubeznaDoba || ''}</td>
+                            <td>${data.typZakazky || ''}</td>
+                            <td>${formatTimestamp(data.planUkonceni)}</td>
+                            <td>${formatTimestamp(data.planZahajeni)}</td>
+                            <td>${data.stav || ''}</td>
+                            <td>${formatTimestamp(data.skutZahajeni)}</td>
+                            <td>${formatTimestamp(data.skutUkonceni)}</td>
+                            <td>${data.casPlneni || ''}</td>
+                            <td>${data.zpozdeniDny || ''}</td>
+                            <td>${data.duvodZpozdeni || ''}</td>
+                            <td class="kontrola-dat"></td>
+                        `;
+                        allRows.push({ id: doc.id, data, row });
+                        tableBody.appendChild(row);
+                    });
+                    console.log('Načteno ' + allRows.length + ' řádků');
+                    loadingDiv.innerText = 'Data načtena';
+                } catch (error) {
+                    console.error('Chyba při načítání dat:', error);
+                    loadingDiv.innerText = 'Chyba při načítání dat: ' + error.message;
+                } finally {
+                    setTimeout(() => { loadingDiv.style.display = 'none'; }, 2000);
+                }
+            }
+
+            // Funkce pro validaci
+            async function runDataCheck() {
+                const loadingDiv = document.getElementById('loading');
+                loadingDiv.innerText = 'Provádím kontrolu dat...';
+                loadingDiv.style.display = 'block';
+
+                try {
+                    const orders = allRows.map(item => ({
+                        iDZakazky: item.id,
+                        data: {
+                            ...item.data,
+                            terminDodani: formatTimestamp(item.data.terminDodani) || item.data.terminDodani
+                        }
+                    }));
+
+                    console.log('Odesílám data na validaci:', orders);
+
+                    const response = await fetch('https://validate-production-data-65882611642.europe-west3.run.app', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orders })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP chyba: ${response.status} ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    console.log('Odpověď z validace:', result);
+
+                    result.detailed_results.forEach(validationResult => {
+                        const rowItem = allRows.find(r => r.id === validationResult.row_id);
+                        if (rowItem) {
+                            const kontrolaCell = rowItem.row.querySelector('.kontrola-dat');
+                            kontrolaCell.innerText = validationResult.kontrola_dat;
+                            if (validationResult.kontrola_dat === 'ok') {
+                                kontrolaCell.classList.remove('error');
+                                kontrolaCell.classList.add('ok');
+                            } else {
+                                kontrolaCell.classList.remove('ok');
+                                kontrolaCell.classList.add('error');
+                            }
+                        } else {
+                            console.error('Nenalezen řádek pro row_id:', validationResult.row_id);
+                        }
+                    });
+                    loadingDiv.innerText = `Kontrola dokončena: ${result.summary.ok_rows} OK, ${result.summary.error_rows} chyb`;
+                } catch (error) {
+                    console.error('Chyba při kontrole dat:', error);
+                    loadingDiv.innerText = `Chyba při validaci: ${error.message}`;
+                } finally {
+                    setTimeout(() => { loadingDiv.style.display = 'none'; }, 3000);
+                }
+            }
+
+            // Přiřazení runDataCheck k globálnímu objektu
+            window.runDataCheck = runDataCheck;
+
+            // Načtení dat při načtení stránky
+            loadData();
+        } catch (error) {
+            console.error('Chyba při inicializaci Firebase:', error);
+            document.getElementById('loading').innerText = 'Chyba při inicializaci Firebase: ' + error.message;
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('production-plan.json?v=' + new Date().getTime())
-                .then(response => {
-                    if (!response.ok) throw new Error('Soubor production-plan.json nenalezen.');
-                    return response.json();
-                })
-                .then(data => {
-                    tableData = data;
-                    const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-                    renderTable(tableData, 1, rowsPerPage);
-                })
-                .catch(error => {
-                    console.error('Chyba při načítání dat plánu výroby:', error);
-                    document.querySelector('#dataTable tbody').innerHTML = `<tr><td colspan="18" style="text-align:center; color: red;">Nepodařilo se načíst data. Zkontrolujte, zda soubor production-plan.json existuje a je ve správném formátu.</td></tr>`;
-                });
-
-            document.querySelectorAll('#dataTable th').forEach(th => {
-                th.addEventListener('click', () => sortTable(th.getAttribute('data-sort')));
-            });
-
-            document.getElementById('prevPage').addEventListener('click', () => {
-                const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-                renderTable(tableData, currentPage - 1, rowsPerPage);
-            });
-
-            document.getElementById('nextPage').addEventListener('click', () => {
-                const rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
-                renderTable(tableData, currentPage + 1, rowsPerPage);
-            });
-
-            document.getElementById('rowsPerPage').addEventListener('change', (e) => {
-                const rowsPerPage = parseInt(e.target.value);
-                renderTable(tableData, 1, rowsPerPage);
-            });
-        });
     </script>
 </body>
 

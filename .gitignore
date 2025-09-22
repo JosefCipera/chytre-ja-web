@@ -1,0 +1,5 @@
+# Ignoruj všechny složky node_modules
+node_modules/
+
+# Ignoruj stažené klíče k Firebase
+serviceAccountKey.json

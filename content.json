@@ -79,32 +79,32 @@
     },
     "faq": [
         {
-            "question": "Co je Chytré Já a jak může pomoci mé firmě?",
-            "answer": "Chytré Já je AI platforma s podporou TOC (Teorie omezení), která pomáhá nejen výrobním firmám řešit problémy, s nimiž si doposud nevěděly rady. Může to být plánování výroby, řízení projektů, odměňování podle průtoku nebo hodnocení přínosů jednotlivých výrobků a služeb. Kromě automatizace a integrace s jinými systémy jako ERP, CRM apod. může fungovat i jako jejich další služba."
+            "question": "Co je Chytré já a jak může pomoci mé firmě?",
+            "answer": "Chytré já je AI platforma s podporou TOC (Teorie omezení), která pomáhá firmám řešit problémy, s nimiž si doposud nevěděly rady. Může to být plánování výroby, řízení projektů, odměňování podle průtoku nebo hodnocení přínosů jednotlivých výrobků a služeb. Kromě automatizace a integrace s jinými systémy jako ERP, CRM apod. může fungovat i jako jejich další služba."
         },
         {
-            "question": "Jaké jsou požadavky na implementaci Chytré Já?",
-            "answer": "Chytré Já je cloudové řešení (PWA a SPA), které nevyžaduje složitou instalaci. Stačí moderní webový prohlížeč a připojení k internetu. Pro projekty na míru nabízíme individuální konzultace a integraci s vašimi systémy."
+            "question": "Jaké jsou požadavky na implementaci Chytré já?",
+            "answer": "Chytré já je cloudové řešení postavené na moderních technologiích jako jsou Progressive Web Application (PWA) a Single Page Application (SPA), pro něž nepotřebujete ani žádný AppMarket. Instalaci provedete jednoduše sami z webové adresy, k níž si zakoupíte přístup. Stačí vám webový prohlížeč a připojení k internetu. Pro projekty na míru nabízíme individuální konzultace a integraci s vašimi systémy."
         },
         {
-            "question": "Je Chytré Já vhodné pro malé firmy?",
-            "answer": "Ano, Chytré Já je škálovatelné a přizpůsobitelné. Nabízíme předplatné pro menší firmy s postupným zaváděním funkcí i komplexní řešení pro větší podniky. Můžete začít se základními funkcemi a rozšiřovat podle potřeb."
+            "question": "Je Chytré já vhodné pro malé firmy?",
+            "answer": "Ano, Chytré já je škálovatelné a přizpůsobitelné. Nabízíme předplatné pro menší firmy s postupným zaváděním funkcí i komplexní řešení pro větší podniky. Můžete začít se základními funkcemi a rozšiřovat podle potřeb."
         },
         {
             "question": "Jak je zajištěna bezpečnost dat?",
-            "answer": "Chytré Já používá nejmodernější šifrovací technologie a pravidelné zálohování dat. Mimo to splňuje požadavky na dlouhodobou ochranu vašich informací v souladu s GDPR."
+            "answer": "Chytré já používá nejmodernější šifrovací technologie a pravidelné zálohování dat. Mimo to splňuje požadavky na dlouhodobou ochranu vašich informací v souladu s GDPR."
         },
         {
-            "question": "Mohu Chytré Já vyzkoušet před nákupem?",
+            "question": "Mohu Chytré já vyzkoušet před nákupem?",
             "answer": "Chytré já je komplexní aplikace (platforma), kde záleží na vašich potřebách. Nejlépe když se s námi spojíte a my vám na konkrétních požadavcích ukážeme, jak s ní pracovat. Pak se můžete rozhodnout, zda ji chcete koupit."
         },
         {
             "question": "Co přesně získám ve verzi zdarma?",
-            "answer": "Ve verzi zdarma můžete využít kteréhokoliv z našich AI asistentů k provedení úvodní diagnostiky. Pomohou vám pojmenovat a upřesnit klíčový problém (symptom), který vaši firmu nejvíce brzdí. Získáte tak cenný první vhled a přístup do naší knihovny se základními materiály."
+            "answer": "Ve verzi zdarma získáte přístup do našeho FlowHubu, kde najdete základní informace o Teorii omezení (TOC). Zároveň uvidíte, co nabízíme ve verzi premium, kterou si můžete zakoupit dnes už klasicky formou předplatného. FlowHub slouží primárně k získání povědomí o TOC ještě dříve než se rozhodnete jej využívat v praxi."
         },
         {
             "question": "Jak se liší Premium verze?",
-            "answer": "Premium verze jde do hloubky. Neřeší jen symptomy, ale pomáhá vám odhalit skutečné kořenové příčiny vašich problémů pomocí pokročilých nástrojů a metodiky TOC. Získáte přístup k personalizovaným řešením a strategiím pro maximální růst."
+            "answer": "Premium verze obsahuje další materiály, videa, audio nahrávky atd., nejen teoretické, ale i praktické příklady a zkušenosti ze zavádění včetně přínosů."
         }
     ],
     "library": [

@@ -1,0 +1,4 @@
+iDZakazky,nazevZakazky,vyrobitKs,odvedenoKs,zbyvaVyrobitKs,terminDodani,prubeznaDoba,typZakazky,planovaneUkonceni,planovaneZahajeni,stav,skutecneZahajeni,skutecneUkonceni,casovePlneniV,zpozdeniDny,duvodZpozdeni,kontrolaDat
+22OP000100000208/00001_x,Zakázka A,8,0,8,2024-10-20,2,zakázka,2024-10-20,,plánovaná,,,,,,ok
+22OP000100000191/00001_x,Zakázka B,40,4,36,2024-10-21,5,zakázka,2024-10-21,,plánovaná,,,,,,ok
+22OP000100000176/00001_x,Zakázka C,10,1,9,2024-10-07,4,zakázka,2024-10-07,,plánovaná,,,,,,ok
