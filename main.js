@@ -454,68 +454,101 @@ function updateInfoView() {
   pageCounter.innerText = `Stránka ${currentPage + 1} z ${assistant.pages.length}`;
 }
 
-function launchAssistant(assistantId) {
-  const assistant = contentData.assistants[assistantId];
-  if (!assistant) { console.error(`Assistant ${assistantId} not found in content data.`); return; };
+// =====================================================================
+// === NOVÁ LOGIKA PRO OCHUTNÁVKOVÝ CHAT S PŘESMĚROVÁNÍM DO KNIHOVNY ===
+// =====================================================================
+
+// === LOGIKA PRO OCHUTNÁVKOVÝ CHAT ===
+
+const assistantDialogs = {
+  'vyroba': {
+    name: 'AI asistent Výroba',
+    initMessage: 'Dobrý den. Vím, že ve výrobě je mnoho problémů, které je potřeba řešit. S čím byste potřebovali pomoct nejvíce?',
+    replies: [
+      { text: 'Plnění termínů', searchTerm: 'termíny' },
+      { text: 'Vytěžování kapacit', searchTerm: 'kapacita' },
+      { text: 'Produktivita', searchTerm: 'produktivita' }
+    ]
+  },
+  'finance': {
+    name: 'AI asistent Finance',
+    initMessage: 'Dobrý den! Jsem expert na firemní finance. Jaká oblast je pro vás prioritou? Jsou to být příliš vysoké náklady, špatné cash-flow nebo nízký zisk.',
+    replies: [
+      { text: 'Nízký zisk', searchTerm: 'průtok' },
+      { text: 'Špatné cash flow', searchTerm: 'průtok' },
+      { text: 'Vysoké náklady', searchTerm: 'náklady' }
+    ]
+  },
+  'strateg': {
+    name: 'AI asistent Stratég',
+    initMessage: 'Dobrý den! Pomáhám firmám tvořit inovativní byznys modely, s nimiž bez problémů poráží konkurenci. Co potřebujete řešit nejdříve?',
+    replies: [
+      { text: 'Potřebuji novou strategii', searchTerm: 'strategie' },
+      { text: 'Chci porazit konkurenci', searchTerm: 'strategie' },
+      { text: 'Chci ochránit firmu do budoucna', searchTerm: 'trh' }
+    ]
+  },
+  'marketing': {
+    name: 'AI asistent Marketing',
+    initMessage: 'Dobrý den! Zabývám se tvorbou neodmítnutelné nabídky "Mafia Offer". Díky ní přimějete zákazníky, aby kupovali vaše výrobky a služby jako nikdy předtím. S čím začneme?',
+    replies: [
+      { text: 'Jak získat více zákazníků', searchTerm: 'marketing' },
+      { text: 'Jaká je správná cena', searchTerm: 'cena' },
+      { text: 'Jak na sociální média', searchTerm: 'marketing' }
+    ]
+  }
+};
+
+function startAssistantChat(assistantId) {
+  const dialog = assistantDialogs[assistantId];
+  if (!dialog) return;
+
   currentAssistant = assistantId;
-  if (assistantStates[assistantId]) { assistantStates[assistantId] = { step: 0, problems: [] }; }
-  document.getElementById('chat-title').innerText = assistant.name;
-  document.getElementById('chat-box').innerHTML = '';
-  document.getElementById('quick-replies').innerHTML = '';
-  document.getElementById('chat-input-wrapper').style.display = 'flex';
-  addMessage(assistant.chatInitMessage, 'ai');
+  const chatTitle = document.getElementById('chat-title');
+  const chatBox = document.getElementById('chat-box');
+  const quickReplies = document.getElementById('quick-replies');
+
+  chatTitle.innerText = dialog.name;
+  chatBox.innerHTML = '';
+  quickReplies.innerHTML = '';
+
+  addMessage(dialog.initMessage, 'ai');
+
+  dialog.replies.forEach(reply => {
+    const button = document.createElement('button');
+    button.textContent = reply.text;
+    button.className = 'bg-blue-100 text-blue-800 py-2 px-4 rounded-full hover:bg-blue-200';
+    button.onclick = () => handleAssistantReply(reply.text, reply.searchTerm);
+    quickReplies.appendChild(button);
+  });
+
+  document.getElementById('chat-input-wrapper').style.display = 'none';
   showView('chat');
 }
 
-function handleGenericConversation(userMessage) {
-  const state = assistantStates[currentAssistant];
-  const quickRepliesContainer = document.getElementById('quick-replies');
-  const chatInputWrapper = document.getElementById('chat-input-wrapper');
-  switch (state.step) {
-    case 0:
-      state.problems = userMessage.split(',').map(item => item.trim()).filter(item => item);
-      if (state.problems.length < 2) { setTimeout(() => addMessage("Prosím, zkuste vyjmenovat alespoň dva body, oddělené čárkou.", 'ai'), 500); return; }
-      setTimeout(() => {
-        addMessage("Děkuji za přehled. Který z těchto bodů vnímáte jako nejpalčivější?", 'ai');
-        chatInputWrapper.style.display = 'none';
-        state.problems.forEach(problem => {
-          const button = document.createElement('button');
-          button.textContent = problem;
-          button.className = 'bg-blue-100 text-blue-800 py-2 px-4 rounded-full hover:bg-blue-200 transition-colors';
-          button.onclick = () => { addMessage(problem, 'user'); state.step = 1; handleGenericConversation(problem); };
-          quickRepliesContainer.appendChild(button);
-        });
-      }, 1000);
-      break;
-    case 1:
-      quickRepliesContainer.innerHTML = '';
-      setTimeout(() => { addMessage(`Chápu. To, že vnímáte **${userMessage}** jako klíčový problém, je důležitý první krok...`, 'ai'); }, 1000);
-      setTimeout(() => {
-        addMessage(`Chcete nyní získat přístup do naší bezplatné knihovny...?`, 'ai');
-        chatInputWrapper.style.display = 'none';
-        const yesButton = document.createElement('button');
-        yesButton.textContent = "Ano, chci přístup zdarma";
-        yesButton.className = 'bg-green-500 text-white font-medium py-2 px-6 rounded-lg hover:bg-green-600 transition-colors';
-        yesButton.onclick = () => { state.step = 2; handleGenericConversation("Ano"); };
-        quickRepliesContainer.appendChild(yesButton);
-        const noButton = document.createElement('button');
-        noButton.textContent = "Ne, děkuji";
-        noButton.className = 'bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors';
-        noButton.onclick = () => { state.step = 2; handleGenericConversation("Ne"); };
-        quickRepliesContainer.appendChild(noButton);
-      }, 2500);
-      break;
-    case 2:
-      addMessage(userMessage === 'Ano' ? "Ano, chci přístup zdarma" : "Ne, děkuji", 'user');
-      quickRepliesContainer.innerHTML = '';
-      if (userMessage === "Ano") {
-        setTimeout(() => { addMessage("Výborně! Přesměrovávám vás do knihovny zdrojů...", 'ai'); }, 1000);
-        setTimeout(() => { showView('library'); }, 2500);
-      } else {
-        setTimeout(() => { addMessage("Rozumím. Děkuji za váš čas...", 'ai'); chatInputWrapper.style.display = 'flex'; }, 1000);
-      }
-      break;
+function handleAssistantReply(userChoice, searchTerm) {
+  addMessage(userChoice, 'user');
+  document.getElementById('quick-replies').innerHTML = '';
+
+  setTimeout(() => {
+    const finalMessage = `Chápu. Protože téma **"${userChoice}"** je pro většinu firem klíčové, máme k němu mnoho zajímavých zdrojů. Chcete je zobrazit?`;
+    addMessage(finalMessage, 'ai');
+
+    const quickRepliesContainer = document.getElementById('quick-replies');
+    quickRepliesContainer.innerHTML = `
+            <button onclick="showFilteredLibrary('${searchTerm}')" class="bg-green-500 text-white font-medium py-2 px-6 rounded-lg hover:bg-green-600">Ano, zobrazit zdroje</button>
+            <button onclick="showView('home')" class="bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg hover:bg-gray-300">Ne, děkuji</button>
+        `;
+  }, 1200);
+}
+
+function showFilteredLibrary(searchTerm) {
+  const searchInput = document.getElementById('library-search');
+  if (searchInput) {
+    searchInput.value = searchTerm;
   }
+  showView('library');
+  renderLibrary();
 }
 
 function addMessage(text, sender) {
@@ -526,16 +559,9 @@ function addMessage(text, sender) {
   chatBox.appendChild(messageElement);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-function handleSend() {
-  const input = document.getElementById('chat-input');
-  const userText = input.value.trim();
-  if (userText) {
-    addMessage(userText, 'user');
-    input.value = '';
-    handleGenericConversation(userText);
-  }
-}
+// =====================================================================
+// === NOVÁ, CHYTŘEJŠÍ LOGIKA PRO OCHUTNÁVKOVÝ CHAT ===
+// =====================================================================
 
 // === Inicializace aplikace ===
 document.addEventListener('DOMContentLoaded', () => {
@@ -693,14 +719,13 @@ function showIframeContent(itemId) {
 // Tímto krokem "vystrčíme" klíčové funkce z modulu,
 // aby je našly atributy jako onclick="" v HTML souboru.
 
+// --- Zpřístupnění funkcí pro HTML ---
 window.showView = showView;
-window.launchAssistant = launchAssistant;
+window.startAssistantChat = startAssistantChat;
+window.showFilteredLibrary = showFilteredLibrary;
+window.showContent = showContent;
 window.showAssistantInfo = showAssistantInfo;
 window.closeModal = closeModal;
-// Pro jistotu doplňuji i checklist, který je volán stejně
 window.showInteractiveChecklist = showInteractiveChecklist;
-// TENTO ŘÁDEK JE TEN KLÍČOVÝ, KTERÝ NÁM CHYBÍ:
 window.showMediaInModal = showMediaInModal;
-window.showContent = showContent;
-window.showProductivityDashboard = showProductivityDashboard;
-window.showIframeContent = showIframeContent; 
+window.showIframeContent = showIframeContent;

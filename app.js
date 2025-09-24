@@ -470,7 +470,33 @@ onAuthStateChanged(auth, user => {
   console.log("Uživatel přihlášen:", user ? user.email : 'Uživatel odhlášen');
   if (user) {
     document.getElementById('user-email').innerText = user.email;
-    showView('chat');
+
+    // Zkontrolujeme, jestli je v URL parametr 'recommend'
+    const urlParams = new URLSearchParams(window.location.search);
+    const recommendedId = urlParams.get('recommend');
+
+    if (recommendedId) {
+      // Pokud ano, zobrazíme rovnou knihovnu (FlowHub)
+      console.log(`Nalezeno doporučení na obsah: ${recommendedId}. Zobrazuji knihovnu.`);
+      showView('library');
+
+      // Bonus: Předvyplníme vyhledávání, aby uživatel zdroj hned viděl
+      const searchInput = document.getElementById('library-search-input');
+      if (searchInput) {
+        const resource = contentData.library.find(item => item.id === recommendedId);
+        if (resource) {
+          searchInput.value = resource.title;
+          updateLibraryView(); // Spustíme vyhledávání
+        }
+      }
+
+      // Vyčistíme URL, aby se toto nespouštělo při každém obnovení stránky
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+    } else {
+      // Pokud v URL nic není, zobrazíme standardní chat
+      showView('chat');
+    }
   } else {
     if (loginForm) loginForm.reset();
     if (registerForm) registerForm.reset();
