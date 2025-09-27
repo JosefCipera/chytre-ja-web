@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chytré Já - Ukázka Universa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        html,
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #111827;
+            color: #d1d5db;
+        }
+
+        #knowledge-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Styly pro informační panel */
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            right: -400px;
+            width: 350px;
+            max-height: calc(100vh - 40px);
+            background-color: rgba(31, 41, 55, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: right 0.5s ease-in-out;
+            color: #d1d5db;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        #info-panel.visible {
+            right: 20px;
+        }
+
+        #info-content {
+            padding: 25px;
+        }
+
+        #info-content h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        #info-content p {
+            line-height: 1.6;
+        }
+
+        #info-content a {
+            color: #60A5FA;
+            text-decoration: none;
+        }
+
+        #info-content a:hover {
+            text-decoration: underline;
+        }
+
+        #info-content ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        #info-content hr {
+            border-color: #4b5563;
+            margin: 1.5rem 0;
+        }
+
+        #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #9ca3af;
+            border: none;
+            background: none;
+            z-index: 1001;
+        }
+
+        /* Styly pro úvodní splash screen */
+        #splash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #d1d5db;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+            z-index: 2000;
+        }
+
+        #splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #splash-screen h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        #splash-screen button {
+            background-color: #2563EB;
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        #splash-screen button:hover {
+            background-color: #3b82f6;
+        }
+
+        /* Styly pro tlačítka úloh v panelu */
+        .task-button {
+            background-color: #F59E0B;
+            /* Oranžová pro úkoly */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-button:hover {
+            background-color: #D97706;
+        }
+
+        /* Styly pro zobrazení obsahu článku */
+        .article-view {
+            padding: 20px;
+            background-color: rgba(45, 55, 72, 0.95);
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #e2e8f0;
+        }
+
+        .article-view h2 {
+            color: #ffffff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .article-view p {
+            margin-bottom: 10px;
+        }
+
+        .article-view ul {
+            padding-left: 25px;
+            list-style-type: disc;
+        }
+
+        .article-view a {
+            color: #60A5FA;
+        }
+
+        .article-view button.task-button {
+            margin-top: 15px;
+        }
+
+        .back-to-concept {
+            margin-top: 20px;
+            color: #60A5FA;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .back-to-concept:hover {
+            text-decoration: none;
+        }
+
+        /* Styly pro ikony v panelu (pro HTML panel stále používáme FA) */
+        .concept-icon {
+            margin-right: 10px;
+        }
+
+        /* Styly pro vyhledávání */
+        .search-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input[type="text"] {
+            padding: 10px;
+            border: 1px solid #4B5563;
+            border-radius: 8px;
+            background-color: #1F2937;
+            color: #d1d5db;
+            font-size: 1rem;
+            width: 250px;
+            margin-right: 10px;
+        }
+
+        .search-container input[type="text"]::placeholder {
+            color: #6B7280;
+        }
+
+        .search-container button {
+            background-color: #60A5FA;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #3B82F6;
+        }
+
+        /* Style pro výsledky vyhledávání */
+        #search-results {
+            position: absolute;
+            top: 65px;
+            /* Pod vyhledávacím boxem */
+            left: 20px;
+            width: 250px;
+            background-color: rgba(31, 41, 55, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1001;
+            padding: 10px 0;
+            color: #d1d5db;
+            display: none;
+            /* Skryjeme, dokud nejsou výsledky */
+        }
+
+        #search-results.visible {
+            display: block;
+        }
+
+        .search-results-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-results-item:hover {
+            background-color: #374151;
+        }
+
+        .search-results-item span.highlight {
+            font-weight: bold;
+            color: #FCD34D;
+            /* Žlutá pro zvýraznění */
+        }
+
+        /* Tlačítka dole na mapě */
+        .bottom-buttons-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            /* Přesuneme hlasové tlačítko doprava */
+            display: flex;
+            gap: 10px;
+            /* Mezera mezi tlačítky */
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="knowledge-map"></div>
+
+    <div id="info-panel">
+        <button id="close-btn" onclick="hideInfoPanel()">&times;</button>
+        <div id="info-content"></div>
+    </div>
+
+    <div id="splash-screen">
+        <h1>Vítejte v Universu Myšlenek</h1>
+        <p>Prozkoumejte síť klíčových konceptů. Klikněte na uzel pro detailní informace a související materiály.</p>
+        <p>Můžete uzly přetahovat a přibližovat/oddalovat mapu.</p>
+        <button onclick="hideSplashScreen()">Spustit Universum</button>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="node-search-input" placeholder="Hledat uzel..." oninput="performSearch()">
+        <button onclick="performSearch()">Hledat</button>
+    </div>
+    <div id="search-results"></div>
+
+    <div class="bottom-buttons-container">
+        <button id="voice-input-btn" onclick="startVoiceInput()">Spustit hlas</button>
+    </div>
+
+    <script type="text/javascript">
+        // --- Globální proměnné ---
+        let contentData = {};
+        let network = null;
+        const nodes = new vis.DataSet([]);
+        const edges = new vis.DataSet([]);
+
+        const container = document.getElementById('knowledge-map');
+        const infoPanel = document.getElementById('info-panel');
+        const infoContent = document.getElementById('info-content');
+        const splashScreen = document.getElementById('splash-screen');
+        const searchInput = document.getElementById('node-search-input');
+        const searchResultsDiv = document.getElementById('search-results');
+
+        let currentConceptId = null;
+        let currentUniverse = 'main'; // Sledujeme, v jakém "podvesmíru" se nacházíme
+        let mainUniverseNodesData = []; // Uložíme si data pro uzly hlavního vesmíru
+        let mainUniverseEdgesData = []; // Uložíme si data pro hrany hlavního vesmíru
+
+        // --- Konfigurace VIS.js sítě ---
+        const options = {
+            nodes: {
+                shape: 'dot',
+                size: 18,
+                color: {
+                    border: '#2B7CE9',
+                    background: '#97C2E5',
+                    highlight: { border: '#2B7CE9', background: '#D2E5FF' },
+                    hover: { border: '#2B7CE9', background: '#D2E5FF' }
+                },
+                font: { size: 14, color: '#ffffff', multi: 'html' },
+                borderWidth: 2,
+                shadow: true
+            },
+            edges: {
+                width: 2,
+                color: { color: '#4B5563', highlight: '#60A5FA' },
+                arrows: { to: { enabled: false } },
+                smooth: { type: 'dynamic' }
+            },
+            physics: { enabled: true, solver: 'barnesHut', barnesHut: { gravitationalConstant: -25000, centralGravity: 0.1, springLength: 180, damping: 0.09 } },
+            interaction: { hover: true, tooltipDelay: 200, keyboard: true }
+        };
+
+        // --- Funkce pro syntézu řeči (Text-to-Speech) - PŘESUNUTO NAHORU ---
+        function speakText(text) {
+            if ('SpeechSynthesisUtterance' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'cs-CZ';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.warn('Váš prohlížeč nepodporuje syntézu řeči.');
+            }
+        }
+
+        // --- Funkce pro ovládání UI (Panel, Splash Screen, Úlohy) ---
+        function hideInfoPanel() {
+            infoPanel.classList.remove('visible');
+            currentConceptId = null;
+        }
+
+        function hideSplashScreen() {
+            splashScreen.classList.add('hidden');
+        }
+
+        function runTask(taskId) {
+            let taskUrl = '';
+            switch (taskId) {
+                case 'simulace-linky':
+                    taskUrl = 'table-production.html';
+                    break;
+                case 'minidashboard':
+                    taskUrl = 'minidashboard.html';
+                    break;
+                case 'nalezeni-omezeni':
+                    alert('Spouštím kalkulačku: Nalezení kapacitního omezení');
+                    break;
+                case 'kalkulacka-prutoku':
+                    alert('Spouštím kalkulačku průtoku');
+                    break;
+                case 'prehled-toc':
+                    alert('Zobrazuji přehled TOC pro manažery');
+                    break;
+                case 'implementace-toc':
+                    alert('Otevírám průvodce implementací TOC');
+                    break;
+                case 'analyza-zasob':
+                    alert('Spouštím analýzu optimálních zásob');
+                    break;
+                case 'prirucka-5kroku':
+                    alert('Otevírám průvodce 5 kroky zlepšování');
+                    break;
+                case 'dbn-simulace':
+                    alert('Spouštím simulaci DBR systému');
+                    break;
+                case 'ccpm-uvod':
+                    alert('Otevírám úvod do Critical Chain Project Management');
+                    break;
+                default:
+                    console.warn(`Pro úlohu s ID "${taskId}" nebyla nalezena URL ani definovaná akce.`);
+                    alert(`Úloha "${taskId}" zatím nemá definovanou URL ani akci.`);
+                    return;
+            }
+            if (taskUrl) {
+                window.open(taskUrl, '_blank');
+            }
+        }
+
+        function showArticleDetail(articleId) {
+            const article = contentData.library.find(item => item.id === articleId);
+            if (article && article.content) {
+                infoContent.innerHTML = `
+                    <div class="article-view">
+                        <h2>${article.title}</h2>
+                        ${article.content}
+                        <p class="back-to-concept" onclick="showConceptHub(currentConceptId)">← Zpět k detailu konceptu</p>
+                    </div>
+                `;
+            } else {
+                infoContent.innerHTML = `<h2>Chyba</h2><p>Obsah článku "${articleId}" nebyl nalezen.</p>`;
+            }
+            infoPanel.classList.add('visible');
+        }
+
+        function showConceptHub(termId) {
+            currentConceptId = termId;
+
+            let termData;
+            let isSubnode = false;
+
+            // Nejprve hledáme v hlavních termínech
+            termData = contentData.dictionary.find(term => term.term === termId);
+
+            // Pokud nenalezeno, hledáme v subnodes
+            if (!termData) {
+                for (const mainTerm of contentData.dictionary) {
+                    if (mainTerm.subnodes) {
+                        const sub = mainTerm.subnodes.find(subnode => `${mainTerm.term}-${subnode.term}` === termId);
+                        if (sub) {
+                            termData = sub;
+                            isSubnode = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!termData) {
+                infoContent.innerHTML = `<h2>Nenalezeno</h2><p>Detailní data pro termín "${termId}" nebyla nalezena.</p>`;
+                infoPanel.classList.add('visible');
+                return;
+            }
+
+            const displayTerm = termData.term;
+
+            const iconColor = termData.color || '#FBBF24';
+            const iconHtml = termData.icon ? `<i class="fas fa-${getFaClassName(termData.icon)} concept-icon" style="color:${iconColor};"></i>` : '';
+
+            let relatedContentHtml = '<h3>Související zdroje:</h3><ul>';
+            let foundContent = false;
+
+            // Související obsah hledáme jen pro hlavní uzly, ne pro subnodes
+            if (!isSubnode && contentData.library) {
+                contentData.library.forEach(item => {
+                    const searchableText = `${item.title} ${item.description} ${item.tags ? item.tags.join(' ') : ''}`.toLowerCase();
+                    const termNameLower = termData.term.toLowerCase();
+
+                    const isDirectlyRelated = searchableText.includes(termNameLower);
+
+                    let isIndirectlyRelated = false;
+                    if (termData.relatedTerms && Array.isArray(termData.relatedTerms)) {
+                        isIndirectlyRelated = termData.relatedTerms.some(rt => searchableText.includes(rt.toLowerCase()));
+                    }
+
+                    if (isDirectlyRelated || isIndirectlyRelated) {
+                        if (item.type === 'Článek' || item.type === 'Případová studie' || item.type === 'E-book') {
+                            relatedContentHtml += `<li><a href="#" onclick="showArticleDetail('${item.id}'); return false;">${item.title}</a> (${item.type})</li>`;
+                        } else {
+                            relatedContentHtml += `<li><a href="${item.url || '#'}" target="_blank">${item.title}</a> (${item.type})</li>`;
+                        }
+                        foundContent = true;
+                    }
+                });
+            }
+            if (!foundContent && !isSubnode) relatedContentHtml += '<li>Žádné specifické materiály nebyly nalezeny.</li>';
+            if (isSubnode && !foundContent) relatedContentHtml = '';
+
+            let tasksHtml = '';
+            if (termData.tasks && Array.isArray(termData.tasks) && termData.tasks.length > 0) {
+                tasksHtml = '<h3>Dostupné úlohy:</h3><div>';
+                termData.tasks.forEach(task => {
+                    tasksHtml += `<button class="task-button" onclick="runTask('${task.id}')">${task.name}</button>`;
+                });
+                tasksHtml += '</div><hr>';
+            } else if (isSubnode && (!termData.tasks || termData.tasks.length === 0)) {
+                tasksHtml = '<p>Pro tento podkoncept nejsou k dispozici žádné přímé úlohy.</p>';
+            }
+
+
+            // Přidáme tlačítko pro vstup do podvesmíru, pokud je to hlavní uzel a má subnodes
+            let enterSubuniverseButton = '';
+            // Kontrolujeme, zda je to hlavní uzel (ne subnode) A má subnodes
+            if (!isSubnode && termData.subnodes && termData.subnodes.length > 0) {
+                enterSubuniverseButton = `<button class="task-button" onclick="enterSubuniverse('${termData.term}')">Prozkoumat podkoncepty</button>`;
+            }
+
+            infoContent.innerHTML = `
+                <h2>${iconHtml}${displayTerm}</h2>
+                <p>${termData.definition}</p>
+                ${tasksHtml}
+                ${enterSubuniverseButton}
+                ${!isSubnode && foundContent ? '<hr>' : ''} 
+                ${!isSubnode ? relatedContentHtml : ''} 
+            `;
+
+            infoPanel.classList.add('visible');
+        }
+
+        // Pomocná funkce pro získání názvu třídy z Unicode pro HTML panel
+        function getFaClassName(unicode) {
+            const unicodeMap = {
+                '\uf0eb': 'lightbulb',
+                '\uf071': 'exclamation-triangle',
+                '\uf085': 'cogs',
+                '\uf201': 'chart-line',
+                '\uf0e3': 'gavel',
+                '\uf572': 'stream',
+                '\uf468': 'boxes',
+                '\uf0cb': 'list-ol',
+                '\uf569': 'drum',
+                '\uf542': 'project-diagram',
+                '\uf0ae': 'tasks',
+                '\uf518': 'book-open',
+                '\uf0e8': 'sitemap'
+            };
+            return unicodeMap[unicode] || '';
+        }
+
+        fetch('./content.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Soubor content.json nenalezen.');
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data z content.json úspěšně načtena.");
+                contentData = data;
+                initializeNetwork('main'); // Inicializujeme hlavní vesmír
+            })
+            .catch(error => {
+                console.error('Chyba při načítání content.json:', error);
+                alert('Nepodařilo se načíst data pro universum. Ujistěte se, že soubor content.json je ve stejné složce.');
+            });
+
+        function initializeNetwork(universeType, parentNodeId = null) {
+            nodes.clear();
+            edges.clear();
+            currentUniverse = universeType;
+
+            const termMap = new Map();
+            contentData.dictionary.forEach(term => {
+                termMap.set(term.term.toLowerCase(), term);
+            });
+
+            if (universeType === 'main') {
+                if (mainUniverseNodesData.length === 0) { // Generujeme jen jednou
+                    // Generování uzlů a hran pro hlavní vesmír
+                    const tempNodes = [];
+                    const tempEdges = [];
+
+                    const tocTermData = contentData.dictionary.find(term => term.term === 'Teorie omezení') || { term: 'Teorie omezení', definition: 'Centrální koncept', color: '#2563EB' };
+                    tempNodes.push({
+                        id: 'Teorie omezení',
+                        label: 'Teorie omezení\n(TOC)',
+                        color: tocTermData.color,
+                        size: 40,
+                        font: { color: 'white', size: 16 },
+                        fullData: tocTermData
+                    });
+
+                    contentData.dictionary.forEach(term => {
+                        if (term.term === 'Teorie omezení') return;
+
+                        tempNodes.push({
+                            id: term.term,
+                            label: term.term,
+                            color: term.color || '#10B981',
+                            size: 25,
+                            font: { color: 'white', size: 14 },
+                            fullData: term
+                        });
+
+                        tempEdges.push({ from: 'Teorie omezení', to: term.term });
+                    });
+
+                    // Přidáme i vztahy mezi hlavními uzly (relatedTerms a z definice)
+                    contentData.dictionary.forEach(term => {
+                        if (term.relatedTerms && Array.isArray(term.relatedTerms)) {
+                            term.relatedTerms.forEach(relatedTerm => {
+                                const targetNodeExists = tempNodes.some(n => n.id === relatedTerm);
+                                if (targetNodeExists && term.term !== relatedTerm) {
+                                    const existingEdges = tempEdges.filter(item =>
+                                        (item.from === term.term && item.to === relatedTerm) ||
+                                        (item.from === relatedTerm && item.to === term.term)
+                                    );
+                                    if (existingEdges.length === 0) {
+                                        tempEdges.push({ from: term.term, to: relatedTerm, dashes: true });
+                                    }
+                                }
+                            });
+                        }
+
+                        if (term.definition) {
+                            termMap.forEach((otherTerm, otherTermNameLower) => {
+                                if (term.term.toLowerCase() === otherTermNameLower || otherTermNameLower === 'teorie omezení') {
+                                    return;
+                                }
+                                const edgeExists = tempEdges.filter(item =>
+                                    (item.from === term.term && item.to === otherTerm.term) ||
+                                    (item.from === otherTerm.term && item.to === term.term)
+                                ).length > 0;
+
+                                if (term.definition.toLowerCase().includes(otherTermNameLower) && !edgeExists) {
+                                    tempEdges.push({ from: term.term, to: otherTerm.term, color: { color: '#A1A1AA', opacity: 0.6 } });
+                                }
+                            });
+                        }
+                    });
+
+                    // Uložíme si hlavní vesmír pro budoucí rychlé přepnutí
+                    mainUniverseNodesData = tempNodes;
+                    mainUniverseEdgesData = tempEdges;
+                }
+
+                nodes.add(mainUniverseNodesData);
+                edges.add(mainUniverseEdgesData);
+
+            } else if (universeType === 'sub') {
+                const parentTermData = contentData.dictionary.find(term => term.term === parentNodeId);
+                if (parentTermData) {
+                    nodes.add({
+                        id: parentTermData.term,
+                        label: parentTermData.term + '\n(Zpět do hlavního)',
+                        color: parentTermData.color,
+                        size: 50,
+                        font: { color: 'white', size: 18 },
+                        fullData: parentTermData,
+                        isParentNode: true
+                    });
+
+                    if (parentTermData.subnodes && Array.isArray(parentTermData.subnodes)) {
+                        parentTermData.subnodes.forEach(subnode => {
+                            const subnodeId = `${parentTermData.term}-${subnode.term}`;
+                            nodes.add({
+                                id: subnodeId,
+                                label: subnode.term,
+                                color: subnode.color || parentTermData.color,
+                                size: 25,
+                                font: { color: 'white', size: 14 },
+                                fullData: subnode
+                            });
+                            edges.add({ from: parentTermData.term, to: subnodeId, dashes: false, color: { color: parentTermData.color || '#A1A1AA', opacity: 0.8 } });
+                        });
+                    }
+                }
+            }
+
+            const data = { nodes: nodes, edges: edges };
+
+            if (network) {
+                network.setData(data);
+            } else {
+                network = new vis.Network(container, data, options);
+                network.on("click", function (params) {
+                    if (params.nodes.length > 0) {
+                        const nodeId = params.nodes[0];
+                        const clickedNode = nodes.get(nodeId);
+
+                        if (currentUniverse === 'sub' && clickedNode.isParentNode) {
+                            leaveSubuniverse();
+                        } else {
+                            showConceptHub(nodeId);
+                        }
+                    } else {
+                        hideInfoPanel();
+                    }
+                });
+            }
+            network.fit({ animation: { duration: 700, easingFunction: 'easeInOutQuad' } });
+        }
+
+        // Funkce pro vstup do podvesmíru
+        function enterSubuniverse(parentNodeId) {
+            hideInfoPanel();
+            initializeNetwork('sub', parentNodeId);
+            speakText(`Vstupuji do podkonceptů pro ${parentNodeId}.`);
+        }
+
+        // Funkce pro opuštění podvesmíru
+        function leaveSubuniverse() {
+            hideInfoPanel();
+            initializeNetwork('main');
+            speakText('Vracím se do hlavního vesmíru.');
+        }
+
+        // --- Vyhledávání uzlů ---
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            searchResultsDiv.innerHTML = '';
+            searchResultsDiv.classList.remove('visible');
+
+            if (query.length < 2) {
+                return;
+            }
+
+            const allNodesInCurrentUniverse = nodes.get();
+            const results = [];
+
+            allNodesInCurrentUniverse.forEach(node => {
+                const label = node.label.toLowerCase();
+                const fullData = node.fullData;
+
+                if (label.includes(query) || (fullData && fullData.definition && fullData.definition.toLowerCase().includes(query))) {
+                    results.push(node);
+                }
+            });
+
+            if (results.length > 0) {
+                results.forEach(node => {
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('search-results-item');
+
+                    let displayLabel = node.label.replace(/\n/g, ' ');
+                    const startIndex = displayLabel.toLowerCase().indexOf(query);
+                    if (startIndex !== -1) {
+                        const endIndex = startIndex + query.length;
+                        displayLabel =
+                            displayLabel.substring(0, startIndex) +
+                            `<span class="highlight">${displayLabel.substring(startIndex, endIndex)}</span>` +
+                            displayLabel.substring(endIndex);
+                    } else {
+                        // Pokud hledáme v definici, ale zobrazíme jen label s popiskem
+                        displayLabel = `[Definice] ${displayLabel}`;
+                    }
+
+                    resultItem.innerHTML = displayLabel;
+                    resultItem.onclick = () => {
+                        focusNodeAndShowDetail(node.id);
+                        searchResultsDiv.classList.remove('visible');
+                        searchInput.value = node.label.replace(/\n/g, '');
+                    };
+                    searchResultsDiv.appendChild(resultItem);
+                });
+                searchResultsDiv.classList.add('visible');
+            } else {
+                searchResultsDiv.innerHTML = '<div class="search-results-item">Žádné výsledky</div>';
+                searchResultsDiv.classList.add('visible');
+            }
+        }
+
+        // Funkce pro zaměření na uzel a zobrazení detailu
+        function focusNodeAndShowDetail(nodeId) {
+            network.focus(nodeId, {
+                scale: 1.0,
+                animation: { duration: 1000, easingFunction: 'easeInOutQuad' }
+            });
+            network.selectNodes([nodeId]);
+            showConceptHub(nodeId);
+        }
+
+        // Zavření výsledků vyhledávání při kliknutí mimo ně
+        document.addEventListener('click', function (event) {
+            if (!searchResultsDiv.contains(event.target) && event.target !== searchInput) {
+                searchResultsDiv.classList.remove('visible');
+            }
+        });
+
+
+        // --- Hlasové zadávání ---
+        let recognition;
+        let isListening = false;
+
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'cs-CZ';
+
+            recognition.onresult = (event) => {
+                const last = event.results.length - 1;
+                const command = event.results[last][0].transcript.toLowerCase();
+                console.log('Rozpoznaný příkaz:', command);
+                processVoiceCommand(command);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Chyba rozpoznávání řeči:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Pro použití hlasového zadávání musíte povolit přístup k mikrofonu.');
+                }
+                isListening = false;
+                updateMicrophoneButton();
+            };
+
+            recognition.onend = () => {
+                console.log('Rozpoznávání řeči ukončeno.');
+                isListening = false;
+                updateMicrophoneButton();
+            };
+
+        } else {
+            console.warn('Váš prohlížeč nepodporuje Web Speech API. Tlačítko pro hlasové zadávání bude neaktivní.');
+            const voiceBtn = document.getElementById('voice-input-btn');
+            if (voiceBtn) {
+                voiceBtn.disabled = true;
+                voiceBtn.textContent = 'Hlas (nepodporováno)';
+                voiceBtn.style.backgroundColor = '#6B7280';
+            }
+        }
+
+        function startVoiceInput() {
+            if (recognition) {
+                if (!isListening) {
+                    recognition.start();
+                    isListening = true;
+                    console.log('Naslouchám...');
+                } else {
+                    recognition.stop();
+                    isListening = false;
+                    console.log('Naslouchání zastaveno.');
+                }
+                updateMicrophoneButton();
+            }
+        }
+
+        function updateMicrophoneButton() {
+            const btn = document.getElementById('voice-input-btn');
+            if (btn) {
+                btn.textContent = isListening ? 'Zastavit hlas' : 'Spustit hlas';
+                btn.style.backgroundColor = isListening ? '#EF4444' : '#2563EB';
+            }
+        }
+
+        function processVoiceCommand(command) {
+            if (command.includes('najdi') || command.includes('hledej')) {
+                let searchTerm = command.replace(/najdi|hledej|uzel|koncept|pro/g, '').trim();
+
+                const allNodesInCurrentUniverse = nodes.get();
+                const foundNode = allNodesInCurrentUniverse.find(node =>
+                    node.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (node.fullData && node.fullData.definition && node.fullData.definition.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+
+                if (foundNode) {
+                    focusNodeAndShowDetail(foundNode.id);
+                    speakText(`Zaměřuji se na ${foundNode.label.replace(/\n/g, ' ')}.`);
+                } else {
+                    speakText(`Uzel "${searchTerm}" nebyl nalezen.`);
+                }
+            } else if (command.includes('otevři detail') || command.includes('ukaž detail')) {
+                const searchTerm = command.replace(/otevři detail|ukaž detail/g, '').trim();
+                const foundNode = nodes.get().find(node => node.label.toLowerCase().includes(searchTerm.toLowerCase()));
+                if (foundNode) {
+                    showConceptHub(foundNode.id);
+                    speakText(`Otevírám detail pro ${foundNode.label.replace(/\n/g, ' ')}.`);
+                } else {
+                    speakText(`Detail pro "${searchTerm}" nebyl nalezen.`);
+                }
+            } else if (command.includes('schovej panel') || command.includes('zavři panel') || command.includes('zavři okno')) {
+                hideInfoPanel();
+                speakText('Panel informací skryt.');
+            } else if (command.includes('přiblížit')) {
+                network.zoomIn();
+                speakText('Přibližuji.');
+            } else if (command.includes('oddálit')) {
+                network.zoomOut();
+                speakText('Oddaluji.');
+            } else if (command.includes('resetuj zobrazení') || command.includes('celý vesmír') || command.includes('přepni na hlavní vesmír')) {
+                leaveSubuniverse();
+                speakText('Resetuji zobrazení a vracím se do hlavního vesmíru.');
+            } else if (command.includes('prozkoumat podkoncepty') || command.includes('vstup do podvesmíru')) {
+                const selectedNodes = network.getSelectedNodes();
+                if (selectedNodes.length > 0) {
+                    const nodeId = selectedNodes[0];
+                    const termData = contentData.dictionary.find(term => term.term === nodeId);
+                    if (termData && termData.subnodes && termData.subnodes.length > 0) {
+                        enterSubuniverse(nodeId);
+                    } else {
+                        speakText('Vybraný koncept nemá žádné podkoncepty k prozkoumání.');
+                    }
+                } else {
+                    speakText('Nejprve vyberte nebo zaměřte koncept, jehož podkoncepty chcete prozkoumat.');
+                }
+            }
+            else {
+                speakText('Nerozumím příkazu. Zkuste to znovu.');
+            }
+        }
+    </script>
+</body>
+
+</html>

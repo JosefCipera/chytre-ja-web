@@ -23,6 +23,12 @@
                     "name": "Průvodce implementací TOC"
                 }
             ],
+            "relatedMedia": [
+                "audio-toc-uvod",
+                "video-001",
+                "image-001",
+                "checklist-pdf-002-kuchta"
+            ],
             "subnodes": [
                 {
                     "term": "Původ TOC",
@@ -96,6 +102,9 @@
                     "id": "minidashboard",
                     "name": "Zobrazit Mini Dashboard"
                 }
+            ],
+            "relatedMedia": [
+                "audio-eliska-intro"
             ]
         },
         {
@@ -174,6 +183,86 @@
     ],
     "library": [
         {
+            "id": "uvod-toc",
+            "title": "Úvod do Teorie Omezení",
+            "type": "Článek",
+            "description": "Základní přehled principů TOC a jejího významu.",
+            "tags": [
+                "TOC",
+                "Základy",
+                "Úvod"
+            ],
+            "content": "<p>Tento článek pojednává o základech Teorie Omezení...</p><p>Dále se dozvíte, jak...</p>"
+        },
+        {
+            "id": "audio-toc-uvod",
+            "title": "Základy TOC (audio)",
+            "type": "audio",
+            "description": "Zde si poslechněte stručný úvod do Teorie Omezení a proč je důležitá.",
+            "url": "materialy/eliska.mp3",
+            "tags": [
+                "TOC",
+                "audio",
+                "poslech"
+            ]
+        },
+        {
+            "id": "audio-eliska-intro",
+            "title": "Úvod do Alenky (audio)",
+            "type": "audio",
+            "description": "Krátká audio ukázka z Alenky v říši divů.",
+            "url": "materialy/eliska.mp3",
+            "tags": [
+                "Alenka",
+                "audio"
+            ]
+        },
+        {
+            "id": "video-001",
+            "type": "video",
+            "access": "free",
+            "published": true,
+            "icon": "fas fa-video text-red-500",
+            "title": "Plánovač Karel",
+            "description": "Zjistěte, jak se dá plánovat výroba v průtokovém světě.",
+            "url": "https://www.youtube.com/watch?v=LRXSXmQ5kZU&t=1s",
+            "linkText": "Zobrazit video",
+            "tags": [
+                "video",
+                "ukázka"
+            ]
+        },
+        {
+            "id": "image-001",
+            "type": "image",
+            "access": "free",
+            "published": true,
+            "icon": "fas fa-image text-indigo-500",
+            "title": "AI specializovaný asistent",
+            "description": "Popis obrázku nebo animovaného GIFu, ideální pro vizuální schémata.",
+            "url": "/images/avatar_chytre_ja.png",
+            "linkText": "Zobrazit obrázek",
+            "tags": [
+                "obrázek",
+                "schéma"
+            ]
+        },
+        {
+            "id": "checklist-pdf-002-kuchta",
+            "type": "pdf",
+            "access": "free",
+            "published": true,
+            "icon": "fas fa-file-pdf text-red-500",
+            "title": "Kuchařka skvělých receptů",
+            "description": "Uvařte si podle skvělé kuchařky chutná jídla.",
+            "tags": [
+                "pdf",
+                "TOC"
+            ],
+            "url": "/materialy/kuchta.pdf",
+            "linkText": "Stáhnout PDF"
+        },
+        {
             "id": "prod_plan",
             "title": "Jak vytvořit efektivní výrobní plán",
             "description": "Průvodce plánováním výroby s ohledem na omezení a průtok. Zahrnuje principy buben-nárazník-lano.",
@@ -195,9 +284,9 @@
             "tags": [
                 "Omezení",
                 "Kapacita",
-                "Nádytění kapacita"
+                "Nádbytečná kapacita"
             ],
-            "content": "<h2>Nástroje pro analýzu a nalezení omezení</h2><p>Identifikace skutečného omezení v systému je prvním a nejdůležitějším krokem metodologie TOC. Existuje několik nástrojů a technik, které lze k tomuto účelu využít.</p><h3>Vizuální kontrola toku</h3><p>Často nejjednodušší metodou je vizuální kontrola výrobního procesu nebo toku práce. Kde se hromadí fronty, kde dochází k zácpám? To jsou často indikátory potenciálního omezení.</p><h3>Analýza úzkých míst (Bottleneck Analysis)</h3><p>Systematické mapování procesu a měření času a kapacity jednotlivých kroků. Krok s nejnižší kapacitou nebo nejdelší dobou cyklu je pravděpodobně omezením.</p><h3>Kalkulátor nádytění kapacity</h3><p>Speciální nástroj pro výpočet skutečné kapacity a detekci, kde se kapacita systému láme. Může brát v úvahu proměnné, jako jsou prostojové časy, údržba, kvalita materiálu a variabilita procesů. <button class=\"task-button\" onclick=\"runTask('nalezeni-omezeni')\">Spustit kalkulátor</button></p>"
+            "content": "<h2>Nástroje pro analýzu a nalezení omezení</h2><p>Identifikace skutečného omezení v systému je prvním a nejdůležitějším krokem metodologie TOC. Existuje několik nástrojů a technik, které lze k tomuto účelu využít.</p><h3>Vizuální kontrola toku</h3><p>Často nejjednodušší metodou je vizuální kontrola výrobního procesu nebo toku práce. Kde se hromadí fronty, kde dochází k zácpám? To jsou často indikátory potenciálního omezení.</p><h3>Analýza úzkých míst (Bottleneck Analysis)</h3><p>Systematické mapování procesu a měření času a kapacity jednotlivých kroků. Krok s nejnižší kapacitou nebo nejdelší dobou cyklu je pravděpodobně omezením.</p><h3>Kalkulátor nádbytečné kapacity</h3><p>Speciální nástroj pro výpočet skutečné kapacity a detekci, kde se kapacita systému láme. Může brát v úvahu proměnné, jako jsou prostojové časy, údržba, kvalita materiálu a variabilita procesů. <button class=\"task-button\" onclick=\"runTask('nalezeni-omezeni')\">Spustit kalkulátor</button></p>"
         },
         {
             "id": "prutok_optimal",
