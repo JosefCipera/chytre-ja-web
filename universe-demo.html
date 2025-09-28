@@ -783,6 +783,15 @@
             };
 
             network = new vis.Network(container, data, options);
+            // ZMĚNA: Kód pro zvětšení uzlu 'Teorie omezení' po inicializaci sítě
+            const centralNodeTerm = "Teorie omezení";
+            const centralNodeId = allNodesData.find(node => node.label.includes(centralNodeTerm))?.id;
+
+            if (centralNodeId) {
+                // Aktualizuje uzel 'Teorie omezení' v datech sítě
+                data.nodes.update({ id: centralNodeId, size: 40 });
+            }
+            // Konec ZMĚNY
 
             // --- PŘIDANÉ LISTENERY PRO FOKUS (z bodu 3 předchozího plánu) ---
             network.on('selectNode', function (properties) {
