@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chytré Já - Ukázka Universa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        html,
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #111827;
+            color: #d1d5db;
+        }
+
+        #knowledge-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Styly pro informační panel */
+        #info-panel {
+            position: absolute;
+            top: 20px;
+            right: -400px;
+            width: 350px;
+            max-height: calc(100vh - 40px);
+            background-color: rgba(31, 41, 55, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: right 0.5s ease-in-out;
+            color: #d1d5db;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        #info-panel.visible {
+            right: 20px;
+        }
+
+        #info-content {
+            padding: 25px;
+        }
+
+        #info-content h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        #info-content p {
+            line-height: 1.6;
+        }
+
+        #info-content a {
+            color: #60A5FA;
+            text-decoration: none;
+        }
+
+        #info-content a:hover {
+            text-decoration: underline;
+        }
+
+        #info-content ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        #info-content hr {
+            border-color: #4b5563;
+            margin: 1.5rem 0;
+        }
+
+        #close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #9ca3af;
+            border: none;
+            background: none;
+            z-index: 1001;
+        }
+
+        /* Styly pro úvodní splash screen */
+        #splash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #d1d5db;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+            z-index: 2000;
+        }
+
+        #splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #splash-screen h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        #splash-screen button {
+            background-color: #2563EB;
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+
+        #splash-screen button:hover {
+            background-color: #3b82f6;
+        }
+
+        /* Styly pro tlačítka úloh v panelu */
+        .task-button {
+            background-color: #F59E0B;
+            /* Oranžová pro úkoly */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-button:hover {
+            background-color: #D97706;
+        }
+
+        /* Styly pro zobrazení obsahu článku */
+        .article-view {
+            padding: 20px;
+            background-color: rgba(45, 55, 72, 0.95);
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #e2e8f0;
+        }
+
+        .article-view h2 {
+            color: #ffffff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .article-view p {
+            margin-bottom: 10px;
+        }
+
+        .article-view ul {
+            padding-left: 25px;
+            list-style-type: disc;
+        }
+
+        .article-view a {
+            color: #60A5FA;
+        }
+
+        .article-view button.task-button {
+            margin-top: 15px;
+        }
+
+        .back-to-concept {
+            margin-top: 20px;
+            color: #60A5FA;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .back-to-concept:hover {
+            text-decoration: none;
+        }
+
+        /* Styly pro ikony v panelu (pro HTML panel stále používáme FA) */
+        .concept-icon {
+            margin-right: 10px;
+        }
+
+        /* Styly pro vyhledávání */
+        .search-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-container input[type="text"] {
+            padding: 10px;
+            border: 1px solid #4B5563;
+            border-radius: 8px;
+            background-color: #1F2937;
+            color: #d1d5db;
+            font-size: 1rem;
+            width: 250px;
+            margin-right: 10px;
+        }
+
+        .search-container input[type="text"]::placeholder {
+            color: #6B7280;
+        }
+
+        .search-container button {
+            background-color: #60A5FA;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #3B82F6;
+        }
+
+        /* Style pro výsledky vyhledávání */
+        #search-results {
+            position: absolute;
+            top: 65px;
+            /* Pod vyhledávacím boxem */
+            left: 20px;
+            width: 250px;
+            background-color: rgba(31, 41, 55, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1001;
+            padding: 10px 0;
+            color: #d1d5db;
+            display: none;
+            /* Skryjeme, dokud nejsou výsledky */
+        }
+
+        #search-results.visible {
+            display: block;
+        }
+
+        .search-results-item {
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-results-item:hover {
+            background-color: #374151;
+        }
+
+        .search-results-item span.highlight {
+            font-weight: bold;
+            color: #FCD34D;
+            /* Žlutá pro zvýraznění */
+        }
+
+        /* Tlačítka dole na mapě */
+        .bottom-buttons-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="open-search-button"
+        class="absolute top-4 right-4 p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xl shadow-lg z-50">
+        <i class="fas fa-search"></i>
+    </button>
+    <div id="knowledge-map"></div>
+    <div id="search-panel"
+        class="absolute top-4 right-4 z-40 bg-gray-800 bg-opacity-90 p-3 rounded-lg shadow-xl transition-all duration-300 transform translate-x-full opacity-0 pointer-events-none">
+        <div class="flex items-center space-x-2">
+            <input type="text" id="node-search-input" placeholder="Hledat pojem..."
+                class="p-2 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+            <button id="search-toggle-button"
+                class="p-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-lg focus:outline-none"
+                aria-label="Hledat">
+                <i class="fas fa-search"></i> </button>
+            <button id="search-close-button"
+                class="p-2 rounded-full bg-gray-600 hover:bg-gray-700 text-white text-lg focus:outline-none"
+                aria-label="Zavřít vyhledávání">
+                <i class="fas fa-times"></i> </button>
+        </div>
+        <div id="search-results" class="mt-3 max-h-60 overflow-y-auto bg-gray-700 rounded-md p-2 hidden">
+        </div>
+    </div>
+
+    <div id="info-panel">
+        <button id="close-btn" onclick="hideInfoPanel()">&times;</button>
+        <div id="info-content"></div>
+    </div>
+
+    <div id="splash-screen">
+        <h1>Vítejte v Universu Myšlenek</h1>
+        <p>Prozkoumejte síť klíčových konceptů. Klikněte na uzel pro detailní informace a související materiály.</p>
+        <p>Můžete uzly přetahovat a přibližovat/oddalovat mapu.</p>
+        <button onclick="hideSplashScreen()">Spustit Universum</button>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="node-search-input" placeholder="Hledat uzel..." oninput="performSearch()">
+        <button onclick="performSearch()">Hledat</button>
+    </div>
+    <div id="search-results"></div>
+
+    <div class="bottom-buttons-container">
+        <button id="voice-input-btn" onclick="startVoiceInput()">Spustit hlas</button>
+    </div>
+
+    <script type="text/javascript">
+        // --- Globální proměnné ---
+        let contentData = {};
+        let network = null;
+
+        let currentConceptId = null;
+        let currentFocusedParent = null; // Sledujeme, který hlavní koncept má zobrazené podkoncepty
+
+        // --- NOVÉ GLOBÁLNÍ PROMĚNNÉ PRO ŘÍZENÍ ZOBRAZENÍ ---
+        let originalNodeColors = new Map(); // K uložení původních barev uzlů
+        let originalEdgeColors = new Map(); // K uložení původních barev hran
+        let originalEdgeSmoothness = new Map(); // K uložení původního smooth nastavení hran
+        const DEFAULT_BLUR_OPACITY_NODE = 0.2; // Opacity pro "zamlžené" uzly
+        const DEFAULT_BLUR_OPACITY_EDGE = 0.1; // Opacity pro "zamlžené" hrany
+        const ACTIVE_OPACITY = 1.0; // Plná opacity pro aktivní prvky
+
+        // Globální datové sady pro uzly a hrany (Vis.js dataSets)
+        const nodes = new vis.DataSet([]);
+        const edges = new vis.DataSet([]);
+
+        // Pomocné datové sady pro správu všech uzlů a hran, včetně skrytých podkonceptů
+        let allNodesData = []; // Uložíme si původní (neměnné) data všech uzlů
+        let allEdgesData = []; // Uložíme si původní (neměnné) data všech hran
+
+        const container = document.getElementById('knowledge-map');
+        const infoPanel = document.getElementById('info-panel');
+        const infoContent = document.getElementById('info-content');
+        const splashScreen = document.getElementById('splash-screen');
+        // --- Globální proměnné pro vyhledávání ---
+        const searchCloseButton = document.getElementById('search-close-button');
+        const openSearchButton = document.getElementById('open-search-button');
+        console.log('openSearchButton element:', openSearchButton); // <--- Přidej tento řádek
+        const searchPanel = document.getElementById('search-panel');
+        console.log('searchPanel element:', searchPanel); // <--- Přidej i tento
+        const searchInput = document.getElementById('node-search-input'); // Tuto už jsi měl
+        console.log('searchInput element:', searchInput); // <--- A tento
+        const searchResultsDiv = document.getElementById('search-results'); // Tuto už jsi měl
+        console.log('searchResultsDiv element:', searchResultsDiv); // <--- A tento
+
+
+        // --- Konfigurace VIS.js sítě ---
+        const options = {
+            nodes: {
+                shape: 'dot',
+                size: 18,
+                color: {
+                    border: '#2B7CE9',
+                    background: '#97C2E5',
+                    highlight: { border: '#2B7CE9', background: '#D2E5FF' },
+                    hover: { border: '#2B7CE9', background: '#D2E5FF' }
+                },
+                font: { size: 14, color: '#ffffff', multi: 'html' },
+                borderWidth: 2,
+                shadow: true
+            },
+            edges: {
+                width: 2,
+                color: { color: '#4B5563', highlight: '#60A5FA' },
+                arrows: { to: { enabled: false } }
+                // smooth: { type: 'dynamic' } // Tuto řádku zakomentujeme nebo odstraníme
+            },
+            physics: { enabled: true, solver: 'barnesHut', barnesHut: { gravitationalConstant: -25000, centralGravity: 0.1, springLength: 180, damping: 0.09 } },
+            interaction: { hover: true, tooltipDelay: 200, keyboard: true }
+        };
+
+        // --- Funkce pro syntézu řeči (Text-to-Speech) ---
+        function speakText(text) {
+            if ('SpeechSynthesisUtterance' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'cs-CZ';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.warn('Váš prohlížeč nepodporuje syntézu řeči.');
+            }
+        }
+
+        // --- Funkce pro ovládání UI (Panel, Splash Screen, Úlohy) ---
+        function hideInfoPanel() {
+            infoPanel.classList.remove('visible');
+            // currentConceptId = null; // Ponecháme, protože panel může být zavřen, ale koncept vybrán
+        }
+
+        function hideSplashScreen() {
+            splashScreen.classList.add('hidden');
+        }
+
+        function runTask(taskId) {
+            let taskUrl = '';
+            switch (taskId) {
+                case 'simulace-linky':
+                    taskUrl = 'table-production.html';
+                    break;
+                case 'minidashboard':
+                    taskUrl = 'minidashboard.html';
+                    break;
+                case 'nalezeni-omezeni':
+                    alert('Spouštím kalkulačku: Nalezení kapacitního omezení');
+                    break;
+                case 'kalkulacka-prutoku':
+                    alert('Spouštím kalkulačku průtoku');
+                    break;
+                case 'prehled-toc':
+                    alert('Zobrazuji přehled TOC pro manažery');
+                    break;
+                case 'implementace-toc':
+                    alert('Otevírám průvodce implementací TOC');
+                    break;
+                case 'analyza-zasob':
+                    alert('Spouštím analýzu optimálních zásob');
+                    break;
+                case 'prirucka-5kroku':
+                    alert('Otevírám průvodce 5 kroky zlepšování');
+                    break;
+                case 'dbn-simulace':
+                    alert('Spouštím simulaci DBR systému');
+                    break;
+                case 'ccpm-uvod':
+                    alert('Otevírám úvod do Critical Chain Project Management');
+                    break;
+                default:
+                    console.warn(`Pro úlohu s ID "${taskId}" nebyla nalezena URL ani definovaná akce.`);
+                    alert(`Úloha "${taskId}" zatím nemá definovanou URL ani akci.`);
+                    return;
+            }
+            if (taskUrl) {
+                window.open(taskUrl, '_blank');
+            }
+        }
+
+        function showArticleDetail(articleId) {
+            const article = contentData.library.find(item => item.id === articleId);
+            if (article && article.content) {
+                infoContent.innerHTML = `
+                    <div class="article-view">
+                        <h2>${article.title}</h2>
+                        ${article.content}
+                        <p class="back-to-concept" onclick="showConceptHub(currentConceptId)">← Zpět k detailu konceptu</p>
+                    </div>
+                `;
+            } else {
+                infoContent.innerHTML = `<h2>Chyba</h2><p>Obsah článku "${articleId}" nebyl nalezen.</p>`;
+            }
+            infoPanel.classList.add('visible');
+        }
+
+        function showConceptHub(termId) {
+            currentConceptId = termId;
+
+            let termData;
+            let isSubnode = false;
+
+            termData = contentData.dictionary.find(term => term.term === termId);
+            if (!termData) {
+                for (const mainTerm of contentData.dictionary) {
+                    if (mainTerm.subnodes) {
+                        const sub = mainTerm.subnodes.find(subnode => `${mainTerm.term}-${subnode.term}` === termId);
+                        if (sub) {
+                            termData = sub;
+                            isSubnode = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!termData) {
+                infoContent.innerHTML = `<h2>Nenalezeno</h2><p>Detailní data pro termín "${termId}" nebyla nalezena.</p>`;
+                infoPanel.classList.add('visible');
+                return;
+            }
+
+            const displayTerm = termData.term;
+            const iconColor = termData.color || '#FBBF24';
+            const iconHtml = termData.icon ? `<i class="fas fa-${getFaClassName(termData.icon)} concept-icon" style="color:${iconColor};"></i>` : '';
+
+            // --- Zobrazení souvisejících médií (audio/video/image/pdf) ---
+            let relatedMediaHtml = '';
+            if (termData.relatedMedia && Array.isArray(termData.relatedMedia) && termData.relatedMedia.length > 0) {
+                const mediaItems = termData.relatedMedia.map(mediaId =>
+                    contentData.library.find(item => item.id === mediaId)
+                ).filter(Boolean); // Odfiltruje undefined, pokud ID neexistuje
+
+                if (mediaItems.length > 0) {
+                    relatedMediaHtml += '<hr><h3>Související média:</h3>';
+                    mediaItems.forEach(media => {
+                        // Dynamická ikona pro médium
+                        const mediaIconHtml = media.icon ? `<i class="${media.icon}" style="margin-right: 8px;"></i>` : '';
+
+                        relatedMediaHtml += `<div class="media-item">`; // Kontejner pro každé médium
+                        relatedMediaHtml += `<p style="margin-bottom: 5px;">${mediaIconHtml}<strong>${media.title}</strong></p>`; // Název média s ikonou
+                        relatedMediaHtml += `<p style="font-size: 0.9em; margin-top: 0; margin-bottom: 10px;">${media.description}</p>`; // Popis média
+
+                        if (media.type === 'audio') {
+                            relatedMediaHtml += `
+                                <audio controls style="width: 100%;">
+                                    <source src="${media.url}" type="audio/mpeg">
+                                    Váš prohlížeč nepodporuje přehrávání zvuku.
+                                </audio>
+                            `;
+                        } else if (media.type === 'video') {
+                            let videoEmbedHtml = '';
+                            if (media.url.includes('youtube.com') || media.url.includes('youtu.be')) {
+                                const videoId = media.url.split('v=')[1]?.split('&')[0] || media.url.split('/').pop();
+                                videoEmbedHtml = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                            } else if (media.url.includes('vimeo.com')) {
+                                const videoId = media.url.split('/').pop();
+                                videoEmbedHtml = `<iframe src="https://player.vimeo.com/video/${videoId}" width="100%" height="200" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+                            } else {
+                                videoEmbedHtml = `<video controls width="100%" height="200"><source src="${media.url}" type="video/mp4">Váš prohlížeč nepodporuje video tag.</video>`;
+                            }
+                            relatedMediaHtml += videoEmbedHtml;
+                            if (media.linkText) {
+                                relatedMediaHtml += `<p style="margin-top: 5px;"><a href="${media.url}" target="_blank">${media.linkText}</a></p>`;
+                            }
+                        } else if (media.type === 'image' || media.type === 'gif') {
+                            relatedMediaHtml += `
+                                <img src="${media.url}" alt="${media.title}" style="max-width: 100%; height: auto; display: block; margin-bottom: 5px;">
+                            `;
+                            if (media.linkText) {
+                                relatedMediaHtml += `<p style="margin-top: 5px;"><a href="${media.url}" target="_blank">${media.linkText}</a></p>`;
+                            }
+                        } else if (media.type === 'pdf') {
+                            relatedMediaHtml += `
+                                <p><a href="${media.url}" target="_blank" download>${media.linkText || 'Stáhnout PDF'}</a></p>
+                            `;
+                        }
+                        relatedMediaHtml += `</div><br>`; // Uzavření kontejneru a mezera
+                    });
+                    relatedMediaHtml += '<hr>';
+                }
+            }
+            // --- Konec souvisejících médií ---
+
+            let relatedContentHtml = '<h3>Související zdroje:</h3><ul>';
+            let foundContent = false;
+
+            if (!isSubnode && contentData.library) {
+                contentData.library.forEach(item => {
+                    // Ignorujeme multimediální typy, protože ty se zobrazují v relatedMediaHtml
+                    if (['audio', 'video', 'image', 'gif', 'pdf'].includes(item.type)) return;
+
+                    const searchableText = `${item.title} ${item.description} ${item.tags ? item.tags.join(' ') : ''}`.toLowerCase();
+                    const termNameLower = termData.term.toLowerCase();
+
+                    const isDirectlyRelated = searchableText.includes(termNameLower);
+                    let isIndirectlyRelated = false;
+                    if (termData.relatedTerms && Array.isArray(termData.relatedTerms)) {
+                        isIndirectlyRelated = termData.relatedTerms.some(rt => searchableText.includes(rt.toLowerCase()));
+                    }
+
+                    if (isDirectlyRelated || isIndirectlyRelated) {
+                        if (item.type === 'Článek' || item.type === 'Případová studie' || item.type === 'E-book') {
+                            relatedContentHtml += `<li><a href="#" onclick="showArticleDetail('${item.id}'); return false;">${item.title}</a> (${item.type})</li>`;
+                        } else {
+                            relatedContentHtml += `<li><a href="${item.url || '#'}" target="_blank">${item.title}</a> (${item.type})</li>`;
+                        }
+                        foundContent = true;
+                    }
+                });
+            }
+            if (!foundContent && !isSubnode) relatedContentHtml += '<li>Žádné specifické materiály nebyly nalezeny.</li>';
+            if (isSubnode && !foundContent) relatedContentHtml = '';
+            // --- Funkce pro zobrazení/skrytí vyhledávacího panelu ---
+            function toggleSearchPanel(show) {
+                if (show) {
+                    searchPanel.classList.remove('translate-x-full', 'opacity-0', 'pointer-events-none');
+                    searchPanel.classList.add('translate-x-0', 'opacity-100');
+                    openSearchButton.classList.add('hidden'); // Skryj tlačítko pro otevření
+                    searchInput.focus(); // Zaměř se na vyhledávací pole
+                } else {
+                    searchPanel.classList.remove('translate-x-0', 'opacity-100');
+                    searchPanel.classList.add('translate-x-full', 'opacity-0', 'pointer-events-none');
+                    openSearchButton.classList.remove('hidden'); // Zobraz tlačítko pro otevření
+                    searchResultsDiv.innerHTML = ''; // Vyčisti výsledky
+                    searchResultsDiv.classList.add('hidden'); // Skryj výsledky
+                    searchInput.value = ''; // Vyčisti vyhledávací pole
+                }
+            }
+
+            // --- Funkce pro filtrování uzlů ---
+            function filterNodes(query) {
+                searchResultsDiv.innerHTML = '';
+                searchResultsDiv.classList.add('hidden');
+                if (query.length < 2) return; // Hledat až od 2 znaků
+
+                const lowerCaseQuery = query.toLowerCase();
+                const matchingItems = contentData.items.filter(item =>
+                    item.type === 'term' && item.title.toLowerCase().includes(lowerCaseQuery)
+                );
+
+                if (matchingItems.length > 0) {
+                    matchingItems.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.classList.add('p-2', 'hover:bg-gray-600', 'cursor-pointer', 'text-white', 'rounded-md');
+                        resultDiv.innerHTML = item.title;
+                        resultDiv.onclick = () => {
+                            // Po kliknutí na výsledek
+                            showConceptHub(item.id); // Zobraz detail konceptu
+                            network.focus(item.id, {
+                                scale: 1.0,
+                                animation: {
+                                    duration: 1000,
+                                    easingFunction: 'easeInOutQuad'
+                                }
+                            });
+                            toggleSearchPanel(false); // Zavři vyhledávací panel
+                        };
+                        searchResultsDiv.appendChild(resultDiv);
+                    });
+                    searchResultsDiv.classList.remove('hidden');
+                } else {
+                    searchResultsDiv.classList.remove('hidden');
+                    searchResultsDiv.innerHTML = '<div class="p-2 text-gray-400">Žádné výsledky.</div>';
+                }
+            }
+
+
+            let tasksHtml = '';
+            if (termData.tasks && Array.isArray(termData.tasks) && termData.tasks.length > 0) {
+                tasksHtml = '<h3>Dostupné úlohy:</h3><div>';
+                termData.tasks.forEach(task => {
+                    tasksHtml += `<button class="task-button" onclick="runTask('${task.id}')">${task.name}</button>`;
+                });
+                tasksHtml += '</div><hr>';
+            } else if (isSubnode && (!termData.tasks || termData.tasks.length === 0)) {
+                tasksHtml = '<p>Pro tento podkoncept nejsou k dispozici žádné přímé úlohy.</p>';
+            }
+
+            let toggleSubuniverseButton = '';
+            if (!isSubnode && termData.subnodes && Array.isArray(termData.subnodes) && termData.subnodes.length > 0) {
+                if (currentFocusedParent === termData.term) {
+                    toggleSubuniverseButton = `<button class="task-button" onclick="toggleSubuniverse('${termData.term}', false)">Skrýt podkoncepty</button>`;
+                } else {
+                    toggleSubuniverseButton = `<button class="task-button" onclick="toggleSubuniverse('${termData.term}', true)">Prozkoumat podkoncepty</button>`;
+                }
+            } else if (currentFocusedParent && currentFocusedParent !== termId) {
+                toggleSubuniverseButton = `<button class="task-button" onclick="resetNetworkView()">Zpět na hlavní vesmír</button>`;
+            } else if (currentFocusedParent && isSubnode && termId.startsWith(currentFocusedParent + '-')) {
+                toggleSubuniverseButton = `<button class="task-button" onclick="showConceptHub('${currentFocusedParent}')">Zpět k mateřskému konceptu</button>`;
+            }
+
+            infoContent.innerHTML = `
+                <h2>${iconHtml}${displayTerm}</h2>
+                <p>${termData.definition}</p>
+                ${relatedMediaHtml}
+                ${tasksHtml}
+                ${toggleSubuniverseButton}
+                ${!isSubnode && foundContent ? '<hr>' : ''}
+                ${!isSubnode ? relatedContentHtml : ''}
+            `;
+
+            infoPanel.classList.add('visible');
+        }
+
+        // Pomocná funkce pro získání názvu třídy z Unicode pro HTML panel
+        function getFaClassName(unicode) {
+            const unicodeMap = {
+                '\uf0eb': 'lightbulb',
+                '\uf071': 'exclamation-triangle',
+                '\uf085': 'cogs',
+                '\uf201': 'chart-line',
+                '\uf0e3': 'gavel',
+                '\uf572': 'stream',
+                '\uf468': 'boxes',
+                '\uf0cb': 'list-ol',
+                '\uf569': 'drum',
+                '\uf542': 'project-diagram',
+                '\uf0ae': 'tasks',
+                '\uf518': 'book-open',
+                '\uf0e8': 'sitemap'
+            };
+            return unicodeMap[unicode] || '';
+        }
+
+        fetch('./content.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Soubor content.json nenalezen.');
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data z content.json úspěšně načtena.");
+                contentData = data;
+                initializeNetwork(); // Inicializujeme síť bez parametrů
+            })
+            .catch(error => {
+                console.error('Chyba při načítání content.json:', error);
+                alert('Nepodařilo se načíst data pro universum. Ujistěte se, že soubor content.json je ve stejné složce.');
+            });
+
+        function initializeNetwork() {
+            // Vyčistíme stará data pro případ opětovné inicializace
+            originalNodeColors = new Map();
+            originalEdgeColors = new Map();
+            originalEdgeSmoothness = new Map();
+
+            const allNodesData = [];
+            const allEdgesData = [];
+
+            // Přidáme uzly pro hlavní koncepty a uložíme jejich barvy
+            contentData.dictionary.forEach(term => {
+                const nodeColor = term.color || '#FBBF24'; // Výchozí barva pro uzly
+                allNodesData.push({ id: term.term, label: term.term, color: nodeColor, icon: term.icon });
+                originalNodeColors.set(term.term, nodeColor); // Uložíme originální barvu uzlu
+            });
+
+            // Speciální uzel pro "Teorie omezení" (pokud je explicitně definován a má mít specifickou barvu/chování)
+            // Ujisti se, že "Teorie omezení" JE ve tvém dictionary, jinak to může způsobit duplikaci nebo chyby.
+            // Pokud "Teorie omezení" už je zpracována v předchozím cyklu, tento blok můžeš odstranit.
+            // Předpokládám, že je ve dictionary a chci jen zajistit, že má specifickou barvu.
+            const tocNodeInDictionary = contentData.dictionary.find(term => term.term === 'Teorie omezení');
+            if (tocNodeInDictionary) {
+                const tocNodeColor = '#2563EB'; // Specifická barva pro TOC
+                // Najdeme index uzlu 'Teorie omezení' a aktualizujeme ho
+                const tocNodeIndex = allNodesData.findIndex(node => node.id === 'Teorie omezení');
+                if (tocNodeIndex !== -1) {
+                    allNodesData[tocNodeIndex].color = tocNodeColor;
+                } else {
+                    // Mělo by být nalezeno, ale pro jistotu
+                    allNodesData.push({ id: 'Teorie omezení', label: 'Teorie omezení', color: tocNodeColor, icon: '\uf0eb' });
+                }
+                originalNodeColors.set('Teorie omezení', tocNodeColor); // Uložíme originální barvu
+            } else {
+                // Pokud TOC není ve dictionary, ale chceme ho jako speciální uzel
+                const tocNodeColor = '#2563EB';
+                allNodesData.push({ id: 'Teorie omezení', label: 'Teorie omezení', color: tocNodeColor, icon: '\uf0eb' });
+                originalNodeColors.set('Teorie omezení', tocNodeColor);
+            }
+
+
+            // Propojení "Teorie omezení" s hlavními koncepty
+            contentData.dictionary.forEach(term => {
+                if (term.term !== 'Teorie omezení') { // Nepropojovat sama se sebou
+                    const edgeId = `edge-Teorie omezení-${term.term}`;
+                    // Před přidáním zkontrolujeme, zda hrana s tímto ID (nebo opačným) již neexistuje
+                    if (!allEdgesData.some(edge => edge.id === edgeId || edge.id === `edge-${term.term}-Teorie omezení`)) {
+                        const edgeSettings = { from: 'Teorie omezení', to: term.term, color: { color: '#60A5FA', opacity: 0.8 }, smooth: { type: 'dynamic' }, id: edgeId };
+                        allEdgesData.push(edgeSettings);
+                        originalEdgeColors.set(edgeId, edgeSettings.color);
+                        originalEdgeSmoothness.set(edgeId, edgeSettings.smooth);
+                    }
+                }
+            });
+
+            // Propojení relatedTerms (přerušovanou čarou)
+            contentData.dictionary.forEach(term => {
+                if (term.relatedTerms) {
+                    term.relatedTerms.forEach(relatedTerm => {
+                        // Zajistíme, že relatedTerm existuje jako uzel, než vytvoříme hranu
+                        if (allNodesData.some(node => node.id === relatedTerm)) {
+                            const edgeId = `edge-${term.term}-${relatedTerm}`;
+                            // Před přidáním zkontrolujeme, zda hrana s tímto ID (nebo opačným) již neexistuje
+                            if (!allEdgesData.some(edge => edge.id === edgeId || edge.id === `edge-${relatedTerm}-${term.term}`)) {
+                                const edgeSettings = { from: term.term, to: relatedTerm, dashes: true, color: { color: '#4B5563', opacity: 0.6 }, smooth: { type: 'dynamic' }, id: edgeId };
+                                allEdgesData.push(edgeSettings);
+                                originalEdgeColors.set(edgeId, edgeSettings.color);
+                                originalEdgeSmoothness.set(edgeId, edgeSettings.smooth);
+                            }
+                        }
+                    });
+                }
+            });
+            // Propojení z definice (slovní analýza)
+            contentData.dictionary.forEach(term => {
+                if (term.definition) {
+                    contentData.dictionary.forEach(otherTerm => {
+                        if (term.term !== otherTerm.term && term.definition.includes(otherTerm.term)) {
+                            const edgeId = `edge-${term.term}-${otherTerm.term}`;
+                            // Zkontrolujeme, zda tato hrana již neexistuje, abychom zabránili duplikátům
+                            if (!allEdgesData.some(edge => edge.id === edgeId || edge.id === `edge-${otherTerm.term}-${term.term}`)) {
+                                const edgeSettings = { from: term.term, to: otherTerm.term, color: { color: '#A1A1AA', opacity: 0.6 }, smooth: { type: 'dynamic' }, id: edgeId };
+                                allEdgesData.push(edgeSettings);
+                                originalEdgeColors.set(edgeId, edgeSettings.color);
+                                originalEdgeSmoothness.set(edgeId, edgeSettings.smooth);
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Data pro Vis.js
+            const data = {
+                nodes: new vis.DataSet(allNodesData),
+                edges: new vis.DataSet(allEdgesData)
+            };
+
+            // const container = document.getElementById('mynetwork');
+            if (container) {
+                // !!! PŘIDAT TOTO VYČIŠTĚNÍ !!!
+                container.innerHTML = ''; // Vyčistí veškerý obsah divu, včetně starého canvasu Vis.js
+            } else {
+                console.error("HTML element s ID 'mynetwork' nebyl nalezen!");
+                return; // Zastaví funkci, pokud element neexistuje
+            }
+
+            // --- Konfigurace VIS.js sítě ---
+            const options = {
+                nodes: {
+                    shape: 'dot',
+                    size: 18,
+                    color: {
+                        border: '#2B7CE9',
+                        background: '#97C2E5',
+                        highlight: { border: '#2B7CE9', background: '#D2E5FF' },
+                        hover: { border: '#2B7CE9', background: '#D2E5FF' }
+                    },
+                    font: { size: 14, color: '#ffffff', multi: 'html' },
+                    borderWidth: 2,
+                    shadow: true
+                },
+                edges: { // Zde už NEBUDE globální smooth nastavení, aby lokální nastavení fungovalo
+                    width: 2,
+                    color: { color: '#4B5563', highlight: '#60A5FA' },
+                    arrows: { to: { enabled: false } }
+                    // !!! Zde už NEBUDE smooth: { type: 'dynamic' } !!!
+                    // Pokud ho tam máte, smažte nebo zakomentujte.
+                    // Tím se zajistí, že lokální nastavení smoothness v allEdgesData bude mít prioritu.
+                },
+                physics: { enabled: true, solver: 'barnesHut', barnesHut: { gravitationalConstant: -25000, centralGravity: 0.1, springLength: 180, damping: 0.09 } },
+                interaction: { hover: true, tooltipDelay: 200, keyboard: true }
+            };
+
+            network = new vis.Network(container, data, options);
+            // ZMĚNA: Kód pro zvětšení uzlu 'Teorie omezení' po inicializaci sítě
+            const centralNodeTerm = "Teorie omezení";
+            const centralNodeId = allNodesData.find(node => node.label.includes(centralNodeTerm))?.id;
+
+            if (centralNodeId) {
+                // Aktualizuje uzel 'Teorie omezení' v datech sítě
+                data.nodes.update({ id: centralNodeId, size: 40 });
+            }
+            // Konec ZMĚNY
+
+            // --- PŘIDANÉ LISTENERY PRO FOKUS (z bodu 3 předchozího plánu) ---
+            network.on('selectNode', function (properties) {
+                const selectedNodeId = properties.nodes[0];
+                if (selectedNodeId) {
+                    const connectedEdges = network.getConnectedEdges(selectedNodeId);
+                    const connectedEdgesIds = connectedEdges.map(edgeId => network.body.data.edges.get(edgeId).id);
+                    setNetworkFocus(selectedNodeId, connectedEdgesIds);
+                    showConceptHub(selectedNodeId);
+                }
+            });
+
+            network.on('deselectNode', function (properties) {
+                if (properties.nodes.length === 0) {
+                    resetNetworkFocus();
+                    infoPanel.classList.remove('visible'); // Zavřeme panel po odkliknutí
+                }
+            });
+
+            network.on('click', function (properties) {
+                if (properties.nodes.length === 0 && properties.edges.length === 0) {
+                    resetNetworkFocus();
+                    infoPanel.classList.remove('visible');
+                }
+            });
+            // --- Event Listenery pro vyhledávání (přidej na konec skriptu, např. pod DOMContentLoaded) ---
+            // Musí být volány až po definici elementů v HTML
+            openSearchButton.addEventListener('click', () => toggleSearchPanel(true));
+            searchCloseButton.addEventListener('click', () => toggleSearchPanel(false));
+
+            searchInput.addEventListener('input', (event) => {
+                filterNodes(event.target.value);
+            });
+
+            searchInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    filterNodes(event.target.value); // Po stisku Enter také filtruj
+                    event.preventDefault(); // Zabraň odeslání formuláře nebo jinému výchozímu chování
+                }
+            });
+            // --- KONEC PŘIDANÝCH LISTENERŮ ---
+
+            // network.fit(); // Přizpůsobí pohled celé síti na začátku
+
+            // Po inicializaci a předání dat, pokud chci resetovat pohled.
+            // Zde bychom neměli volat resetNetworkFocus, protože je síť poprvé inicializována
+            // a všechny prvky mají originální barvy.
+        }
+
+        // --- POMOCNÉ FUNKCE PRO ZOBRAZENÍ ---
+
+        // Pomocná funkce pro získání rgba barvy s danou opacitou
+        function getRgbaColor(hexColor, opacity) {
+            if (!hexColor || typeof hexColor !== 'string') {
+                console.warn('Invalid hexColor provided:', hexColor);
+                return `rgba(128, 128, 128, ${opacity})`; // Fallback šedá
+            }
+            const r = parseInt(hexColor.slice(1, 3), 16);
+            const g = parseInt(hexColor.slice(3, 5), 16);
+            const b = parseInt(hexColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+
+        // Funkce pro nastavení opacity uzlů a hran
+        function setNetworkFocus(focusedNodeId = null, focusedEdgesIds = []) {
+            const nodes = network.body.data.nodes;
+            const edges = network.body.data.edges;
+            const updatedNodes = [];
+            const updatedEdges = [];
+
+            // Aktualizace uzlů
+            nodes.forEach(node => {
+                let newColor;
+                const originalColor = originalNodeColors.get(node.id);
+
+                if (focusedNodeId === node.id || (focusedEdgesIds.includes(`edge-${focusedNodeId}-${node.id}`) || focusedEdgesIds.includes(`edge-${node.id}-${focusedNodeId}`))) {
+                    // Vybraný uzel nebo uzel přímo spojený s vybraným - plná barva
+                    newColor = originalColor || node.color; // Použij originální barvu
+                    if (typeof newColor === 'string') {
+                        newColor = getRgbaColor(newColor, ACTIVE_OPACITY);
+                    } else if (newColor && newColor.color) { // Pokud je to objekt {color: '#hex', opacity: x}
+                        newColor = getRgbaColor(newColor.color, ACTIVE_OPACITY);
+                    }
+                } else if (focusedNodeId && !currentFocusedParent) { // Pokud je vybrán UZEL (ne podvesmír)
+                    // Ostatní uzly - snížená opacity
+                    newColor = originalColor || node.color;
+                    if (typeof newColor === 'string') {
+                        newColor = getRgbaColor(newColor, DEFAULT_BLUR_OPACITY_NODE);
+                    } else if (newColor && newColor.color) {
+                        newColor = getRgbaColor(newColor.color, DEFAULT_BLUR_OPACITY_NODE);
+                    }
+                } else if (currentFocusedParent) { // Jsme v podvesmíru - zatlumit vše, co není v podvesmíru
+                    if (node.id === currentFocusedParent || node.id.startsWith(currentFocusedParent + '-')) {
+                        newColor = originalColor || node.color;
+                        if (typeof newColor === 'string') {
+                            newColor = getRgbaColor(newColor, ACTIVE_OPACITY);
+                        } else if (newColor && newColor.color) {
+                            newColor = getRgbaColor(newColor.color, ACTIVE_OPACITY);
+                        }
+                    } else {
+                        newColor = originalColor || node.color;
+                        if (typeof newColor === 'string') {
+                            newColor = getRgbaColor(newColor, DEFAULT_BLUR_OPACITY_NODE);
+                        } else if (newColor && newColor.color) {
+                            newColor = getRgbaColor(newColor.color, DEFAULT_BLUR_OPACITY_NODE);
+                        }
+                    }
+                } else { // Žádný fokus - plná barva
+                    newColor = originalColor || node.color;
+                    if (typeof newColor === 'string') {
+                        newColor = getRgbaColor(newColor, ACTIVE_OPACITY);
+                    } else if (newColor && newColor.color) {
+                        newColor = getRgbaColor(newColor.color, originalColor.opacity || ACTIVE_OPACITY);
+                    }
+                }
+                updatedNodes.push({ id: node.id, color: newColor });
+            });
+
+            // Aktualizace hran
+            edges.forEach(edge => {
+                let newColor;
+                const originalEdgeObj = originalEdgeColors.get(edge.id); // Objekt {color: '#hex', opacity: x}
+                const originalEdgeHexColor = originalEdgeObj ? originalEdgeObj.color : '#A1A1AA'; // Výchozí šedá
+                const originalEdgeOpacity = originalEdgeObj ? originalEdgeObj.opacity : ACTIVE_OPACITY; // Výchozí plná
+
+                if (focusedEdgesIds.includes(edge.id) || (focusedNodeId && (edge.from === focusedNodeId || edge.to === focusedNodeId))) {
+                    // Hrana přímo spojená s vybraným uzlem - plná barva
+                    newColor = getRgbaColor(originalEdgeHexColor, ACTIVE_OPACITY);
+                } else if (focusedNodeId && !currentFocusedParent) { // Vybrán uzel (ne podvesmír)
+                    // Ostatní hrany - snížená opacity
+                    newColor = getRgbaColor(originalEdgeHexColor, DEFAULT_BLUR_OPACITY_EDGE);
+                } else if (currentFocusedParent) { // Jsme v podvesmíru - zatlumit vše, co není v podvesmíru
+                    if ((edge.from === currentFocusedParent && edge.hidden === false) ||
+                        (contentData.dictionary.some(term => term.term === currentFocusedParent && term.subnodes && term.subnodes.some(sub => sub.term === edge.to.replace(currentFocusedParent + '-', '')) && edge.from === currentFocusedParent))) {
+                        // Je to hrana k viditelnému podkonceptu
+                        newColor = getRgbaColor(originalEdgeHexColor, ACTIVE_OPACITY);
+                    } else {
+                        newColor = getRgbaColor(originalEdgeHexColor, DEFAULT_BLUR_OPACITY_EDGE);
+                    }
+                }
+                else { // Žádný fokus - plná barva
+                    newColor = getRgbaColor(originalEdgeHexColor, originalEdgeOpacity); // Původní barva s původní opacity
+                }
+                updatedEdges.push({ id: edge.id, color: newColor });
+            });
+
+            // Aplikuj změny
+            nodes.update(updatedNodes);
+            edges.update(updatedEdges);
+        }
+
+        // Funkce pro resetování fokusu (vrácení všech na původní opacity)
+        function resetNetworkFocus() {
+            setNetworkFocus(null, []); // Volání bez ID uzlů zruší fokus
+            currentFocusedParent = null; // Zrušíme i fokus na podvesmír
+            // Můžeš zde případně zavolat network.fit() nebo network.zoom to (1) pro návrat k původnímu pohledu,
+            // ale to by se mělo dít automaticky, když se Vis.js resetuje.
+        }
+        // Funkce pro přepínání viditelnosti podkonceptů a zvýraznění
+        function toggleSubuniverse(parentNodeId, show) {
+            hideInfoPanel();
+
+            const nodesToUpdate = [];
+            const edgesToUpdate = [];
+            const nodesToFocus = [parentNodeId];
+
+            const parentNode = nodes.get(parentNodeId);
+            if (!parentNode) return;
+
+            // Najdeme všechny podkoncepty a jejich hrany pro daný mateřský uzel
+            const relatedSubnodes = allNodesData.filter(n => n.parentNodeId === parentNodeId);
+            const relatedEdges = allEdgesData.filter(e => e.from === parentNodeId && relatedSubnodes.some(sn => sn.id === e.to));
+
+            // Aktualizujeme stav skrytí pro podkoncepty a jejich hrany
+            relatedSubnodes.forEach(subnode => {
+                nodesToUpdate.push({
+                    id: subnode.id,
+                    hidden: !show,
+                    size: show ? 18 : 15,
+                    font: { size: show ? 14 : 12 },
+                    color: subnode.fullData.color || parentNode.fullData.color
+                });
+                if (show) nodesToFocus.push(subnode.id);
+            });
+            relatedEdges.forEach(edge => {
+                edgesToUpdate.push({ id: edge.id, hidden: !show });
+            });
+
+            // --- Zeslabení/zvýraznění uzlů a hran ---
+            allNodesData.forEach(node => {
+                if (node.id === parentNodeId || relatedSubnodes.some(sn => sn.id === node.id)) {
+                    // Zvýrazníme mateřský uzel a jeho podkoncepty (plná barva, normální velikost)
+                    nodesToUpdate.push({
+                        id: node.id,
+                        color: node.fullData.color || '#FBBF24',
+                        font: { color: 'white' },
+                        value: show ? 2 : 1
+                    });
+                } else if (!node.parentNodeId) {
+                    // Ostatní HLAVNÍ uzly zeslabíme
+                    nodesToUpdate.push({
+                        id: node.id,
+                        color: show ? { background: '#374151', border: '#4B5563', highlight: { background: '#4B5563', border: '#6B7280' }, hover: { background: '#4B5563', border: '#6B7280' } } : node.fullData.color,
+                        font: { color: show ? '#6B7280' : 'white' },
+                        value: show ? 0.5 : 1
+                    });
+                }
+            });
+
+            allEdgesData.forEach(edge => {
+                // Zjistíme, zda hrana patří do aktivního podvesmíru (mezi mateřským a podkonceptem, nebo mateřským a jiným hlavním)
+                const isEdgeInActiveSubuniverse =
+                    (edge.from === parentNodeId && relatedSubnodes.some(sn => sn.id === edge.to)) || // z rodiče na podkoncept
+                    (edge.to === parentNodeId && relatedSubnodes.some(sn => sn.id === edge.from)) || // z podkonceptu na rodiče
+                    (edge.from === parentNodeId && !nodes.get(edge.to)?.parentNodeId) || // z rodiče na hlavní uzel
+                    (!nodes.get(edge.from)?.parentNodeId && edge.to === parentNodeId); // z hlavního uzlu na rodiče
+
+                // Zeslabíme všechny hrany, které nejsou v aktivním podvesmíru
+                if (show && !isEdgeInActiveSubuniverse) {
+                    edgesToUpdate.push({
+                        id: edge.id,
+                        color: { color: '#4B5563', opacity: 0.3 }
+                    });
+                } else {
+                    // Všechny hrany, které jsou součástí aktivního podvesmíru, nebo když se skrývá, plná opacita
+                    edgesToUpdate.push({
+                        id: edge.id,
+                        color: { color: edge.color?.color || '#60A5FA', opacity: 1 }
+                    });
+                }
+            });
+
+            nodes.update(nodesToUpdate);
+            edges.update(edgesToUpdate);
+
+            currentFocusedParent = show ? parentNodeId : null;
+
+            if (show) {
+                network.focus(nodesToFocus, {
+                    scale: 0.8,
+                    animation: { duration: 1000, easingFunction: 'easeInOutQuad' }
+                });
+                speakText(`Zobrazuji podkoncepty pro ${parentNode.fullData.term}.`);
+            } else {
+                resetNetworkView();
+            }
+        }
+
+        // Funkce pro resetování pohledu na celý hlavní vesmír (skryje všechny podkoncepty a obnoví styly)
+        function resetNetworkView() {
+            hideInfoPanel();
+
+            const nodesToUpdate = [];
+            const edgesToUpdate = [];
+
+            allNodesData.forEach(node => {
+                if (node.parentNodeId) { // Je to podkoncept
+                    nodesToUpdate.push({ id: node.id, hidden: true, size: 15, font: { size: 12 } });
+                } else {
+                    const mainNodeData = contentData.dictionary.find(t => t.term === node.id);
+                    if (mainNodeData) {
+                        nodesToUpdate.push({
+                            id: node.id,
+                            color: mainNodeData.color,
+                            label: mainNodeData.term + (node.id === 'Teorie omezení' ? '\n(TOC)' : ''),
+                            font: { color: 'white' },
+                            value: 1
+                        });
+                    }
+                }
+            });
+            allEdgesData.forEach(edge => {
+                if (edge.id && edge.id.startsWith('edge-')) { // Je to hrana k podkonceptu
+                    edgesToUpdate.push({ id: edge.id, hidden: true });
+                } else {
+                    // Obnovit barvy a průhlednost všech hlavních hran
+                    edgesToUpdate.push({
+                        id: edge.id,
+                        color: { color: edge.color?.color || '#4B5563', opacity: 1 }
+                    });
+                }
+            });
+
+            nodes.update(nodesToUpdate);
+            edges.update(edgesToUpdate);
+
+            currentFocusedParent = null;
+            network.fit({ animation: { duration: 700, easingFunction: 'easeInOutQuad' } });
+            speakText('Vracím se do hlavního vesmíru.');
+        }
+
+        // --- Vyhledávání uzlů ---
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            searchResultsDiv.innerHTML = '';
+            searchResultsDiv.classList.remove('visible');
+
+            if (query.length < 2) {
+                return;
+            }
+
+            // Hledáme ve všech uzlech, bez ohledu na to, zda jsou skryté
+            const allNodesInCurrentUniverse = allNodesData; // Použijeme allNodesData
+            const results = [];
+
+            allNodesInCurrentUniverse.forEach(node => {
+                const label = node.label.toLowerCase();
+                const fullData = node.fullData;
+
+                if (label.includes(query) || (fullData && fullData.definition && fullData.definition.toLowerCase().includes(query))) {
+                    results.push(node);
+                }
+            });
+
+            if (results.length > 0) {
+                results.forEach(node => {
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('search-results-item');
+
+                    let displayLabel = node.label.replace(/\n/g, ' ');
+                    const startIndex = displayLabel.toLowerCase().indexOf(query);
+                    if (startIndex !== -1) {
+                        const endIndex = startIndex + query.length;
+                        displayLabel =
+                            displayLabel.substring(0, startIndex) +
+                            `<span class="highlight">${displayLabel.substring(startIndex, endIndex)}</span>` +
+                            displayLabel.substring(endIndex);
+                    } else {
+                        displayLabel = `[Definice] ${displayLabel}`;
+                    }
+
+                    resultItem.innerHTML = displayLabel;
+                    resultItem.onclick = () => {
+                        focusNodeAndShowDetail(node.id);
+                        searchResultsDiv.classList.remove('visible');
+                        searchInput.value = node.label.replace(/\n/g, '');
+                    };
+                    searchResultsDiv.appendChild(resultItem);
+                });
+                searchResultsDiv.classList.add('visible');
+            } else {
+                searchResultsDiv.innerHTML = '<div class="search-results-item">Žádné výsledky</div>';
+                searchResultsDiv.classList.add('visible');
+            }
+        }
+
+        // Funkce pro zaměření na uzel a zobrazení detailu
+        function focusNodeAndShowDetail(nodeId) {
+            // Pokud je to podkoncept, musíme nejprve zobrazit jeho mateřský uzel a podkoncepty
+            const node = allNodesData.find(n => n.id === nodeId);
+            if (node && node.parentNodeId) {
+                // Nejprve zajistíme, že jsou podkoncepty zobrazeny
+                toggleSubuniverse(node.parentNodeId, true);
+                // Pak zaměříme na konkrétní podkoncept
+                network.focus(nodeId, {
+                    scale: 1.0,
+                    animation: { duration: 1000, easingFunction: 'easeInOutQuad' }
+                });
+                network.selectNodes([nodeId]);
+                showConceptHub(nodeId);
+
+            } else {
+                // Jinak jen zaměříme na uzel (buď hlavní, nebo po resetování podkonceptů)
+                network.focus(nodeId, {
+                    scale: 1.0,
+                    animation: { duration: 1000, easingFunction: 'easeInOutQuad' }
+                });
+                network.selectNodes([nodeId]);
+                showConceptHub(nodeId);
+            }
+        }
+
+        // Zavření výsledků vyhledávání při kliknutí mimo ně
+        document.addEventListener('click', function (event) {
+            if (!searchResultsDiv.contains(event.target) && event.target !== searchInput) {
+                searchResultsDiv.classList.remove('visible');
+            }
+        });
+
+
+        // --- Hlasové zadávání ---
+        let recognition;
+        let isListening = false;
+
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'cs-CZ';
+
+            recognition.onresult = (event) => {
+                const last = event.results.length - 1;
+                const command = event.results[last][0].transcript.toLowerCase();
+                console.log('Rozpoznaný příkaz:', command);
+                processVoiceCommand(command);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Chyba rozpoznávání řeči:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Pro použití hlasového zadávání musíte povolit přístup k mikrofonu.');
+                }
+                isListening = false;
+                updateMicrophoneButton();
+            };
+
+            recognition.onend = () => {
+                console.log('Rozpoznávání řeči ukončeno.');
+                isListening = false;
+                updateMicrophoneButton();
+            };
+
+        } else {
+            console.warn('Váš prohlížeč nepodporuje Web Speech API. Tlačítko pro hlasové zadávání bude neaktivní.');
+            const voiceBtn = document.getElementById('voice-input-btn');
+            if (voiceBtn) {
+                voiceBtn.disabled = true;
+                voiceBtn.textContent = 'Hlas (nepodporováno)';
+                voiceBtn.style.backgroundColor = '#6B7280';
+            }
+        }
+
+        function startVoiceInput() {
+            if (recognition) {
+                if (!isListening) {
+                    recognition.start();
+                    isListening = true;
+                    console.log('Naslouchám...');
+                } else {
+                    recognition.stop();
+                    isListening = false;
+                    console.log('Naslouchání zastaveno.');
+                }
+                updateMicrophoneButton();
+            }
+        }
+
+        function updateMicrophoneButton() {
+            const btn = document.getElementById('voice-input-btn');
+            if (btn) {
+                btn.textContent = isListening ? 'Zastavit hlas' : 'Spustit hlas';
+                btn.style.backgroundColor = isListening ? '#EF4444' : '#2563EB';
+            }
+        }
+
+        function processVoiceCommand(command) {
+            if (command.includes('najdi') || command.includes('hledej')) {
+                let searchTerm = command.replace(/najdi|hledej|uzel|koncept|pro/g, '').trim();
+
+                // Hledáme ve všech uzlech, ne jen v zobrazených
+                const allNodes = allNodesData;
+                const foundNode = allNodes.find(node =>
+                    node.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (node.fullData && node.fullData.definition && node.fullData.definition.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+
+                if (foundNode) {
+                    focusNodeAndShowDetail(foundNode.id);
+                    speakText(`Zaměřuji se na ${foundNode.label.replace(/\n/g, ' ')}.`);
+                } else {
+                    speakText(`Uzel "${searchTerm}" nebyl nalezen.`);
+                }
+            } else if (command.includes('otevři detail') || command.includes('ukaž detail')) {
+                const searchTerm = command.replace(/otevři detail|ukaž detail/g, '').trim();
+                const foundNode = allNodesData.find(node => node.label.toLowerCase().includes(searchTerm.toLowerCase()));
+                if (foundNode) {
+                    focusNodeAndShowDetail(foundNode.id); // Použít focusNodeAndShowDetail pro správné zobrazení podkonceptů
+                    speakText(`Otevírám detail pro ${foundNode.label.replace(/\n/g, ' ')}.`);
+                } else {
+                    speakText(`Detail pro "${searchTerm}" nebyl nalezen.`);
+                }
+            } else if (command.includes('schovej panel') || command.includes('zavři panel') || command.includes('zavři okno')) {
+                hideInfoPanel();
+                speakText('Panel informací skryt.');
+            } else if (command.includes('přiblížit')) {
+                network.zoomIn();
+                speakText('Přibližuji.');
+            } else if (command.includes('oddálit')) {
+                network.zoomOut();
+                speakText('Oddaluji.');
+            } else if (command.includes('resetuj zobrazení') || command.includes('celý vesmír') || command.includes('přepni na hlavní vesmír') || command.includes('schovej podkoncepty')) {
+                resetNetworkView();
+                speakText('Resetuji zobrazení a vracím se do hlavního vesmíru.');
+            } else if (command.includes('prozkoumat podkoncepty') || command.includes('vstup do podvesmíru')) {
+                const selectedNodes = network.getSelectedNodes();
+                if (selectedNodes.length > 0) {
+                    const nodeId = selectedNodes[0];
+                    const termData = contentData.dictionary.find(term => term.term === nodeId);
+                    if (termData && termData.subnodes && termData.subnodes.length > 0) {
+                        toggleSubuniverse(nodeId, true); // Zobrazíme podkoncepty
+                    } else {
+                        speakText('Vybraný koncept nemá žádné podkoncepty k prozkoumání.');
+                    }
+                } else {
+                    speakText('Nejprve vyberte nebo zaměřte koncept, jehož podkoncepty chcete prozkoumat.');
+                }
+            }
+            else {
+                speakText('Nerozumím příkazu. Zkuste to znovu.');
+            }
+        }
+    </script>
+</body>
+
+</html>
